@@ -1,0 +1,217 @@
+@import "scss/variables.scss";
+@import "scss/mixins.scss";
+
+// Reset & Base Styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  color: $dark-text;
+  background-color: $light-bg;
+}
+
+body {
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Tailwind CSS
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Typography
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+p {
+  color: $light-text;
+}
+
+// Links
+a {
+  color: $primary-color;
+  text-decoration: none;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: $primary-hover;
+  }
+}
+
+// Buttons
+.btn {
+  @include button-base;
+
+  &-primary {
+    background-color: $primary-color;
+    color: $white;
+
+    &:hover:not(:disabled) {
+      background-color: $primary-hover;
+      box-shadow: $box-shadow-md;
+    }
+  }
+
+  &-secondary {
+    background-color: $light-bg;
+    color: $dark-text;
+    border: 1px solid #e5e7eb;
+
+    &:hover:not(:disabled) {
+      background-color: #f3f4f6;
+    }
+  }
+
+  &-link {
+    padding: 0;
+    color: $primary-color;
+    text-decoration: underline;
+
+    &:hover {
+      color: $primary-hover;
+    }
+  }
+}
+
+// Forms
+.form {
+  &-group {
+    margin-bottom: 1.5rem;
+  }
+
+  &-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: $dark-text;
+    font-size: 0.95rem;
+  }
+
+  &-input,
+  &-textarea,
+  &-select {
+    @include input-base;
+
+    &:disabled {
+      background-color: #f9fafb;
+      cursor: not-allowed;
+    }
+  }
+
+  &-textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  &-error {
+    color: $error-color;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  &-hint {
+    color: $light-text;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+}
+
+// Cards
+.card {
+  background-color: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: $box-shadow-md;
+  }
+}
+
+// Containers
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+// Utilities
+.text-primary {
+  color: $primary-color;
+}
+
+.text-secondary {
+  color: $secondary-color;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: $light-text;
+}
+
+.mt-1 {
+  margin-top: 0.5rem;
+}
+
+.mt-2 {
+  margin-top: 1rem;
+}
+
+.mt-3 {
+  margin-top: 1.5rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-2 {
+  margin-bottom: 1rem;
+}
+
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+
+.gap-1 {
+  gap: 0.5rem;
+}
+
+.gap-2 {
+  gap: 1rem;
+}
+
+.gap-3 {
+  gap: 1.5rem;
+}

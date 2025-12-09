@@ -1,0 +1,108 @@
+/* Custom animations and styles for sign-in component */
+
+.sign-in-container {
+  min-height: 100vh;
+}
+
+/* Enhanced backdrop blur for better readability */
+@supports (backdrop-filter: blur(8px)) {
+  .backdrop-blur-sm {
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* Fallback for browsers that don't support backdrop-filter */
+@supports not (backdrop-filter: blur(8px)) {
+  .backdrop-blur-sm {
+    background-color: rgba(255, 255, 255, 0.80) !important;
+  }
+}
+
+/* Smooth focus animation for inputs */
+input:focus {
+  animation: focusGlow 0.3s ease-in-out;
+}
+
+@keyframes focusGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(26, 86, 50, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 3px rgba(26, 86, 50, 0.1);
+  }
+}
+
+/* Button hover effect */
+button[type="submit"]:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 86, 50, 0.3);
+}
+
+button[type="submit"]:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Logo animation on load */
+img[alt="TOPREC Logo"] {
+  animation: logoFadeIn 0.6s ease-in-out;
+}
+
+@keyframes logoFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Form fade in animation */
+form {
+  animation: formSlideIn 0.5s ease-out;
+}
+
+@keyframes formSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Password toggle button */
+button[type="button"]:focus {
+  outline: none;
+}
+
+/* Background image positioning */
+.absolute.inset-0 img {
+  object-position: center;
+}
+
+/* Ensure form container is readable on all backgrounds */
+.bg-white\/75 {
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .max-w-md {
+    max-width: 28rem;
+  }
+  
+  /* Increase overlay opacity on mobile for better readability */
+  .bg-white\/75 {
+    background-color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+@media (max-width: 640px) {
+  .max-w-md {
+    max-width: 100%;
+  }
+}
