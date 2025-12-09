@@ -1,5 +1,7 @@
 @import "scss/variables.scss";
 @import "scss/mixins.scss";
+@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
 
 // Reset & Base Styles
 * {
@@ -11,7 +13,7 @@
 html,
 body {
   height: 100%;
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Mulish", sans-serif !important;
   color: $dark-text;
   background-color: $light-bg;
 }
