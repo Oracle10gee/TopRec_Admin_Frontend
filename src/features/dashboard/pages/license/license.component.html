@@ -1,0 +1,118 @@
+<div class="max-w-4xl">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">My Licenses</h1>
+    <p class="text-gray-600 mt-1">View and manage your professional licenses</p>
+  </div>
+
+  <!-- Licenses List -->
+  <div class="space-y-4">
+    <div
+      *ngFor="let license of licenses"
+      class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+    >
+      <!-- Status Badge -->
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-gray-900">
+            {{ license.qualification }}
+          </h3>
+          <p class="text-gray-600 text-sm">License ID: {{ license.id }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span
+            class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full"
+          >
+            {{ license.status }}
+          </span>
+          <span
+            *ngIf="license.verified"
+            class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full"
+          >
+            ✓ Verified
+          </span>
+        </div>
+      </div>
+
+      <!-- License Details Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <!-- Issued Date -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <p class="text-gray-600 text-sm">Issued Date</p>
+          <p class="text-lg font-semibold text-gray-900 mt-1">
+            {{ license.issuedDate | date : "MMM d, yyyy" }}
+          </p>
+        </div>
+
+        <!-- Expiry Date -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <p class="text-gray-600 text-sm">Expiry Date</p>
+          <p class="text-lg font-semibold text-gray-900 mt-1">
+            {{ license.expiryDate | date : "MMM d, yyyy" }}
+          </p>
+        </div>
+
+        <!-- Days Until Expiry -->
+        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+          <p class="text-orange-700 text-sm font-medium">Days Until Expiry</p>
+          <p class="text-2xl font-bold text-orange-900 mt-1">
+            {{ license.daysUntilExpiry }}
+          </p>
+        </div>
+      </div>
+
+      <!-- License Details -->
+      <div class="bg-gray-50 p-4 rounded-lg mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p class="text-gray-600 text-sm">License Number</p>
+            <p class="text-gray-900 font-medium">{{ license.id }}</p>
+          </div>
+          <div>
+            <p class="text-gray-600 text-sm">Status</p>
+            <p class="text-gray-900 font-medium">{{ license.status }}</p>
+          </div>
+          <div>
+            <p class="text-gray-600 text-sm">Qualification Level</p>
+            <p class="text-gray-900 font-medium">Professional</p>
+          </div>
+          <div>
+            <p class="text-gray-600 text-sm">Verification Status</p>
+            <p class="text-green-600 font-medium">✓ Verified</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap gap-3">
+        <button
+          (click)="downloadLicense(license.id)"
+          class="px-4 py-2 bg-[#1a5632] text-white rounded-lg font-medium hover:bg-[#2a7642] transition-colors flex items-center gap-2"
+        >
+          <span>📥</span>
+          Download License
+        </button>
+        <button
+          (click)="verifyCertificate(license.id)"
+          class="px-4 py-2 border border-[#1a5632] text-[#1a5632] rounded-lg font-medium hover:bg-green-50 transition-colors flex items-center gap-2"
+        >
+          <span>✓</span>
+          Verify Certificate
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Renewal Information -->
+  <div class="mt-8 bg-amber-50 border border-amber-200 rounded-lg p-6">
+    <h3 class="text-lg font-bold text-amber-900 mb-2">
+      ⏰ License Renewal Reminder
+    </h3>
+    <p class="text-amber-800 text-sm">
+      Your current license will expire in
+      {{ licenses[0].daysUntilExpiry }} days. Please renew your license to
+      maintain active status. Visit the
+      <span class="font-medium">Payments</span> section to process your renewal.
+    </p>
+  </div>
+</div>

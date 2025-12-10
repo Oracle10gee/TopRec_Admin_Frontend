@@ -1,0 +1,228 @@
+<header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-20 backdrop-blur-sm bg-white/95">
+  <div class="flex items-center justify-between h-16 px-4 md:px-6">
+    <!-- Left: Menu Toggle Button & Page Title -->
+    <div class="flex items-center gap-4">
+      <!-- Mobile Menu Toggle -->
+      <button
+        (click)="onToggleMenu()"
+        class="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+        aria-label="Toggle menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+
+      <!-- Page Title -->
+      <div class="flex items-center gap-2">
+        <h2 class="text-lg md:text-xl font-bold text-gray-800">
+          {{ pageTitle }}
+        </h2>
+        <!-- Breadcrumb (optional) -->
+        <span class="hidden lg:flex items-center text-sm text-gray-500">
+          <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+          {{ currentPage }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Right: Actions & User Menu -->
+    <div class="flex items-center gap-2 md:gap-3">
+      <!-- Search Button (Desktop) -->
+      <button
+        class="hidden lg:flex items-center gap-2 px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200"
+        aria-label="Search"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <span class="text-sm">Search...</span>
+      </button>
+
+      <!-- Notifications Button -->
+      <button
+        (click)="toggleNotifications()"
+        class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+        aria-label="Notifications"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+        </svg>
+        <!-- Notification Badge -->
+        <span 
+          *ngIf="notificationCount > 0"
+          class="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse"
+        >
+          {{ notificationCount > 9 ? '9+' : notificationCount }}
+        </span>
+      </button>
+
+      <!-- Quick Actions Dropdown (Desktop) -->
+      <button
+        class="hidden md:flex p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95"
+        aria-label="Quick actions"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+        </svg>
+      </button>
+
+      <!-- Divider -->
+      <div class="hidden md:block w-px h-8 bg-gray-300"></div>
+
+      <!-- User Menu Dropdown -->
+      <div class="relative">
+        <button
+          (click)="toggleUserMenu()"
+          class="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 group"
+        >
+          <!-- User Avatar -->
+          <div class="relative">
+            <div
+              class="w-9 h-9 bg-gradient-to-br from-[#1a5632] to-[#0d3520] text-white rounded-full flex items-center justify-center text-sm font-bold shadow-md ring-2 ring-white group-hover:ring-green-200 transition-all duration-200"
+            >
+              {{ userInitials }}
+            </div>
+            <!-- Online Status -->
+            <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
+          </div>
+
+          <!-- User Info (Hidden on Mobile) -->
+          <div class="hidden sm:block text-left">
+            <p class="text-sm font-semibold text-gray-900">{{ userName }}</p>
+            <p class="text-xs text-gray-500">{{ userRole }}</p>
+          </div>
+
+          <!-- Dropdown Arrow -->
+          <svg
+            class="w-4 h-4 text-gray-600 transition-transform duration-200"
+            [class.rotate-180]="showUserMenu"
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        <!-- User Menu Dropdown Content -->
+        <div
+          *ngIf="showUserMenu"
+          class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden animate-slideIn"
+          style="animation: slideIn 0.2s ease-out"
+        >
+          <!-- User Info Header -->
+          <div class="px-4 py-4 border-b border-gray-200 bg-gradient-to-br from-gray-50 to-white">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-gradient-to-br from-[#1a5632] to-[#0d3520] text-white rounded-full flex items-center justify-center text-lg font-bold shadow-md">
+                {{ userInitials }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-900 truncate">{{ userName }}</p>
+                <p class="text-xs text-gray-500 truncate">{{ userEmail }}</p>
+                <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium text-green-700 bg-green-100 rounded-full">
+                  {{ userRole }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Menu Items -->
+          <div class="py-2">
+            <a
+              (click)="navigateToProfile(); closeUserMenu(); $event.preventDefault()"
+              class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer group"
+            >
+              <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition-colors">
+                <svg class="w-5 h-5 text-gray-600 group-hover:text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+              <span class="font-medium">My Profile</span>
+            </a>
+
+            <a
+              (click)="navigateToSettings(); closeUserMenu(); $event.preventDefault()"
+              class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer group"
+            >
+              <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition-colors">
+                <svg class="w-5 h-5 text-gray-600 group-hover:text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <span class="font-medium">Settings</span>
+            </a>
+
+            <a
+              (click)="closeUserMenu(); $event.preventDefault()"
+              class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer group"
+            >
+              <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition-colors">
+                <svg class="w-5 h-5 text-gray-600 group-hover:text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <span class="font-medium">Help & Support</span>
+            </a>
+          </div>
+
+          <!-- Logout Section -->
+          <div class="border-t border-gray-200 py-2">
+            <button
+              (click)="onLogout()"
+              class="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-semibold group"
+            >
+              <div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+              </div>
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Backdrop for User Menu -->
+<div
+  *ngIf="showUserMenu"
+  class="fixed inset-0 z-10 bg-black/20 backdrop-blur-sm"
+  (click)="closeUserMenu()"
+></div>
+
+<!-- Notifications Panel (Slide-in) -->
+<div
+  *ngIf="showNotifications"
+  class="fixed right-0 top-16 w-96 max-w-full h-[calc(100vh-4rem)] bg-white shadow-2xl z-30 border-l border-gray-200 animate-slideInRight overflow-y-auto"
+>
+  <!-- Notifications Header -->
+  <div class="sticky top-0 bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between">
+    <h3 class="text-lg font-bold text-gray-900">Notifications</h3>
+    <button
+      (click)="toggleNotifications()"
+      class="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+    >
+      <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Notifications Content -->
+  <div class="p-4">
+    <p class="text-sm text-gray-500 text-center py-8">No new notifications</p>
+  </div>
+</div>
+
+<!-- Backdrop for Notifications -->
+<div
+  *ngIf="showNotifications"
+  class="fixed inset-0 z-20 bg-black/20 backdrop-blur-sm"
+  (click)="toggleNotifications()"
+></div>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
     standalone: true,
@@ -18,7 +19,8 @@ export class LoginComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private router: Router
+        private router: Router,
+        private authService: AuthService
     ) { }
 
     ngOnInit(): void {
@@ -49,17 +51,36 @@ export class LoginComponent implements OnInit {
             this.isLoading = true;
             this.errorMessage = '';
 
-            // Simulate API call
+            const { email, password } = this.signInForm.value;
+
+            // Simulate API response with mock token and user data
             setTimeout(() => {
-                const { email, password } = this.signInForm.value;
+                // Set mock authentication token to pass AuthGuard
+                localStorage.setItem('auth_token', 'mock_jwt_token_' + Date.now());
 
-                // Add your authentication logic here
-                console.log('Sign In Attempt:', { email, password });
+                // Create and set mock user data
+                const mockUser = {
+                    id: '1',
+                    email: email,
+                    firstName: 'User',
+                    lastName: 'Admin',
+                    role: 'ADMIN',
+                    rtp: 'RTP001',
+                    qualification: 'Professional',
+                    dateOfRegistration: new Date().toISOString(),
+                    address: '123 Test Street',
+                    phoneNumber: '+1234567890',
+                    fullLegalName: 'User Admin'
+                };
 
-                // Navigate to dashboard on success
-                // this.router.navigate(['/dashboard']);
+                localStorage.setItem('current_user', JSON.stringify(mockUser));
 
-                this.isLoading = false;
+                // Update auth service state
+                // Use a small delay to ensure navigation happens after token is set
+                setTimeout(() => {
+                    this.router.navigate(['/dashboard/home']);
+                    this.isLoading = false;
+                }, 100);
             }, 1500);
         } else {
             // Mark all fields as touched to show validation errors
@@ -70,7 +91,7 @@ export class LoginComponent implements OnInit {
     }
 
     navigateToForgotPassword(): void {
-        this.router.navigate(['/forgot-password']);
+        this.router.navigate(['/auth/forgot-password']);
     }
 
     navigateToSignUp(): void {

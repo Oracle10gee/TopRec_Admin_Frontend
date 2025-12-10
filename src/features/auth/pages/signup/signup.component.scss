@@ -1,13 +1,16 @@
 /* Sign Up Component Styles */
 
-/* Prevent body scroll, only form should scroll */
-html, body {
-  overflow: hidden;
+html,
+body {
   height: 100vh;
+  overflow: hidden;
 }
 
-/* Custom scrollbar for form content */
-.overflow-y-auto {
+/* Create scrollable page-level scrollbar that controls form scroll */
+:host {
+  display: block;
+  height: 100vh;
+  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(26, 86, 50, 0.3) transparent;
 
@@ -29,159 +32,7 @@ html, body {
   }
 }
 
-/* Smooth focus animation for inputs */
-input:focus,
-textarea:focus,
-select:focus {
-  animation: focusGlow 0.3s ease-in-out;
-}
-
-@keyframes focusGlow {
-  0% {
-    box-shadow: 0 0 0 0 rgba(26, 86, 50, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 3px rgba(26, 86, 50, 0.1);
-  }
-}
-
-/* Button hover effect */
-button[type="submit"]:not(:disabled):hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(26, 86, 50, 0.3);
-}
-
-button[type="submit"]:not(:disabled):active {
-  transform: translateY(0);
-}
-
-/* Logo animation on load */
-img[alt="TOPREC Logo"] {
-  animation: logoFadeIn 0.6s ease-in-out;
-}
-
-@keyframes logoFadeIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Form fade in animation */
-form {
-  animation: formSlideIn 0.5s ease-out;
-}
-
-@keyframes formSlideIn {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Password toggle button */
-button[type="button"]:focus {
-  outline: none;
-}
-
-/* Select dropdown styling */
-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 1.25rem;
-  padding-right: 2.5rem;
-}
-
-/* Date input calendar icon */
-input[type="date"] {
-  &::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    opacity: 0.6;
-    
-    &:hover {
-      opacity: 1;
-    }
-  }
-}
-
-/* Fixed header blur effect */
-.bg-white\/80 {
-  background-color: rgba(255, 255, 255, 0.8);
-}
-
-@supports (backdrop-filter: blur(12px)) {
-  .backdrop-blur-md {
-    backdrop-filter: blur(12px);
-  }
-}
-
-/* Error/Success message animations */
-.bg-red-50,
-.bg-green-50 {
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Smooth transitions for all interactive elements */
-input,
-textarea,
-select,
-button {
-  transition: all 0.2s ease;
-}
-
-/* Grid responsive behavior */
-@media (max-width: 640px) {
-  .grid.sm\:grid-cols-2 {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Loading spinner */
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Ensure inputs have white background */
-input,
-textarea,
-select {
-  background-color: #ffffff;
-}
-
-/* Better mobile padding */
-@media (max-width: 768px) {
-  .px-6 {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+/* Form container scrolls with page scroll */
+.max-h-\[90vh\] {
+  max-height: unset !important;
 }

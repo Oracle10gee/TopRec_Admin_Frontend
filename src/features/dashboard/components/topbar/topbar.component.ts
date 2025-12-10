@@ -1,0 +1,175 @@
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+
+@Component({
+    standalone: true,
+    selector: 'app-topbar',
+    imports: [CommonModule],
+    templateUrl: './topbar.component.html',
+    styleUrls: ['./topbar.component.scss']
+})
+export class TopbarComponent implements OnInit {
+    @Output() toggleMenu = new EventEmitter<void>();
+
+    showUserMenu = false;
+    showNotifications = false;
+    
+    // User data
+    userInitials = '';
+    userName = '';
+    userEmail = '';
+    userRole = '';
+    
+    // Page info
+    pageTitle = 'Dashboard';
+    currentPage = 'Home';
+    
+    // Notification count
+    notificationCount = 3; // Example count
+
+    constructor(private router: Router) {}
+
+    ngOnInit(): void {
+        this.loadUserData();
+        this.updatePageTitle();
+        
+        // Listen to route changes
+        this.router.events
+            .pipe(filter(event => event instanceof NavigationEnd))
+            .subscribe(() => {
+                this.updatePageTitle();
+            });
+    }
+
+    /**
+     * Load user data from localStorage
+     */
+    private loadUserData(): void {
+        try {
+            const user = JSON.parse(localStorage.getItem('current_user') || '{}');
+            
+            this.userName = user.fullLegalName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
+            this.userEmail = user.email || 'user@toprecng.org';
+            this.userRole = user.role || 'Admin';
+            
+            // Generate initials
+            const nameParts = this.userName.split(' ');
+            if (nameParts.length >= 2) {
+                this.userInitials = (nameParts[0][0] + nameParts[1][0]).toUpperCase();
+            } else {
+                this.userInitials = this.userName.substring(0, 2).toUpperCase();
+            }
+        } catch (error) {
+            console.error('Error loading user data:', error);
+            this.userName = 'User';
+            this.userEmail = 'user@toprecng.org';
+            this.userRole = 'Admin';
+            this.userInitials = 'US';
+        }
+    }
+
+    /**
+     * Update page title based on current route
+     */
+    private updatePageTitle(): void {
+        const currentRoute = this.router.url;
+        
+        // Map routes to titles
+        const routeTitles: { [key: string]: { title: string, page: string } } = {
+            '/dashboard/home': { title: 'Dashboard', page: 'Home' },
+            '/dashboard/profile': { title: 'Profile', page: 'My Profile' },
+            '/dashboard/license': { title: 'License', page: 'License Management' },
+            '/dashboard/payments': { title: 'Payments', page: 'Payment History' },
+            '/dashboard/settings': { title: 'Settings', page: 'Account Settings' }
+        };
+
+        const routeInfo = routeTitles[currentRoute] || { title: 'Dashboard', page: 'Home' };
+        this.pageTitle = routeInfo.title;
+        this.currentPage = routeInfo.page;
+    }
+
+    /**
+     * Toggle mobile menu
+     */
+    onToggleMenu(): void {
+        this.toggleMenu.emit();
+    }
+
+    /**
+     * Toggle user menu dropdown
+     */
+    toggleUserMenu(): void {
+        this.showUserMenu = !this.showUserMenu;
+        
+        // Close notifications if open
+        if (this.showUserMenu && this.showNotifications) {
+            this.showNotifications = false;
+        }
+    }
+
+    /**
+     * Close user menu
+     */
+    closeUserMenu(): void {
+        this.showUserMenu = false;
+    }
+
+    /**
+     * Toggle notifications panel
+     */
+    toggleNotifications(): void {
+        this.showNotifications = !this.showNotifications;
+        
+        // Close user menu if open
+        if (this.showNotifications && this.showUserMenu) {
+            this.showUserMenu = false;
+        }
+    }
+
+    /**
+     * Navigate to profile page
+     */
+    navigateToProfile(): void {
+        this.router.navigate(['/dashboard/profile']);
+    }
+
+    /**
+     * Navigate to settings page
+     */
+    navigateToSettings(): void {
+        this.router.navigate(['/dashboard/settings']);
+    }
+
+    /**
+     * Logout user
+     */
+    onLogout(): void {
+        // Clear authentication data
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('current_user');
+        
+        // Close dropdowns
+        this.closeUserMenu();
+        
+        // Navigate to login
+        this.router.navigate(['/auth/login']);
+    }
+
+    /**
+     * Mark notification as read (placeholder)
+     */
+    markNotificationRead(notificationId: string): void {
+        // Implement notification read logic
+        console.log('Marking notification as read:', notificationId);
+    }
+
+    /**
+     * Clear all notifications (placeholder)
+     */
+    clearAllNotifications(): void {
+        this.notificationCount = 0;
+        console.log('Clearing all notifications');
+    }
+}

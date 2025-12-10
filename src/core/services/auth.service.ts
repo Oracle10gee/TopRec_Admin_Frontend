@@ -175,6 +175,19 @@ export class AuthService {
         const token = localStorage.getItem(this.TOKEN_KEY);
         if (!token) return null;
 
+        // For mock tokens, get user from current_user storage
+        if (token.startsWith('mock_jwt_token_')) {
+            const userData = localStorage.getItem('current_user');
+            if (userData) {
+                try {
+                    return JSON.parse(userData);
+                } catch {
+                    return null;
+                }
+            }
+            return null;
+        }
+
         try {
             // Decode JWT token to get user info
             const payload = JSON.parse(atob(token.split('.')[1]));
@@ -190,6 +203,11 @@ export class AuthService {
     private hasValidToken(): boolean {
         const token = localStorage.getItem(this.TOKEN_KEY);
         if (!token) return false;
+
+        // Check for mock token (for development/testing)
+        if (token.startsWith('mock_jwt_token_')) {
+            return true;
+        }
 
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));

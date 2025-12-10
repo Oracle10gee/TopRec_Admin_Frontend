@@ -1,0 +1,248 @@
+<div class="max-w-4xl space-y-6">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
+    <p class="text-gray-600 mt-1">Manage your account preferences</p>
+  </div>
+
+  <!-- Success/Error Messages -->
+  <div
+    *ngIf="successMessage"
+    class="p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-start gap-3"
+  >
+    <span>✓</span>
+    <p>{{ successMessage }}</p>
+  </div>
+
+  <!-- Security Settings -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h2 class="text-xl font-bold text-gray-900 mb-6">Security Settings</h2>
+
+    <form
+      [formGroup]="securityForm"
+      (ngSubmit)="onPasswordChange()"
+      class="space-y-4"
+    >
+      <!-- Current Password -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Current Password *
+        </label>
+        <div class="relative">
+          <input
+            [type]="showCurrentPassword ? 'text' : 'password'"
+            formControlName="currentPassword"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all pr-10"
+          />
+          <button
+            type="button"
+            (click)="showCurrentPassword = !showCurrentPassword"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          >
+            {{ showCurrentPassword ? "👁️" : "👁️‍🗨️" }}
+          </button>
+        </div>
+      </div>
+
+      <!-- New Password -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          New Password *
+        </label>
+        <div class="relative">
+          <input
+            [type]="showNewPassword ? 'text' : 'password'"
+            formControlName="newPassword"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all pr-10"
+          />
+          <button
+            type="button"
+            (click)="showNewPassword = !showNewPassword"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          >
+            {{ showNewPassword ? "👁️" : "👁️‍🗨️" }}
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+      </div>
+
+      <!-- Confirm Password -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Confirm Password *
+        </label>
+        <div class="relative">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            formControlName="confirmPassword"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all pr-10"
+          />
+          <button
+            type="button"
+            (click)="showConfirmPassword = !showConfirmPassword"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          >
+            {{ showConfirmPassword ? "👁️" : "👁️‍🗨️" }}
+          </button>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="isSaving || !securityForm.valid"
+        class="px-6 py-2 bg-[#1a5632] text-white rounded-lg font-medium hover:bg-[#2a7642] transition-colors disabled:opacity-70"
+      >
+        {{ isSaving ? "Updating..." : "Change Password" }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Notification Settings -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h2 class="text-xl font-bold text-gray-900 mb-6">
+      Notification Preferences
+    </h2>
+
+    <form
+      [formGroup]="notificationForm"
+      (ngSubmit)="onNotificationSave()"
+      class="space-y-4"
+    >
+      <!-- Email Notifications -->
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div>
+          <p class="font-medium text-gray-900">📧 Email Notifications</p>
+          <p class="text-sm text-gray-500">Receive updates via email</p>
+        </div>
+        <label class="relative inline-block w-12 h-6">
+          <input
+            type="checkbox"
+            formControlName="emailNotifications"
+            class="sr-only peer"
+          />
+          <div
+            class="w-full h-full bg-gray-300 peer-checked:bg-[#1a5632] rounded-full transition-colors cursor-pointer"
+          ></div>
+          <div
+            class="absolute left-0 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"
+          ></div>
+        </label>
+      </div>
+
+      <!-- SMS Notifications -->
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div>
+          <p class="font-medium text-gray-900">📱 SMS Notifications</p>
+          <p class="text-sm text-gray-500">Receive text message alerts</p>
+        </div>
+        <label class="relative inline-block w-12 h-6">
+          <input
+            type="checkbox"
+            formControlName="smsNotifications"
+            class="sr-only peer"
+          />
+          <div
+            class="w-full h-full bg-gray-300 peer-checked:bg-[#1a5632] rounded-full transition-colors cursor-pointer"
+          ></div>
+          <div
+            class="absolute left-0 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"
+          ></div>
+        </label>
+      </div>
+
+      <!-- Payment Reminders -->
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div>
+          <p class="font-medium text-gray-900">💳 Payment Reminders</p>
+          <p class="text-sm text-gray-500">
+            Get notified about payment deadlines
+          </p>
+        </div>
+        <label class="relative inline-block w-12 h-6">
+          <input
+            type="checkbox"
+            formControlName="paymentReminders"
+            class="sr-only peer"
+          />
+          <div
+            class="w-full h-full bg-gray-300 peer-checked:bg-[#1a5632] rounded-full transition-colors cursor-pointer"
+          ></div>
+          <div
+            class="absolute left-0 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"
+          ></div>
+        </label>
+      </div>
+
+      <!-- Renewal Reminders -->
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div>
+          <p class="font-medium text-gray-900">📜 Renewal Reminders</p>
+          <p class="text-sm text-gray-500">
+            Get notified about license renewals
+          </p>
+        </div>
+        <label class="relative inline-block w-12 h-6">
+          <input
+            type="checkbox"
+            formControlName="renewalReminders"
+            class="sr-only peer"
+          />
+          <div
+            class="w-full h-full bg-gray-300 peer-checked:bg-[#1a5632] rounded-full transition-colors cursor-pointer"
+          ></div>
+          <div
+            class="absolute left-0 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"
+          ></div>
+        </label>
+      </div>
+
+      <!-- Newsletters -->
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div>
+          <p class="font-medium text-gray-900">📰 Newsletters</p>
+          <p class="text-sm text-gray-500">Subscribe to our newsletter</p>
+        </div>
+        <label class="relative inline-block w-12 h-6">
+          <input
+            type="checkbox"
+            formControlName="newsletters"
+            class="sr-only peer"
+          />
+          <div
+            class="w-full h-full bg-gray-300 peer-checked:bg-[#1a5632] rounded-full transition-colors cursor-pointer"
+          ></div>
+          <div
+            class="absolute left-0 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-6 transition-transform"
+          ></div>
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="isSaving"
+        class="px-6 py-2 bg-[#1a5632] text-white rounded-lg font-medium hover:bg-[#2a7642] transition-colors disabled:opacity-70"
+      >
+        {{ isSaving ? "Saving..." : "Save Preferences" }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Account Danger Zone -->
+  <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+    <h2 class="text-xl font-bold text-red-900 mb-4">⚠️ Danger Zone</h2>
+
+    <div class="space-y-3">
+      <p class="text-red-800 text-sm">
+        These actions cannot be undone. Please proceed with caution.
+      </p>
+
+      <button
+        (click)="deleteAccount()"
+        class="w-full px-4 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+      >
+        <span>🗑️</span>
+        Delete Account
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,315 @@
+/* Topbar Component Styles */
+/* Using Tailwind CSS utility classes for responsive design */
+/* Modern Topbar Component Styles */
+
+/* Smooth backdrop blur */
+header {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Custom animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.2s ease-out;
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.3s ease-out;
+}
+
+/* Button hover effects */
+button {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+    transform: scale(0);
+    transition: transform 0.4s ease;
+  }
+
+  &:active::before {
+    transform: scale(1);
+  }
+}
+
+/* User avatar ring animation */
+.ring-2 {
+  transition: all 0.3s ease;
+}
+
+/* Badge pulse */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Dropdown menu shadow */
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* User menu items */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Icon containers in dropdown */
+.group:hover .w-8.h-8 {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* Online status indicator */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.bg-green-500::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Divider line */
+.w-px {
+  width: 1px;
+}
+
+/* Search bar hover */
+.bg-gray-100:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Notification badge */
+span.animate-pulse {
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+/* Backdrop blur */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Scrollbar for notifications panel */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.5);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(156, 163, 175, 0.7);
+    }
+  }
+}
+
+/* Role badge */
+.bg-green-100 {
+  background-color: #d1fae5;
+}
+
+.text-green-700 {
+  color: #047857;
+}
+
+/* Logout button special styling */
+button.text-red-600 {
+  &:hover {
+    .w-8.h-8 {
+      background-color: #fee2e2;
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, transform, box-shadow, opacity, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus states for accessibility */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #1a5632;
+  outline-offset: 2px;
+}
+
+/* Mobile menu button special effect */
+@media (max-width: 768px) {
+  button[aria-label="Toggle menu"] {
+    &:active {
+      background-color: rgba(26, 86, 50, 0.1);
+    }
+  }
+}
+
+/* User menu dropdown positioning */
+.relative > .absolute {
+  right: 0;
+  margin-top: 0.5rem;
+  z-index: 50;
+}
+
+/* Enhanced gradient for user avatar */
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, #1a5632, #0d3520);
+  
+  &:hover {
+    background-image: linear-gradient(to bottom right, #2a7642, #1a5632);
+  }
+}
+
+/* Notification panel header */
+.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Menu item hover effect */
+a.group,
+button.group {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: linear-gradient(to bottom, #1a5632, #2a7642);
+    border-radius: 0 2px 2px 0;
+    transition: height 0.2s ease;
+  }
+
+  &:hover::before {
+    height: 70%;
+  }
+}
+
+/* Page title animation */
+h2 {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Breadcrumb separator */
+.text-gray-500 svg {
+  opacity: 0.5;
+}
+
+/* Icon button active state */
+button[aria-label]:active {
+  transform: scale(0.95);
+}
+
+/* Quick actions button */
+button[aria-label="Quick actions"] {
+  &:hover svg {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  /* Reduce padding on mobile */
+  header .flex {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Full width notification panel on mobile */
+  .w-96.max-w-full {
+    width: 100%;
+  }
+}
+
+/* Status indicator pulse */
+.bg-green-500.border-2 {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid #10b981;
+    animation: pingStatus 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+}
+
+@keyframes pingStatus {
+  75%, 100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}

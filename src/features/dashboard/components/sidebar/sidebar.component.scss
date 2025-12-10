@@ -1,0 +1,208 @@
+/* Modern Sidebar Component Styles */
+
+/* Ensure sidebar takes full height */
+aside {
+  height: 100vh;
+  top: 0;
+}
+
+/* Custom scrollbar styling */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+/* Logo animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Menu item hover effects */
+nav button {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  &:hover::before {
+    transform: translateX(100%);
+  }
+}
+
+/* Active menu item glow effect */
+.active-menu-item {
+  background: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    pointer-events: none;
+  }
+}
+
+/* Badge pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+span[class*="bg-red-500"] {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* User avatar gradient */
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, #4ade80, #16a34a);
+  box-shadow: 0 4px 6px -1px rgba(74, 222, 128, 0.3);
+}
+
+/* Logout button hover effect */
+button[class*="bg-red-600"] {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+  }
+
+  &:hover::before {
+    transform: translateX(100%);
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, transform, box-shadow, opacity;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mobile overlay animation */
+@media (max-width: 768px) {
+  aside {
+    &.translate-x-0 {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    &.-translate-x-full {
+      animation: slideOut 0.3s ease-out;
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Hover shadow enhancement */
+button:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Active state enhancement */
+button:active {
+  transform: scale(0.98);
+}
+
+/* Focus states for accessibility */
+button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Glass morphism effect for user section */
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}
+
+/* Border glow effect */
+.border-white\/10 {
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Enhanced gradient background */
+aside {
+  background: linear-gradient(
+    to bottom,
+    #1a5632 0%,
+    #155229 50%,
+    #0d3520 100%
+  );
+  
+  /* Add subtle texture */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
