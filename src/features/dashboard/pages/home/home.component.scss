@@ -1,336 +1,42 @@
-/* Home Component Styles */
-/* Using Tailwind CSS utility classes for responsive design */
-
-/* Modern Dashboard Home Component Styles */
-
-/* Page fade-in animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+/* Home Component Styles - Ultra Minimal */
 
 .animate-fadeIn {
-  animation: fadeIn 0.6s ease-out;
-}
-
-/* Slide in animation for title */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  opacity: 1;
 }
 
 .animate-slideIn {
-  animation: slideIn 0.5s ease-out;
+  opacity: 1;
 }
 
-/* Slide up animation for cards */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.group:hover .w-14.h-14 {
+  transform: scale(1.05);
 }
 
-/* Stats card hover effects */
-.group:hover {
-  .w-14.h-14 {
-    transform: scale(1.1) rotate(5deg);
-  }
-}
-
-/* Progress bar animation */
-@keyframes progressFill {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 75%;
-  }
-}
-
-.bg-gradient-to-r {
-  animation: progressFill 1s ease-out 0.5s both;
-}
-
-/* Quick action cards */
 .group {
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 0.75rem;
-    background: linear-gradient(135deg, rgba(26, 86, 50, 0.05), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover::before {
-    opacity: 1;
-  }
+  transition: all 0.2s ease;
 }
 
-/* Activity item hover */
-.hover\:bg-gray-50:hover {
-  transform: translateX(4px);
-  transition: transform 0.2s ease;
-}
-
-/* Banner background patterns */
-.bg-gradient-to-r {
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.1) 0%,
-      transparent 70%
-    );
-    animation: rotate 20s linear infinite;
-  }
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Icon pulse animation */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Stat change indicator */
 .text-green-600,
 .text-red-600 {
   font-weight: 600;
 }
 
-/* Badge animations */
-span[class*='bg-green-100'],
-span[class*='bg-purple-100'],
-span[class*='bg-orange-100'],
-span[class*='bg-blue-100'] {
-  animation: fadeIn 0.5s ease-out;
-}
-
-/* Action button hover */
 button:hover {
   transform: scale(1.02);
-  transition: all 0.2s ease;
-
-  &:active {
-    transform: scale(0.98);
-  }
 }
 
-/* Progress bar glow effect */
-.bg-gradient-to-r.from-\[\#1a5632\] {
-  box-shadow: 0 2px 8px rgba(26, 86, 50, 0.3);
-  animation: glow 2s ease-in-out infinite;
-}
-
-@keyframes glow {
-  0%, 100% {
-    box-shadow: 0 2px 8px rgba(26, 86, 50, 0.3);
-  }
-  50% {
-    box-shadow: 0 2px 12px rgba(26, 86, 50, 0.5);
-  }
-}
-
-/* Card shadows */
-.shadow-sm {
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-.shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
+.shadow-sm,
+.shadow-md,
+.shadow-lg,
 .shadow-xl {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.hover\:shadow-lg:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-.hover\:shadow-md:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.hover\:shadow-xl:hover {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-/* Border gradient animation */
-@keyframes borderGlow {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.border-\[\#1a5632\] {
-  animation: borderGlow 2s ease-in-out infinite;
-}
-
-/* Activity status badges */
-.bg-green-100 {
-  background-color: #d1fae5;
-}
-
-.bg-blue-100 {
-  background-color: #dbeafe;
-}
-
-.bg-purple-100 {
-  background-color: #e9d5ff;
-}
-
-.bg-orange-100 {
-  background-color: #fed7aa;
-}
-
-/* Icon rotation on hover */
 svg {
   transition: transform 0.3s ease;
 }
 
-button:hover svg,
-a:hover svg {
-  transform: scale(1.1);
-}
-
-/* Backdrop blur support */
-@supports (backdrop-filter: blur(8px)) {
-  .backdrop-blur-sm {
-    backdrop-filter: blur(8px);
-  }
-}
-
-/* Smooth transitions */
-* {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Grid responsive adjustments */
-@media (max-width: 640px) {
-  .grid {
-    gap: 1rem;
-  }
-
-  .text-3xl {
-    font-size: 1.75rem;
-  }
-
-  .p-6 {
-    padding: 1.25rem;
-  }
-}
-
-/* Card background patterns */
-.bg-white {
-  position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: 
-      radial-gradient(circle at 10% 20%, rgba(26, 86, 50, 0.02) 0%, transparent 50%),
-      radial-gradient(circle at 90% 80%, rgba(26, 86, 50, 0.02) 0%, transparent 50%);
-    pointer-events: none;
-    border-radius: inherit;
-  }
-}
-
-/* Welcome emoji animation */
-.text-2xl {
-  display: inline-block;
-  animation: wave 1s ease-in-out infinite;
-  transform-origin: 70% 70%;
-}
-
-@keyframes wave {
-  0%, 100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(20deg);
-  }
-  75% {
-    transform: rotate(-10deg);
-  }
-}
-
-/* License progress bar container */
-.overflow-hidden {
-  position: relative;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transform: translateX(-100%);
-    animation: shimmer 2s infinite;
-  }
-}
-
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* Focus states for accessibility */
-button:focus-visible,
-a:focus-visible {
+button:focus-visible {
   outline: 2px solid #1a5632;
   outline-offset: 2px;
 }
