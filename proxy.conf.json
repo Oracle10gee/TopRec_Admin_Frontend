@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://toprec.sendswifts.com",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

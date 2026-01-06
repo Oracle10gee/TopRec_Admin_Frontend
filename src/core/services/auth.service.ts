@@ -34,10 +34,16 @@ export class AuthService {
     /**
      * Login user
      */
-    login(credentials: LoginRequest): Observable<AuthResponse> {
+    login(credentials: LoginRequest): Observable<User> {
         return this.apiService.post<AuthResponse>('/auth/login', credentials).pipe(
-            tap((response) => this.handleAuthSuccess(response.data)),
-            map((response) => response.data),
+            tap((response) => {
+                if (response.data.token) {
+                    localStorage.setItem(this.TOKEN_KEY, response.data.token);
+                }
+                this.currentUserSubject.next(response.data.user);
+                this.isAuthenticatedSubject.next(true);
+            }),
+            map((response) => response.data.user),
             catchError((error) => this.handleAuthError(error))
         );
     }
@@ -45,11 +51,16 @@ export class AuthService {
     /**
      * Sign up user
      */
-    signUp(data: SignUpRequest): Observable<AuthResponse> {
-        const { confirmPassword, ...payload } = data;
-        return this.apiService.post<AuthResponse>('/auth/signup', payload).pipe(
-            tap((response) => this.handleAuthSuccess(response.data)),
-            map((response) => response.data),
+    signUp(data: SignUpRequest): Observable<User> {
+        return this.apiService.post<AuthResponse>('/auth/register', data).pipe(
+            tap((response) => {
+                if (response.data.token) {
+                    localStorage.setItem(this.TOKEN_KEY, response.data.token);
+                }
+                this.currentUserSubject.next(response.data.user);
+                this.isAuthenticatedSubject.next(true);
+            }),
+            map((response) => response.data.user),
             catchError((error) => this.handleAuthError(error))
         );
     }
@@ -151,10 +162,9 @@ export class AuthService {
     /**
      * Handle successful authentication
      */
-    private handleAuthSuccess(authResponse: AuthResponse): void {
-        localStorage.setItem(this.TOKEN_KEY, authResponse.accessToken);
-        if (authResponse.refreshToken) {
-            localStorage.setItem(this.REFRESH_TOKEN_KEY, authResponse.refreshToken);
+    private handleAuthSuccess(authResponse: { user: User; token?: string }): void {
+        if (authResponse.token) {
+            localStorage.setItem(this.TOKEN_KEY, authResponse.token);
         }
         this.currentUserSubject.next(authResponse.user);
         this.isAuthenticatedSubject.next(true);
@@ -175,26 +185,17 @@ export class AuthService {
         const token = localStorage.getItem(this.TOKEN_KEY);
         if (!token) return null;
 
-        // For mock tokens, get user from current_user storage
-        if (token.startsWith('mock_jwt_token_')) {
-            const userData = localStorage.getItem('current_user');
-            if (userData) {
-                try {
-                    return JSON.parse(userData);
-                } catch {
-                    return null;
-                }
+        // Get user from localStorage if available
+        const userData = localStorage.getItem('current_user');
+        if (userData) {
+            try {
+                return JSON.parse(userData);
+            } catch {
+                return null;
             }
-            return null;
         }
 
-        try {
-            // Decode JWT token to get user info
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            return payload.user || null;
-        } catch {
-            return null;
-        }
+        return null;
     }
 
     /**
@@ -204,17 +205,14 @@ export class AuthService {
         const token = localStorage.getItem(this.TOKEN_KEY);
         if (!token) return false;
 
-        // Check for mock token (for development/testing)
-        if (token.startsWith('mock_jwt_token_')) {
-            return true;
-        }
-
         try {
+            // For JWT tokens, check expiry
             const payload = JSON.parse(atob(token.split('.')[1]));
             const expiresAt = payload.exp * 1000;
             return Date.now() < expiresAt;
         } catch {
-            return false;
+            // If we can't parse, assume valid if token exists
+            return !!token;
         }
     }
 

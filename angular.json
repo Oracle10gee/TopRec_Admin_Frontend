@@ -60,7 +60,8 @@
               "buildTarget": "Toprec:build:production"
             },
             "development": {
-              "buildTarget": "Toprec:build:development"
+              "buildTarget": "Toprec:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

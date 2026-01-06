@@ -75,33 +75,28 @@
           <!-- Full Legal Name -->
           <div>
             <label
-              for="fullLegalName"
+              for="full_name"
               class="block text-sm font-medium text-gray-700 mb-1.5"
             >
               Full Legal Name <span class="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="fullLegalName"
-              formControlName="fullLegalName"
+              id="full_name"
+              formControlName="full_name"
               placeholder="Enter your full legal name"
               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
-              [class.border-red-500]="
-                fullLegalName?.invalid && fullLegalName?.touched
-              "
+              [class.border-red-500]="full_name?.invalid && full_name?.touched"
             />
-            <div
-              *ngIf="fullLegalName?.invalid && fullLegalName?.touched"
-              class="mt-1"
-            >
+            <div *ngIf="full_name?.invalid && full_name?.touched" class="mt-1">
               <p
-                *ngIf="fullLegalName?.errors?.['required']"
+                *ngIf="full_name?.errors?.['required']"
                 class="text-xs text-red-500"
               >
                 Name is required
               </p>
               <p
-                *ngIf="fullLegalName?.errors?.['minlength']"
+                *ngIf="full_name?.errors?.['minlength']"
                 class="text-xs text-red-500"
               >
                 Name must be at least 3 characters
@@ -141,33 +136,33 @@
           <!-- Phone Number -->
           <div>
             <label
-              for="phoneNumber"
+              for="phone_number"
               class="block text-sm font-medium text-gray-700 mb-1.5"
             >
               Phone Number <span class="text-red-500">*</span>
             </label>
             <input
               type="tel"
-              id="phoneNumber"
-              formControlName="phoneNumber"
+              id="phone_number"
+              formControlName="phone_number"
               placeholder="e.g., 08012345678"
               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
               [class.border-red-500]="
-                phoneNumber?.invalid && phoneNumber?.touched
+                phone_number?.invalid && phone_number?.touched
               "
             />
             <div
-              *ngIf="phoneNumber?.invalid && phoneNumber?.touched"
+              *ngIf="phone_number?.invalid && phone_number?.touched"
               class="mt-1"
             >
               <p
-                *ngIf="phoneNumber?.errors?.['required']"
+                *ngIf="phone_number?.errors?.['required']"
                 class="text-xs text-red-500"
               >
                 Phone number is required
               </p>
               <p
-                *ngIf="phoneNumber?.errors?.['pattern']"
+                *ngIf="phone_number?.errors?.['pattern']"
                 class="text-xs text-red-500"
               >
                 Please enter a valid phone number
@@ -216,25 +211,33 @@
             Professional Details
           </h3>
 
-          <!-- RTP Number -->
+          <!-- Membership Number -->
           <div>
             <label
-              for="rtp"
+              for="membership_number"
               class="block text-sm font-medium text-gray-700 mb-1.5"
             >
-              RTP Number <span class="text-red-500">*</span>
+              Membership Number <span class="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="rtp"
-              formControlName="rtp"
-              placeholder="Enter your RTP number"
+              id="membership_number"
+              formControlName="membership_number"
+              placeholder="Enter your membership number"
               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
-              [class.border-red-500]="rtp?.invalid && rtp?.touched"
+              [class.border-red-500]="
+                membership_number?.invalid && membership_number?.touched
+              "
             />
-            <div *ngIf="rtp?.invalid && rtp?.touched" class="mt-1">
-              <p *ngIf="rtp?.errors?.['required']" class="text-xs text-red-500">
-                RTP number is required
+            <div
+              *ngIf="membership_number?.invalid && membership_number?.touched"
+              class="mt-1"
+            >
+              <p
+                *ngIf="membership_number?.errors?.['required']"
+                class="text-xs text-red-500"
+              >
+                Membership number is required
               </p>
             </div>
           </div>
@@ -259,10 +262,11 @@
               >
                 <option value="">Select qualification</option>
                 <option value="bachelor">Bachelor's Degree</option>
+                <option value="Associate">Associate</option>
                 <option value="master">Master's Degree</option>
                 <option value="phd">PhD</option>
                 <option value="diploma">Diploma</option>
-                <option value="certificate">Certificate</option>
+                <option value="certificate">SSCE</option>
               </select>
               <div
                 *ngIf="qualification?.invalid && qualification?.touched"
@@ -280,28 +284,26 @@
             <!-- Date of Registration -->
             <div>
               <label
-                for="dateOfRegistration"
+                for="registration_date"
                 class="block text-sm font-medium text-gray-700 mb-1.5"
               >
                 Registration Date <span class="text-red-500">*</span>
               </label>
               <input
                 type="date"
-                id="dateOfRegistration"
-                formControlName="dateOfRegistration"
+                id="registration_date"
+                formControlName="registration_date"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
                 [class.border-red-500]="
-                  dateOfRegistration?.invalid && dateOfRegistration?.touched
+                  registration_date?.invalid && registration_date?.touched
                 "
               />
               <div
-                *ngIf="
-                  dateOfRegistration?.invalid && dateOfRegistration?.touched
-                "
+                *ngIf="registration_date?.invalid && registration_date?.touched"
                 class="mt-1"
               >
                 <p
-                  *ngIf="dateOfRegistration?.errors?.['required']"
+                  *ngIf="registration_date?.errors?.['required']"
                   class="text-xs text-red-500"
                 >
                   Required
@@ -340,6 +342,7 @@
                 type="button"
                 (click)="togglePasswordVisibility()"
                 class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                title="Toggle password visibility"
               >
                 <svg
                   *ngIf="!showPassword"
@@ -397,7 +400,7 @@
           <!-- Confirm Password Field -->
           <div>
             <label
-              for="confirmPassword"
+              for="confirm_password"
               class="block text-sm font-medium text-gray-700 mb-1.5"
             >
               Confirm Password <span class="text-red-500">*</span>
@@ -405,16 +408,17 @@
             <div class="relative">
               <input
                 [type]="showConfirmPassword ? 'text' : 'password'"
-                id="confirmPassword"
-                formControlName="confirmPassword"
+                id="confirm_password"
+                formControlName="confirm_password"
                 placeholder="Re-enter your password"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 pr-10 text-sm bg-white"
-                [class.border-red-500]="(confirmPassword?.invalid && confirmPassword?.touched) || (signUpForm.errors?.['passwordMismatch'] && confirmPassword?.touched)"
+                [class.border-red-500]="(confirm_password?.invalid && confirm_password?.touched) || (signUpForm.errors?.['passwordMismatch'] && confirm_password?.touched)"
               />
               <button
                 type="button"
                 (click)="toggleConfirmPasswordVisibility()"
                 class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                title="Toggle password visibility"
               >
                 <svg
                   *ngIf="!showConfirmPassword"
@@ -454,11 +458,11 @@
               </button>
             </div>
             <div
-              *ngIf="(confirmPassword?.invalid && confirmPassword?.touched) || (signUpForm.errors?.['passwordMismatch'] && confirmPassword?.touched)"
+              *ngIf="(confirm_password?.invalid && confirm_password?.touched) || (signUpForm.errors?.['passwordMismatch'] && confirm_password?.touched)"
               class="mt-1"
             >
               <p
-                *ngIf="confirmPassword?.errors?.['required']"
+                *ngIf="confirm_password?.errors?.['required']"
                 class="text-xs text-red-500"
               >
                 Please confirm your password

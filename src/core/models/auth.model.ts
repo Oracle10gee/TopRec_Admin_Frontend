@@ -1,36 +1,53 @@
+// Login/SignUp Request Models
 export interface LoginRequest {
-    email: string;
+    identifier: string; // email or username
     password: string;
 }
 
 export interface SignUpRequest {
-    firstName: string;
-    lastName: string;
+    full_name: string;
     email: string;
+    phone_number: string;
+    address: string;
+    membership_number: string;
+    qualification: string;
+    role: string;
+    registration_date: string;
     password: string;
-    confirmPassword: string;
+    confirm_password: string;
 }
 
+// API Response Models
 export interface AuthResponse {
-    user: User;
-    accessToken: string;
-    refreshToken?: string;
-    expiresIn: number;
+    success: boolean;
+    message: string;
+    data: {
+        user: User;
+        token?: string;
+    };
+    error: null | string;
+    meta: {
+        requestId: string;
+        timestamp: string;
+    };
 }
 
 export interface User {
     id: string;
-    firstName: string;
-    lastName: string;
+    full_name: string;
     email: string;
-    avatar?: string;
-    role: UserRole;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
+    phone_number: string;
+    address: string;
+    membership_number: string;
+    qualification: string;
+    role: string;
+    registration_date: string;
+    current_financial_status: null | string;
+    status: 'active' | 'inactive';
+    created_at: string;
 }
 
-export type UserRole = 'admin' | 'manager' | 'user';
+export type UserRole = 'Member' | 'Admin';
 
 export interface RefreshTokenRequest {
     refreshToken: string;

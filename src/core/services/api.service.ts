@@ -9,7 +9,6 @@ import { ApiResponse, PaginatedResponse, PaginationParams } from '../models/api.
 })
 export class ApiService {
     private readonly apiUrl = environment.apiUrl;
-    private readonly apiVersion = environment.apiVersion;
 
     constructor(private http: HttpClient) { }
 
@@ -91,10 +90,10 @@ export class ApiService {
     }
 
     /**
-     * Build complete URL with base and version
+     * Build complete URL with base
      */
     private buildUrl(endpoint: string): string {
         const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-        return `${this.apiUrl}/${this.apiVersion}${cleanEndpoint}`;
+        return `${this.apiUrl}${cleanEndpoint}`;
     }
 }

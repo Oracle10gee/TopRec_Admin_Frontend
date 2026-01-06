@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
     standalone: true,
@@ -20,7 +21,8 @@ export class SignUpComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private router: Router
+        private router: Router,
+        private authService: AuthService
     ) { }
 
     ngOnInit(): void {
@@ -29,15 +31,15 @@ export class SignUpComponent implements OnInit {
 
     initializeForm(): void {
         this.signUpForm = this.fb.group({
-            fullLegalName: ['', [Validators.required, Validators.minLength(3)]],
-            rtp: ['', Validators.required],
+            full_name: ['', [Validators.required, Validators.minLength(3)]],
+            membership_number: ['', Validators.required],
             qualification: ['', Validators.required],
-            dateOfRegistration: ['', Validators.required],
+            registration_date: ['', Validators.required],
             address: ['', [Validators.required, Validators.minLength(5)]],
-            phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
+            phone_number: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(6)]],
-            confirmPassword: ['', Validators.required]
+            confirm_password: ['', Validators.required]
         }, {
             validators: this.passwordMatchValidator
         });
@@ -45,7 +47,7 @@ export class SignUpComponent implements OnInit {
 
     passwordMatchValidator(group: FormGroup): { [key: string]: any } | null {
         const password = group.get('password')?.value;
-        const confirmPassword = group.get('confirmPassword')?.value;
+        const confirmPassword = group.get('confirm_password')?.value;
 
         if (password && confirmPassword && password !== confirmPassword) {
             return { passwordMismatch: true };
@@ -61,28 +63,28 @@ export class SignUpComponent implements OnInit {
         this.showConfirmPassword = !this.showConfirmPassword;
     }
 
-    get fullLegalName() {
-        return this.signUpForm.get('fullLegalName');
+    get full_name() {
+        return this.signUpForm.get('full_name');
     }
 
-    get rtp() {
-        return this.signUpForm.get('rtp');
+    get membership_number() {
+        return this.signUpForm.get('membership_number');
     }
 
     get qualification() {
         return this.signUpForm.get('qualification');
     }
 
-    get dateOfRegistration() {
-        return this.signUpForm.get('dateOfRegistration');
+    get registration_date() {
+        return this.signUpForm.get('registration_date');
     }
 
     get address() {
         return this.signUpForm.get('address');
     }
 
-    get phoneNumber() {
-        return this.signUpForm.get('phoneNumber');
+    get phone_number() {
+        return this.signUpForm.get('phone_number');
     }
 
     get email() {
@@ -93,8 +95,8 @@ export class SignUpComponent implements OnInit {
         return this.signUpForm.get('password');
     }
 
-    get confirmPassword() {
-        return this.signUpForm.get('confirmPassword');
+    get confirm_password() {
+        return this.signUpForm.get('confirm_password');
     }
 
     onSubmit(): void {
@@ -103,25 +105,28 @@ export class SignUpComponent implements OnInit {
             this.errorMessage = '';
             this.successMessage = '';
 
-            // Simulate API call
-            setTimeout(() => {
-                const formData = this.signUpForm.value;
+            const formData = this.signUpForm.value;
+            const signUpData = {
+                ...formData,
+                role: 'Member'  // Default role for new users
+            };
 
-                // Remove confirmPassword from payload (not needed for backend)
-                const { confirmPassword, ...payload } = formData;
-
-                // Add your registration logic here
-                console.log('Sign Up Attempt:', payload);
-
-                // Show success message
-                this.successMessage = 'Account created successfully! Redirecting to sign in...';
-                this.isLoading = false;
-
-                // Navigate to login after 2 seconds
-                setTimeout(() => {
-                    this.router.navigate(['/auth/login']);
-                }, 2000);
-            }, 1500);
+            this.authService.signUp(signUpData).subscribe({
+                next: (user) => {
+                    this.successMessage = 'Account created successfully! Redirecting to dashboard...';
+                    // Store user data
+                    localStorage.setItem('current_user', JSON.stringify(user));
+                    this.isLoading = false;
+                    // Navigate to dashboard after 1.5 seconds
+                    setTimeout(() => {
+                        this.router.navigate(['/dashboard/home']);
+                    }, 1500);
+                },
+                error: (error) => {
+                    this.isLoading = false;
+                    this.errorMessage = error.message || 'Registration failed. Please try again.';
+                }
+            });
         } else {
             this.errorMessage = 'Please fill in all required fields correctly';
         }

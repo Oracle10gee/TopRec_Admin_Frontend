@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
 
     initializeForm(): void {
         this.signInForm = this.fb.group({
-            email: ['', [Validators.required, Validators.email]],
+            identifier: ['', [Validators.required]],
             password: ['', [Validators.required, Validators.minLength(6)]]
         });
     }
@@ -38,8 +38,8 @@ export class LoginComponent implements OnInit {
         this.showPassword = !this.showPassword;
     }
 
-    get email() {
-        return this.signInForm.get('email');
+    get identifier() {
+        return this.signInForm.get('identifier');
     }
 
     get password() {
@@ -51,37 +51,20 @@ export class LoginComponent implements OnInit {
             this.isLoading = true;
             this.errorMessage = '';
 
-            const { email, password } = this.signInForm.value;
+            const credentials = this.signInForm.value;
 
-            // Simulate API response with mock token and user data
-            setTimeout(() => {
-                // Set mock authentication token to pass AuthGuard
-                localStorage.setItem('auth_token', 'mock_jwt_token_' + Date.now());
-
-                // Create and set mock user data
-                const mockUser = {
-                    id: '1',
-                    email: email,
-                    firstName: 'User',
-                    lastName: 'Admin',
-                    role: 'ADMIN',
-                    rtp: 'RTP001',
-                    qualification: 'Professional',
-                    dateOfRegistration: new Date().toISOString(),
-                    address: '123 Test Street',
-                    phoneNumber: '+1234567890',
-                    fullLegalName: 'User Admin'
-                };
-
-                localStorage.setItem('current_user', JSON.stringify(mockUser));
-
-                // Update auth service state
-                // Use a small delay to ensure navigation happens after token is set
-                setTimeout(() => {
-                    this.router.navigate(['/dashboard/home']);
+            this.authService.login(credentials).subscribe({
+                next: (user) => {
+                    // Store user data for later use
+                    localStorage.setItem('current_user', JSON.stringify(user));
                     this.isLoading = false;
-                }, 100);
-            }, 1500);
+                    this.router.navigate(['/dashboard/home']);
+                },
+                error: (error) => {
+                    this.isLoading = false;
+                    this.errorMessage = error.message || 'Login failed. Please try again.';
+                }
+            });
         } else {
             // Mark all fields as touched to show validation errors
             Object.keys(this.signInForm.controls).forEach(key => {
