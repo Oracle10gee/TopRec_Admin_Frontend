@@ -1,2 +1,451 @@
-/* Settings Component Styles */
-/* Using Tailwind CSS utility classes for responsive design */
+/* Modern Settings Component Styles */
+
+:host {
+  display: block;
+  padding: 1.5rem;
+}
+
+/* Page animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Tab content slide-in */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.4s ease-out;
+}
+
+/* Header icon animation */
+.w-10.h-10.bg-gradient-to-br {
+  position: relative;
+  animation: iconPulse 2s ease-in-out infinite;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent);
+    pointer-events: none;
+  }
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(26, 86, 50, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(26, 86, 50, 0);
+  }
+}
+
+/* Tab button transitions */
+button.group {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(26, 86, 50, 0.1), transparent);
+    transform: scale(0);
+    transition: transform 0.4s ease;
+  }
+
+  &:active::before {
+    transform: scale(1);
+  }
+}
+
+/* Active tab animation */
+.bg-white.shadow-sm {
+  animation: tabSlide 0.3s ease-out;
+}
+
+@keyframes tabSlide {
+  from {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Tab icon container transition */
+.w-8.h-8 {
+  transition: all 0.3s ease;
+}
+
+.group:hover .w-8.h-8 {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* New badge pulse */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* "Soon" badge */
+.bg-gray-200 {
+  transition: all 0.3s ease;
+}
+
+.group:hover .bg-gray-200 {
+  background-color: #e5e7eb;
+  transform: scale(1.05);
+}
+
+/* Overview cards shimmer */
+.bg-gradient-to-r {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: shimmer 3s infinite;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    left: 100%;
+  }
+}
+
+/* Overview card icons */
+.w-10.h-10.bg-blue-500,
+.w-10.h-10.bg-green-500,
+.w-10.h-10.bg-purple-500 {
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  
+  svg {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+}
+
+/* Reset button hover */
+.border-2.border-gray-300:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Coming soon placeholder animation */
+.inline-flex.w-16.h-16 {
+  animation: placeholderPulse 2s ease-in-out infinite;
+}
+
+@keyframes placeholderPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* Grid cards stagger animation */
+.grid > div {
+  animation: cardFadeIn 0.5s ease-out;
+}
+
+.grid > div:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.grid > div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.grid > div:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus states for accessibility */
+button:focus-visible {
+  outline: 2px solid #1a5632;
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :host {
+    padding: 1rem;
+  }
+
+  /* Stack tabs vertically on small screens */
+  .flex.p-2 {
+    flex-direction: column;
+  }
+
+  button.group {
+    width: 100%;
+  }
+
+  /* Stack overview cards */
+  .grid.md\:grid-cols-3 {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Smaller header icon */
+  .w-10.h-10 {
+    width: 2rem;
+    height: 2rem;
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  /* Adjust padding */
+  .px-6.py-3\.5 {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Tab content container */
+app-security-settings,
+app-notification-settings {
+  display: block;
+  animation: contentFadeIn 0.5s ease-out;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Icon gradient enhancement */
+.bg-gradient-to-br {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+    pointer-events: none;
+  }
+}
+
+/* Badge animations */
+span[class*='bg-red-500'],
+span[class*='bg-green-100'] {
+  animation: badgePop 0.4s ease-out;
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Overview card hover */
+.border-2:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Number animations */
+.text-lg.font-bold {
+  animation: numberPop 0.5s ease-out;
+}
+
+@keyframes numberPop {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Button ripple effect */
+button {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:active::after {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+/* Tab indicator line (for future use) */
+.border-b-2 {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #1a5632, transparent);
+    animation: lineSlide 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes lineSlide {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Placeholder empty state */
+.text-center {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Overview stats text animation */
+.text-xs.font-semibold.uppercase {
+  letter-spacing: 0.05em;
+  animation: textSlide 0.5s ease-out;
+}
+
+@keyframes textSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Border glow on hover */
+.border-2.border-blue-200:hover,
+.border-2.border-green-200:hover,
+.border-2.border-purple-200:hover {
+  border-width: 2px;
+  box-shadow: 0 0 15px currentColor;
+}
+
+/* Loading state (for future use) */
+.loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.6;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: loading 1.5s infinite;
+  }
+}
+
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

@@ -1,0 +1,452 @@
+/* Modern Notification Settings Component Styles */
+
+/* Page animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Alert slide-in animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Toggle Switch Enhancements */
+input[type="checkbox"]:checked + div {
+  background: linear-gradient(to right, #1a5632, #2a7642);
+  box-shadow: 0 0 10px rgba(26, 86, 50, 0.3);
+}
+
+input[type="checkbox"] + div::after {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input[type="checkbox"]:checked + div::after {
+  transform: translateX(28px);
+}
+
+/* Toggle switch hover */
+label:hover input[type="checkbox"] + div {
+  background-color: #d1d5db;
+}
+
+label:hover input[type="checkbox"]:checked + div {
+  background: linear-gradient(to right, #2a7642, #1a5632);
+}
+
+/* Toggle switch focus ring */
+input[type="checkbox"]:focus + div {
+  box-shadow: 0 0 0 3px rgba(26, 86, 50, 0.1);
+}
+
+/* Notification card hover effects */
+.group {
+  position: relative;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, #1a5632, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  &:hover::before {
+    opacity: 0.1;
+  }
+}
+
+/* Icon container animation */
+.w-12.h-12 {
+  transition: all 0.3s ease;
+}
+
+.group:hover .w-12.h-12 {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Active badge animation */
+.px-2.py-0\.5 {
+  animation: badgePop 0.4s ease-out;
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Active indicator line animation */
+.absolute.bottom-0 {
+  animation: lineGrow 0.3s ease-out;
+}
+
+@keyframes lineGrow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Progress bar animation */
+.h-2 > div {
+  transition: width 0.5s ease;
+}
+
+/* Summary card shimmer */
+.bg-gradient-to-r.from-blue-50 {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: shimmer 3s infinite;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    left: 100%;
+  }
+}
+
+/* Button hover effects */
+button {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+    transform: scale(0);
+    transition: transform 0.4s ease;
+  }
+
+  &:active::before {
+    transform: scale(1);
+  }
+}
+
+/* Gradient button animation */
+.bg-gradient-to-r.from-\[\#1a5632\] {
+  background-size: 200% 100%;
+  transition: background-position 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background-position: right center;
+    box-shadow: 0 10px 25px rgba(26, 86, 50, 0.3);
+  }
+}
+
+/* Spinner animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Header icon pulse */
+.w-10.h-10.bg-gradient-to-br {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent);
+    pointer-events: none;
+  }
+
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(26, 86, 50, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(26, 86, 50, 0);
+  }
+}
+
+/* Alert icon bounce */
+.w-6.h-6 {
+  animation: iconBounce 0.5s ease-out;
+}
+
+@keyframes iconBounce {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Info cards shimmer */
+.bg-gradient-to-r.from-amber-50,
+.bg-gradient-to-r.from-purple-50 {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: shimmer 3s infinite;
+  }
+}
+
+/* Quick action buttons */
+button[type="button"] {
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus states for accessibility */
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #1a5632;
+  outline-offset: 2px;
+}
+
+/* Disabled state */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none !important;
+}
+
+/* Card stagger animation */
+.group[style*="animation-delay"] {
+  animation-name: slideIn;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+/* Border pulse on hover */
+.border-2.border-gray-200 {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    border: 2px solid #1a5632;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  &:hover::after {
+    opacity: 0.3;
+  }
+}
+
+/* Additional info text fade in */
+.text-xs.text-gray-500 {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Percentage text animation */
+.text-sm.font-bold {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* Reset button icon rotation */
+button:hover svg {
+  animation: rotate360 0.5s ease-in-out;
+}
+
+@keyframes rotate360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  /* Stack buttons */
+  .flex.gap-3.pt-6 {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  /* Stack quick actions */
+  .flex.gap-2 {
+    width: 100%;
+
+    button {
+      flex: 1;
+    }
+  }
+
+  /* Reduce padding */
+  .p-6 {
+    padding: 1.25rem;
+  }
+
+  .p-5 {
+    padding: 1rem;
+  }
+
+  /* Stack info cards */
+  .grid.md\:grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Toggle switch glow effect */
+input[type="checkbox"]:checked + div {
+  box-shadow: 
+    0 0 10px rgba(26, 86, 50, 0.3),
+    inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon color transitions */
+svg {
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.group:hover svg {
+  transform: scale(1.05);
+}
+
+/* Progress bar glow */
+.bg-gradient-to-r.from-blue-500 {
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+
+/* Alert close button hover */
+.text-green-600:hover,
+.text-red-600:hover {
+  transform: scale(1.1);
+}
+
+/* Card shadow on hover */
+.hover\:shadow-md:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Additional info icon spin */
+svg.w-4.h-4 {
+  transition: transform 0.3s ease;
+}
+
+.text-xs.text-gray-500:hover svg.w-4.h-4 {
+  transform: rotate(180deg);
+}
+
+/* Form submit animation */
+form {
+  animation: formSlideIn 0.5s ease-out;
+}
+
+@keyframes formSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
