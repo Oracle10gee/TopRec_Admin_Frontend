@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SecuritySettingsComponent } from './components/security-settings/security-settings.component';
 import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
+import { UsersSettingsComponent } from './components/users-settings/users-settings.component';
 
-type SettingsTab = 'security' | 'notifications' | 'account';
+type SettingsTab = 'security' | 'notifications' | 'users' | 'account';
 
 @Component({
     standalone: true,
     selector: 'app-dashboard-settings',
-    imports: [CommonModule, SecuritySettingsComponent, NotificationSettingsComponent],
+    imports: [CommonModule, SecuritySettingsComponent, NotificationSettingsComponent, UsersSettingsComponent],
     templateUrl: './settings.component.html',
     styleUrls: ['./settings.component.scss']
 })
@@ -39,7 +40,7 @@ export class DashboardSettingsComponent implements OnInit {
      * Validate tab name
      */
     private isValidTab(tab: string): boolean {
-        return ['security', 'notifications', 'account'].includes(tab);
+        return ['security', 'notifications', 'users', 'account'].includes(tab);
     }
 
     /**
@@ -49,7 +50,7 @@ export class DashboardSettingsComponent implements OnInit {
         this.activeTab = tab;
         // Save preference
         localStorage.setItem('settings_active_tab', tab);
-        
+
         // Optional: Track analytics
         console.log(`Settings tab changed to: ${tab}`);
     }
@@ -104,16 +105,16 @@ export class DashboardSettingsComponent implements OnInit {
 
         if (confirmed) {
             console.log('Resetting all settings...');
-            
+
             // Clear localStorage settings
             localStorage.removeItem('settings_active_tab');
-            
+
             // Reset to default tab
             this.activeTab = 'security';
-            
+
             // Show success message
             alert('All settings have been reset to defaults.');
-            
+
             // Reload the page to apply changes
             window.location.reload();
         }
@@ -132,12 +133,12 @@ export class DashboardSettingsComponent implements OnInit {
         const dataStr = JSON.stringify(settings, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
-        
+
         const link = document.createElement('a');
         link.href = url;
         link.download = `toprec-settings-${Date.now()}.json`;
         link.click();
-        
+
         URL.revokeObjectURL(url);
     }
 
@@ -148,7 +149,7 @@ export class DashboardSettingsComponent implements OnInit {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'application/json';
-        
+
         input.onchange = (event: any) => {
             const file = event.target.files[0];
             if (file) {
@@ -166,7 +167,7 @@ export class DashboardSettingsComponent implements OnInit {
                 reader.readAsText(file);
             }
         };
-        
+
         input.click();
     }
 

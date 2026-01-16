@@ -18,6 +18,7 @@ export class SignUpComponent implements OnInit {
     isLoading = false;
     errorMessage = '';
     successMessage = '';
+    selectedRole: string = '';
 
     constructor(
         private fb: FormBuilder,
@@ -31,9 +32,10 @@ export class SignUpComponent implements OnInit {
 
     initializeForm(): void {
         this.signUpForm = this.fb.group({
+            role: ['', Validators.required],
             full_name: ['', [Validators.required, Validators.minLength(3)]],
             membership_number: ['', Validators.required],
-            qualification: ['', Validators.required],
+            qualification: [''],
             registration_date: ['', Validators.required],
             address: ['', [Validators.required, Validators.minLength(5)]],
             phone_number: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
@@ -41,8 +43,47 @@ export class SignUpComponent implements OnInit {
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirm_password: ['', Validators.required]
         }, {
-            validators: this.passwordMatchValidator
+            validators: [this.passwordMatchValidator, this.qualificationRequiredValidator.bind(this)]
         });
+
+        // Subscribe to role changes to update qualification requirement
+        this.signUpForm.get('role')?.valueChanges.subscribe((role) => {
+            this.selectedRole = role;
+            this.updateQualificationValidation(role);
+
+            // Auto-set qualification to "test" for non-Member roles
+            const qualificationControl = this.signUpForm.get('qualification');
+            if (role === 'Consulting Firm' || role === 'Practice Firm') {
+                qualificationControl?.setValue('Associate', { emitEvent: false });
+            }
+        });
+    }
+
+    /**
+     * Update qualification field validation based on role
+     */
+    private updateQualificationValidation(role: string): void {
+        const qualificationControl = this.signUpForm.get('qualification');
+        if (role === 'Member') {
+            qualificationControl?.setValidators([Validators.required]);
+        } else {
+            qualificationControl?.setValidators([]);
+            qualificationControl?.reset();
+        }
+        qualificationControl?.updateValueAndValidity();
+    }
+
+    /**
+     * Custom validator to require qualification for Members
+     */
+    private qualificationRequiredValidator(): { [key: string]: any } | null {
+        const role = this.signUpForm?.get('role')?.value;
+        const qualification = this.signUpForm?.get('qualification')?.value;
+
+        if (role === 'Member' && !qualification) {
+            return { qualificationRequired: true };
+        }
+        return null;
     }
 
     passwordMatchValidator(group: FormGroup): { [key: string]: any } | null {
@@ -99,6 +140,17 @@ export class SignUpComponent implements OnInit {
         return this.signUpForm.get('confirm_password');
     }
 
+    get role() {
+        return this.signUpForm.get('role');
+    }
+
+    /**
+     * Check if qualification field should be visible
+     */
+    isQualificationVisible(): boolean {
+        return this.selectedRole === 'Member';
+    }
+
     onSubmit(): void {
         if (this.signUpForm.valid) {
             this.isLoading = true;
@@ -107,8 +159,7 @@ export class SignUpComponent implements OnInit {
 
             const formData = this.signUpForm.value;
             const signUpData = {
-                ...formData,
-                role: 'Member'  // Default role for new users
+                ...formData
             };
 
             this.authService.signUp(signUpData).subscribe({

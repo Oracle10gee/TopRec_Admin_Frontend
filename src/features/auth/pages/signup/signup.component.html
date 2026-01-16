@@ -64,6 +64,44 @@
 
       <!-- Sign Up Form -->
       <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" class="space-y-5">
+        <!-- Role Selection Section -->
+        <div class="bg-white/40 backdrop-blur-sm rounded-lg p-5 space-y-4">
+          <h3
+            class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3"
+          >
+            Account Type
+          </h3>
+
+          <!-- Role Selection -->
+          <div>
+            <label
+              for="role"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
+              Select Your Role <span class="text-red-500">*</span>
+            </label>
+            <select
+              id="role"
+              formControlName="role"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
+              [class.border-red-500]="role?.invalid && role?.touched"
+            >
+              <option value="">-- Select your account type --</option>
+              <option value="Member">Member</option>
+              <option value="Consulting Firm">Consulting Firm</option>
+              <option value="Practice Firm">Practice Firm</option>
+            </select>
+            <div *ngIf="role?.invalid && role?.touched" class="mt-1">
+              <p
+                *ngIf="role?.errors?.['required']"
+                class="text-xs text-red-500"
+              >
+                Please select an account type
+              </p>
+            </div>
+          </div>
+        </div>
+
         <!-- Personal Information Section -->
         <div class="bg-white/40 backdrop-blur-sm rounded-lg p-5 space-y-4">
           <h3
@@ -244,13 +282,14 @@
 
           <!-- Row: Qualification and Date -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Qualification -->
-            <div>
+            <!-- Qualification (Only for Members) -->
+            <div *ngIf="isQualificationVisible()">
               <label
                 for="qualification"
                 class="block text-sm font-medium text-gray-700 mb-1.5"
               >
-                Qualification <span class="text-red-500">*</span>
+                Qualification 
+                <!-- <span class="text-red-500">*</span> -->
               </label>
               <select
                 id="qualification"
@@ -282,7 +321,7 @@
             </div>
 
             <!-- Date of Registration -->
-            <div>
+            <div [ngClass]="{ 'md:col-span-2': !isQualificationVisible() }">
               <label
                 for="registration_date"
                 class="block text-sm font-medium text-gray-700 mb-1.5"
