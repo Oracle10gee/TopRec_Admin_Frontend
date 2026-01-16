@@ -1,0 +1,355 @@
+/* Modern Member Component Styles */
+
+:host {
+  display: block;
+  padding: 1.5rem;
+}
+
+/* Page fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Content slide-in animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.4s ease-out;
+}
+
+/* Header icon animation */
+.w-10.h-10 {
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(26, 86, 50, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(26, 86, 50, 0);
+  }
+}
+
+/* Quick stats animation */
+.bg-blue-50,
+.bg-green-50 {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    left: 100%;
+  }
+}
+
+/* Search input focus effect */
+input:focus {
+  animation: inputGlow 0.3s ease-in-out;
+}
+
+@keyframes inputGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(26, 86, 50, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 3px rgba(26, 86, 50, 0.1);
+  }
+}
+
+/* Tab button hover effects */
+button[type="button"] {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at center,
+      rgba(26, 86, 50, 0.1),
+      transparent
+    );
+    transform: scale(0);
+    transition: transform 0.4s ease;
+  }
+
+  &:active::before {
+    transform: scale(1);
+  }
+}
+
+/* Active tab animation */
+.bg-white.shadow-sm {
+  animation: tabSlide 0.3s ease-out;
+}
+
+@keyframes tabSlide {
+  from {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Icon container transition */
+.w-8.h-8 {
+  transition: all 0.3s ease;
+}
+
+.group:hover .w-8.h-8 {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Badge scale on tab change */
+.px-2.py-0\.5 {
+  transition: all 0.3s ease;
+}
+
+.bg-green-100 {
+  animation: badgePop 0.4s ease-out;
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Filter button hover */
+.bg-\[\#1a5632\]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(26, 86, 50, 0.3);
+}
+
+.bg-\[\#1a5632\]:active {
+  transform: translateY(0);
+}
+
+/* Export button hover */
+.border-gray-300:hover {
+  border-color: #1a5632;
+  color: #1a5632;
+}
+
+/* Select dropdown styling */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.25rem;
+  padding-right: 2.5rem;
+}
+
+/* Tab content transition */
+app-members-list,
+app-consulting-firm,
+app-practice-firm {
+  display: block;
+  animation: contentFadeIn 0.5s ease-out;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus states for accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #1a5632;
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :host {
+    padding: 1rem;
+  }
+
+  /* Stack tabs vertically on mobile */
+  .flex.p-2 {
+    flex-direction: column;
+  }
+
+  button.flex-1 {
+    width: 100%;
+  }
+
+  /* Adjust quick stats on mobile */
+  .flex.gap-3 {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .px-4.py-3 {
+    width: 100%;
+  }
+}
+
+/* Search bar responsive */
+@media (max-width: 640px) {
+  form.flex {
+    flex-direction: column;
+  }
+
+  .flex-1 {
+    width: 100%;
+  }
+
+  .flex.gap-2 {
+    width: 100%;
+    
+    button,
+    select {
+      flex: 1;
+    }
+  }
+}
+
+/* Icon gradient enhancement */
+.bg-gradient-to-br {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+    pointer-events: none;
+  }
+}
+
+/* Tab indicator line animation */
+.border-b-2 {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #1a5632, transparent);
+    animation: lineSlide 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes lineSlide {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Quick stats number animation */
+.text-lg.font-bold {
+  animation: numberPop 0.5s ease-out;
+}
+
+@keyframes numberPop {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Hover shadow for cards */
+.shadow-sm:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Button ripple effect */
+button {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:active::after {
+    width: 300px;
+    height: 300px;
+  }
+}

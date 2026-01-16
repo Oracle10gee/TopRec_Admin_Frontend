@@ -37,9 +37,17 @@ export class AuthService {
     login(credentials: LoginRequest): Observable<User> {
         return this.apiService.post<AuthResponse>('/auth/login', credentials).pipe(
             tap((response) => {
+                console.log('Login response:', response);
+                console.log('Token from response:', response.data.token);
+
                 if (response.data.token) {
+                    console.log('Storing token:', response.data.token);
                     localStorage.setItem(this.TOKEN_KEY, response.data.token);
+                    console.log('Token stored. Retrieved:', localStorage.getItem(this.TOKEN_KEY));
+                } else {
+                    console.warn('No token in response!');
                 }
+
                 this.currentUserSubject.next(response.data.user);
                 this.isAuthenticatedSubject.next(true);
             }),
@@ -114,6 +122,19 @@ export class AuthService {
      */
     getCurrentUserSync(): User | null {
         return this.currentUserSubject.value;
+    }
+
+    /**
+     * Get user profile from API
+     */
+    getProfile(): Observable<User> {
+        return this.apiService.get<AuthResponse>('/auth/profile').pipe(
+            tap((response) => {
+                this.currentUserSubject.next(response.data.user);
+            }),
+            map((response) => response.data.user),
+            catchError((error) => this.handleAuthError(error))
+        );
     }
 
     /**

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
     standalone: true,
@@ -13,28 +14,63 @@ export class DashboardProfileComponent implements OnInit {
     profileForm!: FormGroup;
     isEditing = false;
     isSaving = false;
+    isLoading = true;
     successMessage = '';
     errorMessage = '';
 
-    constructor(private fb: FormBuilder) { }
+    constructor(
+        private fb: FormBuilder,
+        private authService: AuthService
+    ) { }
 
     ngOnInit(): void {
         this.initializeForm();
+        this.loadProfile();
     }
 
     initializeForm(): void {
         this.profileForm = this.fb.group({
-            fullName: ['Kunle Developer', [Validators.required, Validators.minLength(3)]],
-            email: ['kunle@toprecng.org', [Validators.required, Validators.email]],
-            phoneNumber: ['+2348012345678', [Validators.required, Validators.pattern(/^[0-9+\s\-()]+$/)]],
-            rtp: ['RTP/2024/001', Validators.required],
-            qualification: ['Master in Urban Planning', Validators.required],
-            address: ['Lagos, Nigeria', [Validators.required, Validators.minLength(5)]],
-            dateOfRegistration: ['2024-01-15', Validators.required],
-            bio: ['Professional urban planner with 5 years experience', Validators.minLength(10)]
+            full_name: ['', [Validators.required, Validators.minLength(3)]],
+            email: ['', [Validators.required, Validators.email]],
+            phone_number: ['', [Validators.required, Validators.pattern(/^[0-9+\s\-()]+$/)]],
+            membership_number: ['', Validators.required],
+            qualification: ['', Validators.required],
+            address: ['', [Validators.required, Validators.minLength(5)]],
+            registration_date: ['', Validators.required],
+            bio: ['', Validators.minLength(10)]
         });
 
         this.profileForm.disable();
+    }
+
+    loadProfile(): void {
+        this.isLoading = true;
+        this.errorMessage = '';
+
+        // Debug: check if token exists
+        const token = this.authService.getAccessToken();
+        console.log('Token in ProfileComponent:', token);
+
+        this.authService.getProfile().subscribe({
+            next: (user) => {
+                this.profileForm.patchValue({
+                    full_name: user.full_name,
+                    email: user.email,
+                    phone_number: user.phone_number,
+                    membership_number: user.membership_number,
+                    qualification: user.qualification,
+                    address: user.address,
+                    registration_date: user.registration_date,
+                    bio: ''
+                });
+                this.isLoading = false;
+            },
+            error: (error) => {
+                this.isLoading = false;
+                this.errorMessage = error.message || 'Failed to load profile';
+                console.error('Profile load error:', error);
+            }
+        });
     }
 
     toggleEdit(): void {
@@ -68,20 +104,20 @@ export class DashboardProfileComponent implements OnInit {
         }
     }
 
-    get fullName() {
-        return this.profileForm.get('fullName');
+    get full_name() {
+        return this.profileForm.get('full_name');
     }
 
     get email() {
         return this.profileForm.get('email');
     }
 
-    get phoneNumber() {
-        return this.profileForm.get('phoneNumber');
+    get phone_number() {
+        return this.profileForm.get('phone_number');
     }
 
-    get rtp() {
-        return this.profileForm.get('rtp');
+    get membership_number() {
+        return this.profileForm.get('membership_number');
     }
 
     get qualification() {
@@ -92,8 +128,8 @@ export class DashboardProfileComponent implements OnInit {
         return this.profileForm.get('address');
     }
 
-    get dateOfRegistration() {
-        return this.profileForm.get('dateOfRegistration');
+    get registration_date() {
+        return this.profileForm.get('registration_date');
     }
 
     get bio() {
