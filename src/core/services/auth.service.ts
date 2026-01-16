@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
+import { HttpParams } from '@angular/common/http';
 import { ApiService } from './api.service';
 import {
     AuthResponse,
@@ -138,6 +139,37 @@ export class AuthService {
     }
 
     /**
+     * Get users list with filters and pagination
+     */
+    getUsers(params?: {
+        page?: number;
+        limit?: number;
+        search?: string;
+        status?: string;
+        role?: string;
+    }): Observable<any> {
+        const { page = 1, limit = 10, search = '', status = '', role = '' } = params || {};
+
+        let httpParams = new HttpParams()
+            .set('page', page.toString())
+            .set('limit', limit.toString());
+
+        if (search) {
+            httpParams = httpParams.set('search', search);
+        }
+        if (status) {
+            httpParams = httpParams.set('status', status);
+        }
+        if (role) {
+            httpParams = httpParams.set('role', role);
+        }
+
+        return this.apiService.get<any>('/auth/users', { params: httpParams }).pipe(
+            catchError((error) => this.handleAuthError(error))
+        );
+    }
+
+    /**
      * Change password
      */
     changePassword(request: ChangePasswordRequest): Observable<ApiResponse<string>> {
@@ -265,4 +297,23 @@ export class AuthService {
             this.logout();
         }
     }
+
+    /**
+     * Update user by ID
+     */
+    updateUser(userId: string, data: any): Observable<any> {
+        return this.apiService.patch(`/auth/users/${userId}`, data).pipe(
+            catchError((error) => this.handleAuthError(error))
+        );
+    }
+
+    /**
+     * Delete user by ID
+     */
+    deleteUser(userId: string): Observable<any> {
+        return this.apiService.delete(`/auth/users/${userId}`).pipe(
+            catchError((error) => this.handleAuthError(error))
+        );
+    }
 }
+

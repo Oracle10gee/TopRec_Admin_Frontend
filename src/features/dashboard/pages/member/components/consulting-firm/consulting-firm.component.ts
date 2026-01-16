@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../../../../../core/services/auth.service';
+import { NotificationService } from '../../../../../../core/services/notification.service';
 
 interface ConsultingFirm {
     id: string;
@@ -9,7 +11,9 @@ interface ConsultingFirm {
     email: string;
     phone: string;
     address: string;
+    membership_number?: string;
     status: 'Active' | 'Inactive';
+    role?: string;
 }
 
 @Component({
@@ -19,86 +23,203 @@ interface ConsultingFirm {
     templateUrl: './consulting-firm.component.html',
     styleUrls: ['./consulting-firm.component.scss']
 })
-export class ConsultingFirmComponent implements OnInit {
+export class ConsultingFirmComponent implements OnInit, OnChanges {
+    @Input() role: string = 'Consulting Firm';
+
     filterForm!: FormGroup;
-    firms: ConsultingFirm[] = [
-        {
-            id: 'CF/001',
-            name: 'Premium Consulting Ltd',
-            contact: 'John Doe',
-            email: 'contact@premiumconsulting.com',
-            phone: '070 1234 5678',
-            address: 'Lagos',
-            status: 'Active'
-        },
-        {
-            id: 'CF/002',
-            name: 'Global Advisors Inc',
-            contact: 'Jane Smith',
-            email: 'info@globaladvisors.com',
-            phone: '070 9876 5432',
-            address: 'Abuja',
-            status: 'Active'
-        },
-        {
-            id: 'CF/003',
-            name: 'Strategic Solutions',
-            contact: 'Michael Johnson',
-            email: 'hello@strategicsolutions.com',
-            phone: '070 1212 1212',
-            address: 'Port Harcourt',
-            status: 'Inactive'
-        },
-        {
-            id: 'CF/004',
-            name: 'Excellence Partners Group',
-            contact: 'Sarah Williams',
-            email: 'info@excellencepartners.com',
-            phone: '080 3344 5566',
-            address: 'Kano',
-            status: 'Active'
-        },
-        {
-            id: 'CF/005',
-            name: 'Visionary Consulting Hub',
-            contact: 'David Brown',
-            email: 'contact@visionaryhub.com',
-            phone: '090 7788 9900',
-            address: 'Kaduna',
-            status: 'Active'
-        }
-    ];
-
+    editForm!: FormGroup;
+    firms: ConsultingFirm[] = [];
     filteredFirms: ConsultingFirm[] = [];
+    isLoading = false;
+    errorMessage = '';
 
-    constructor(private fb: FormBuilder) {}
+    // Modal states
+    showViewModal = false;
+    showEditModal = false;
+    selectedFirm: ConsultingFirm | null = null;
+    isSubmitting = false;
+
+    // Pagination
+    currentPage = 1;
+    pageSize = 10;
+    totalCount = 0;
+
+    constructor(
+        private fb: FormBuilder,
+        private authService: AuthService,
+        private notificationService: NotificationService
+    ) { }
 
     ngOnInit(): void {
+        this.initializeForm();
+        this.loadFirms();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['role'] && !changes['role'].firstChange) {
+            this.currentPage = 1;
+            this.loadFirms();
+        }
+    }
+
+    private initializeForm(): void {
         this.filterForm = this.fb.group({
-            searchTerm: ['']
+            searchTerm: [''],
+            status: ['']
         });
 
         this.filterForm.get('searchTerm')?.valueChanges.subscribe(value => {
-            this.filterFirms(value);
+            this.applyFilters();
         });
 
-        this.filteredFirms = [...this.firms];
+        this.filterForm.get('status')?.valueChanges.subscribe(value => {
+            this.applyFilters();
+        });
+
+        // Initialize edit form
+        this.editForm = this.fb.group({
+            full_name: ['', Validators.required],
+            email: ['', [Validators.required, Validators.email]],
+            phone_number: ['', Validators.required],
+            address: ['', Validators.required],
+            status: ['Active', Validators.required]
+        });
     }
 
-    filterFirms(searchTerm: string): void {
-        if (!searchTerm || !searchTerm.trim()) {
-            this.filteredFirms = [...this.firms];
-        } else {
-            const term = searchTerm.toLowerCase();
-            this.filteredFirms = this.firms.filter(firm =>
-                firm.name.toLowerCase().includes(term) ||
-                firm.email.toLowerCase().includes(term) ||
-                firm.id.toLowerCase().includes(term) ||
-                firm.phone.includes(term) ||
-                firm.contact.toLowerCase().includes(term) ||
-                firm.address.toLowerCase().includes(term)
-            );
-        }
+    /**
+     * Load firms from API
+     */
+    private loadFirms(): void {
+        this.isLoading = true;
+        this.errorMessage = '';
+
+        const params = {
+            page: this.currentPage,
+            limit: this.pageSize,
+            role: this.role,
+            search: this.filterForm.get('searchTerm')?.value || '',
+            status: this.filterForm.get('status')?.value || ''
+        };
+
+        this.authService.getUsers(params).subscribe({
+            next: (response) => {
+                console.log('Consulting firms response:', response);
+
+                // Map API response to ConsultingFirm interface
+                if (response.data?.users && Array.isArray(response.data.users)) {
+                    this.firms = response.data.users.map((user: any) => ({
+                        id: user.id || '',
+                        name: user.full_name || '',
+                        contact: user.full_name || '',
+                        email: user.email || '',
+                        phone: user.phone_number || '',
+                        address: user.address || '',
+                        membership_number: user.membership_number || '',
+                        status: user.status === 'active' ? 'Active' : 'Inactive',
+                        role: user.role
+                    }));
+                    this.totalCount = response.data?.pagination?.total || this.firms.length;
+                } else if (response.data && Array.isArray(response.data)) {
+                    this.firms = response.data.map((user: any) => ({
+                        id: user.id || user.membership_number || '',
+                        name: user.full_name || user.name || '',
+                        contact: user.full_name || user.name || '',
+                        email: user.email || '',
+                        phone: user.phone_number || user.mobile || '',
+                        address: user.address || '',
+                        status: user.status === 'active' || user.status === 'Active' ? 'Active' : 'Inactive',
+                        role: user.role
+                    }));
+                    this.totalCount = response.meta?.total || this.firms.length;
+                } else if (response.users && Array.isArray(response.users)) {
+                    this.firms = response.users.map((user: any) => ({
+                        id: user.id || user.membership_number || '',
+                        name: user.full_name || user.name || '',
+                        contact: user.full_name || user.name || '',
+                        email: user.email || '',
+                        phone: user.phone_number || user.mobile || '',
+                        address: user.address || '',
+                        status: user.status === 'active' || user.status === 'Active' ? 'Active' : 'Inactive',
+                        role: user.role
+                    }));
+                    this.totalCount = response.meta?.total || this.firms.length;
+                }
+
+                this.filteredFirms = [...this.firms];
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Error loading firms:', error);
+                this.errorMessage = error.message || 'Failed to load consulting firms. Please try again.';
+                this.isLoading = false;
+                // Fall back to mock data if API fails
+                this.loadMockData();
+            }
+        });
+    }
+
+    /**
+     * Load mock data as fallback
+     */
+    private loadMockData(): void {
+        const mockFirms: ConsultingFirm[] = [
+            {
+                id: 'CF/001',
+                name: 'Strategic Planning Consultants',
+                contact: 'Dr. Tunde Olawale',
+                email: 'contact@strategicplan.com',
+                phone: '070 1111 2222',
+                address: 'Lagos',
+                status: 'Active',
+                role: 'Consulting Firm'
+            },
+            {
+                id: 'CF/002',
+                name: 'Urban Development Associates',
+                contact: 'Mrs. Amara Obi',
+                email: 'info@urbdev.com',
+                phone: '070 3333 4444',
+                address: 'Abuja',
+                status: 'Active',
+                role: 'Consulting Firm'
+            },
+            {
+                id: 'CF/003',
+                name: 'City Planning Solutions',
+                contact: 'Engr. Charles Ekpenyong',
+                email: 'hello@cityplan.com',
+                phone: '070 5555 6666',
+                address: 'Calabar',
+                status: 'Active',
+                role: 'Consulting Firm'
+            }
+        ];
+
+        this.firms = mockFirms;
+        this.filteredFirms = [...this.firms];
+        this.totalCount = this.firms.length;
+    }
+
+    /**
+     * Apply filters
+     */
+    private applyFilters(): void {
+        const searchTerm = (this.filterForm.get('searchTerm')?.value || '').toLowerCase();
+        const status = this.filterForm.get('status')?.value || '';
+
+        this.filteredFirms = this.firms.filter(firm => {
+            const matchesSearch = !searchTerm ||
+                firm.name.toLowerCase().includes(searchTerm) ||
+                firm.email.toLowerCase().includes(searchTerm) ||
+                firm.id.toLowerCase().includes(searchTerm) ||
+                firm.phone.includes(searchTerm) ||
+                firm.contact.toLowerCase().includes(searchTerm) ||
+                firm.address.toLowerCase().includes(searchTerm);
+
+            const matchesStatus = !status || firm.status === status;
+
+            return matchesSearch && matchesStatus;
+        });
     }
 
     getInitials(name: string): string {
@@ -126,18 +247,86 @@ export class ConsultingFirmComponent implements OnInit {
     }
 
     editFirm(firm: ConsultingFirm): void {
-        console.log('Edit firm:', firm);
+        this.selectedFirm = firm;
+        this.editForm.patchValue({
+            full_name: firm.name,
+            email: firm.email,
+            phone_number: firm.phone,
+            address: firm.address,
+            status: firm.status
+        });
+        this.showEditModal = true;
     }
 
     viewFirm(firm: ConsultingFirm): void {
-        console.log('View firm:', firm);
+        this.selectedFirm = firm;
+        this.showViewModal = true;
     }
 
     deleteFirm(firm: ConsultingFirm): void {
-        const confirmed = confirm(`Delete ${firm.name}?`);
-        if (confirmed) {
-            this.filteredFirms = this.filteredFirms.filter(f => f.id !== firm.id);
-            this.firms = this.firms.filter(f => f.id !== firm.id);
+        if (confirm(`Are you sure you want to delete ${firm.name}?`)) {
+            this.authService.deleteUser(firm.id).subscribe({
+                next: () => {
+                    this.filteredFirms = this.filteredFirms.filter(f => f.id !== firm.id);
+                    this.firms = this.firms.filter(f => f.id !== firm.id);
+                    this.notificationService.success(`${firm.name} deleted successfully`);
+                },
+                error: (error) => {
+                    console.error('Error deleting firm:', error);
+                    this.notificationService.error('Failed to delete firm. Please try again.');
+                }
+            });
         }
+    }
+
+    /**
+     * Save edited firm
+     */
+    saveFirm(): void {
+        if (this.editForm.invalid || !this.selectedFirm) return;
+
+        this.isSubmitting = true;
+        const payload = {
+            full_name: this.editForm.value.full_name,
+            email: this.editForm.value.email,
+            phone_number: this.editForm.value.phone_number,
+            address: this.editForm.value.address
+        };
+
+        this.authService.updateUser(this.selectedFirm.id, payload).subscribe({
+            next: (response) => {
+                // Update the firm in the lists
+                const index = this.firms.findIndex(f => f.id === this.selectedFirm!.id);
+                if (index !== -1) {
+                    this.firms[index] = {
+                        ...this.firms[index],
+                        name: payload.full_name,
+                        email: payload.email,
+                        phone: payload.phone_number,
+                        address: payload.address
+                    };
+                }
+                this.applyFilters();
+                this.closeEditModal();
+                this.isSubmitting = false;
+                this.notificationService.success('Firm updated successfully');
+            },
+            error: (error) => {
+                console.error('Error updating firm:', error);
+                this.notificationService.error(error.error?.message || 'Failed to update firm. Please try again.');
+                this.isSubmitting = false;
+            }
+        });
+    }
+
+    closeViewModal(): void {
+        this.showViewModal = false;
+        this.selectedFirm = null;
+    }
+
+    closeEditModal(): void {
+        this.showEditModal = false;
+        this.selectedFirm = null;
+        this.editForm.reset();
     }
 }
