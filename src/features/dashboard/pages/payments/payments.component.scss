@@ -1,2 +1,412 @@
-/* Payments Component Styles */
-/* Using Tailwind CSS utility classes for responsive design */
+/* Modern Payments Component Styles */
+
+/* Page animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Tab content slide-in */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.4s ease-out;
+}
+
+/* Payment method card hover */
+label.relative.flex {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Selected payment method pulse */
+label.border-\[\#1a5632\] {
+  animation: selectedPulse 2s ease-in-out infinite;
+}
+
+@keyframes selectedPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(26, 86, 50, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(26, 86, 50, 0);
+  }
+}
+
+/* Button hover effect */
+button {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+    transform: scale(0);
+    transition: transform 0.4s ease;
+  }
+
+  &:active::before {
+    transform: scale(1);
+  }
+}
+
+/* Gradient button animation */
+.bg-gradient-to-r {
+  background-size: 200% 100%;
+  transition: background-position 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background-position: right center;
+    box-shadow: 0 10px 25px rgba(26, 86, 50, 0.3);
+  }
+}
+
+/* Icon scale on hover */
+.group:hover svg {
+  transform: scale(1.1);
+}
+
+/* Spinner animation */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Table row hover */
+tbody tr {
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f9fafb;
+    box-shadow: inset 0 0 0 1px rgba(26, 86, 50, 0.1);
+  }
+}
+
+/* Summary sticky behavior */
+.sticky {
+  position: sticky;
+  top: 1.5rem;
+}
+
+/* Alert animations */
+.animate-slideIn {
+  animation: alertSlide 0.4s ease-out;
+}
+
+@keyframes alertSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Icon containers */
+.w-10.h-10 {
+  transition: all 0.3s ease;
+}
+
+.flex:hover .w-10.h-10 {
+  transform: scale(1.05) rotate(5deg);
+}
+
+/* Payment method icons scale */
+svg.w-6.h-6 {
+  transition: transform 0.2s ease;
+}
+
+label:hover svg.w-6.h-6 {
+  transform: scale(1.1);
+}
+
+/* Radio button custom styling */
+input[type="radio"] {
+  cursor: pointer;
+  accent-color: #1a5632;
+}
+
+/* Empty state animation */
+.inline-flex.w-20.h-20 {
+  animation: emptyPulse 2s ease-in-out infinite;
+}
+
+@keyframes emptyPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* Badge animation */
+span.rounded-full {
+  animation: badgePop 0.4s ease-out;
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Benefits list items */
+ul li {
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateX(4px);
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus states for accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #1a5632;
+  outline-offset: 2px;
+}
+
+/* Disabled button */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none !important;
+}
+
+/* Form header gradient */
+.bg-gradient-to-r.from-gray-50 {
+  background: linear-gradient(to right, #f9fafb 0%, #ffffff 100%);
+}
+
+/* Security info shimmer */
+.bg-blue-50 {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: shimmer 3s infinite;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    left: 100%;
+  }
+}
+
+/* Summary card border glow */
+.shadow-lg:hover {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* License validity card pulse */
+.bg-gradient-to-r.from-green-50 {
+  animation: validityPulse 3s ease-in-out infinite;
+}
+
+@keyframes validityPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+/* Table header */
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f9fafb;
+  z-index: 10;
+}
+
+/* Export button hover */
+button.border-2.border-gray-300:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Receipt button hover */
+button.text-\[\#1a5632\]:hover {
+  transform: translateX(2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .sticky {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Stack form and summary */
+  .grid.lg\:grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Reduce padding */
+  .px-8 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  /* Smaller icons */
+  .w-10.h-10 {
+    width: 2rem;
+    height: 2rem;
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  /* Stack table on mobile */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Dark mode support (future) */
+@media (prefers-color-scheme: dark) {
+  /* Already light by default */
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Status badge specific styles */
+span.bg-green-100 {
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+}
+
+/* Amount highlight */
+.text-2xl.text-\[\#1a5632\] {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Card border animation */
+.border.border-gray-200 {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, #1a5632, transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 0.2;
+  }
+}
+
+/* Input focus glow */
+input:focus,
+select:focus {
+  animation: inputGlow 0.3s ease-in-out;
+}
+
+@keyframes inputGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(26, 86, 50, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 3px rgba(26, 86, 50, 0.1);
+  }
+}

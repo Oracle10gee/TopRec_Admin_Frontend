@@ -164,6 +164,7 @@
 
       <!-- Users Tab -->
       <button
+        *ngIf="isTabVisible('users')"
         (click)="setActiveTab('users')"
         [ngClass]="
           activeTab === 'users'
@@ -202,6 +203,7 @@
 
       <!-- Account Settings Tab (Future) -->
       <button
+        *ngIf="isTabVisible('account')"
         (click)="setActiveTab('account')"
         [ngClass]="
           activeTab === 'account'

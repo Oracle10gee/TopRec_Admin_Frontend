@@ -1,2 +1,439 @@
-/* License Component Styles */
-/* Using Tailwind CSS utility classes for responsive design */
+/* Modern License Component Styles */
+
+/* Page animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* License card slide up */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* License header gradient animation */
+.bg-gradient-to-r {
+  background-size: 200% 100%;
+  animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Shield icon animation */
+.w-16.h-16 svg {
+  animation: shieldPulse 2s ease-in-out infinite;
+}
+
+@keyframes shieldPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Status badge pulse */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Date card hover effect */
+.group:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Date card background circle */
+.w-20.h-20 {
+  animation: circleFloat 3s ease-in-out infinite;
+}
+
+@keyframes circleFloat {
+  0%, 100% {
+    transform: translate(2.5rem, -2.5rem);
+  }
+  50% {
+    transform: translate(3rem, -3rem);
+  }
+}
+
+/* Button hover effects */
+button {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+    transform: scale(0);
+    transition: transform 0.4s ease;
+  }
+
+  &:active::before {
+    transform: scale(1);
+  }
+}
+
+/* Gradient button animation */
+.bg-gradient-to-r.from-\[\#1a5632\] {
+  background-size: 200% 100%;
+  transition: background-position 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background-position: right center;
+    box-shadow: 0 10px 25px rgba(26, 86, 50, 0.3);
+  }
+}
+
+/* Icon scale on hover */
+.group:hover svg {
+  transform: scale(1.1);
+}
+
+/* Renewal banner background pattern */
+.bg-gradient-to-r.from-amber-50 {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: shimmer 3s infinite;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    left: 100%;
+  }
+}
+
+/* Renewal icon pulse */
+.w-12.h-12 {
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(245, 158, 11, 0);
+  }
+}
+
+/* Action required badge pulse */
+.animate-pulse.bg-red-500 {
+  animation: badgePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Empty state animation */
+.inline-flex.w-20.h-20 {
+  animation: emptyStatePulse 2s ease-in-out infinite;
+}
+
+@keyframes emptyStatePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* Details grid icons */
+.w-8.h-8.bg-blue-100,
+.w-8.h-8.bg-green-100,
+.w-8.h-8.bg-purple-100,
+.w-8.h-8.bg-emerald-100 {
+  transition: all 0.3s ease;
+}
+
+.flex:hover .w-8.h-8 {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus states for accessibility */
+button:focus-visible {
+  outline: 2px solid #1a5632;
+  outline-offset: 2px;
+}
+
+/* License card shadow enhancement */
+.shadow-lg:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Status dot animation */
+.w-2.h-2.animate-pulse {
+  animation: dotPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 0 3px currentColor;
+  }
+}
+
+/* Background pattern float */
+.absolute.inset-0.opacity-10 {
+  animation: patternFloat 20s ease-in-out infinite;
+}
+
+@keyframes patternFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(5deg);
+  }
+}
+
+/* Border glow on hover */
+.border-2.border-blue-200:hover,
+.border-2.border-purple-200:hover,
+.border-2.border-orange-200:hover {
+  box-shadow: 0 0 15px currentColor;
+}
+
+/* Button ripple effect */
+button {
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:active::after {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  /* Stack date cards */
+  .grid.lg\:grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Stack buttons */
+  .flex-wrap {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Reduce padding */
+  .p-6 {
+    padding: 1.25rem;
+  }
+
+  /* Smaller shield icon */
+  .w-16.h-16 {
+    width: 3rem;
+    height: 3rem;
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+}
+
+/* License header responsive */
+@media (max-width: 640px) {
+  .md\:flex-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .flex-wrap {
+    width: 100%;
+  }
+}
+
+/* Days remaining emphasis */
+.text-3xl.font-bold.text-orange-900 {
+  animation: numberPulse 2s ease-in-out infinite;
+}
+
+@keyframes numberPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Card border animation */
+.border.border-gray-200 {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, #1a5632, transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 0.3;
+  }
+}
+
+/* Verification icon animation */
+.text-emerald-600 svg {
+  animation: verifyPop 0.5s ease-out;
+}
+
+@keyframes verifyPop {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Quick stats shimmer */
+.bg-green-50 {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: shimmer 3s infinite;
+  }
+}
+
+/* Loading state (for future use) */
+.loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.6;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: loading 1.5s infinite;
+  }
+}
+
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

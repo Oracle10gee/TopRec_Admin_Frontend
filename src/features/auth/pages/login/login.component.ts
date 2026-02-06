@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
     standalone: true,
@@ -20,7 +21,8 @@ export class LoginComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private router: Router,
-        private authService: AuthService
+        private authService: AuthService,
+        private notificationService: NotificationService
     ) { }
 
     ngOnInit(): void {
@@ -55,14 +57,13 @@ export class LoginComponent implements OnInit {
 
             this.authService.login(credentials).subscribe({
                 next: (user) => {
-                    // Store user data for later use
-                    localStorage.setItem('current_user', JSON.stringify(user));
                     this.isLoading = false;
                     this.router.navigate(['/dashboard/home']);
                 },
                 error: (error) => {
                     this.isLoading = false;
                     this.errorMessage = error.message || 'Login failed. Please try again.';
+                    this.notificationService.error(this.errorMessage);
                 }
             });
         } else {

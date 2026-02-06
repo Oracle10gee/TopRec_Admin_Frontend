@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { AuthService } from '../../../../core/services/auth.service';
 
 interface MenuItem {
     id: string;
@@ -51,7 +52,8 @@ export class SidebarComponent implements OnInit {
 
     constructor(
         private router: Router,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private authService: AuthService
     ) { }
 
     ngOnInit(): void {
@@ -65,7 +67,7 @@ export class SidebarComponent implements OnInit {
     }
 
     private initializeMenuItems(): void {
-        this.menuItems = [
+        const allMenuItems = [
             {
                 id: 'home',
                 label: 'Home',
@@ -104,6 +106,20 @@ export class SidebarComponent implements OnInit {
                 route: '/dashboard/settings'
             }
         ];
+
+        // Filter menu items based on user role
+        const userRole = this.authService.getCurrentUserRole();
+        this.menuItems = allMenuItems.filter(item => {
+            // Hide 'Member' item for 'Member' role
+            if (userRole === 'Member' && item.id === 'member') {
+                return false;
+            }
+            // Hide 'Profile' item for 'Superadmin' role
+            if (userRole === 'Superadmin' && (item.id === 'profile' || item.id === 'license')) {
+                return false;
+            }
+            return true;
+        });
     }
 
     updateActiveMenuItem(): void {
@@ -120,21 +136,13 @@ export class SidebarComponent implements OnInit {
     }
 
     getUserName(): string {
-        try {
-            const user = JSON.parse(localStorage.getItem('current_user') || '{}');
-            return user.fullLegalName || user.firstName + ' ' + user.lastName || 'User';
-        } catch {
-            return 'User';
-        }
+        const name = this.authService.getCurrentUserName();
+        return name || 'User';
     }
 
     getUserRole(): string {
-        try {
-            const user = JSON.parse(localStorage.getItem('current_user') || '{}');
-            return user.role || 'Admin';
-        } catch {
-            return 'Admin';
-        }
+        const role = this.authService.getCurrentUserRole();
+        return role || 'User';
     }
 
     getUserInitials(): string {
@@ -147,10 +155,8 @@ export class SidebarComponent implements OnInit {
     }
 
     onLogout(): void {
-        // Clear authentication data
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('current_user');
-
+        // Logout through auth service (which will show notification)
+        this.authService.logout();
         // Navigate to login
         this.router.navigate(['/auth/login']);
     }

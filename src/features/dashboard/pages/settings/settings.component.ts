@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SecuritySettingsComponent } from './components/security-settings/security-settings.component';
 import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
 import { UsersSettingsComponent } from './components/users-settings/users-settings.component';
+import { AuthService } from '../../../../core/services/auth.service';
 
 type SettingsTab = 'security' | 'notifications' | 'users' | 'account';
 
@@ -15,15 +16,35 @@ type SettingsTab = 'security' | 'notifications' | 'users' | 'account';
 })
 export class DashboardSettingsComponent implements OnInit {
     activeTab: SettingsTab = 'security';
+    availableTabs: SettingsTab[] = [];
 
     // Mock data - replace with actual API calls
     private lastPasswordChangeDate = new Date('2024-12-15');
     private activeSessions = 2;
     private unreadNotifications = true;
 
+    constructor(private authService: AuthService) { }
+
     ngOnInit(): void {
+        // Initialize available tabs based on user role
+        this.initializeAvailableTabs();
         // Load user preferences
         this.loadUserPreferences();
+    }
+
+    /**
+     * Initialize tabs based on user role
+     */
+    private initializeAvailableTabs(): void {
+        const userRole = this.authService.getCurrentUserRole();
+
+        if (userRole === 'Member') {
+            // Members only see Security Settings and Notifications tabs
+            this.availableTabs = ['security', 'notifications'];
+        } else {
+            // Other roles (Superadmin, Admin, etc.) see all tabs
+            this.availableTabs = ['security', 'notifications', 'users', 'account'];
+        }
     }
 
     /**
@@ -40,7 +61,14 @@ export class DashboardSettingsComponent implements OnInit {
      * Validate tab name
      */
     private isValidTab(tab: string): boolean {
-        return ['security', 'notifications', 'users', 'account'].includes(tab);
+        return this.availableTabs.includes(tab as SettingsTab);
+    }
+
+    /**
+     * Check if tab is visible to user
+     */
+    isTabVisible(tab: SettingsTab): boolean {
+        return this.availableTabs.includes(tab);
     }
 
     /**

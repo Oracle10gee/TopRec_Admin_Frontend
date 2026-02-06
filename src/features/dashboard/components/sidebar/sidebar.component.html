@@ -1,21 +1,20 @@
 <aside
-  class="fixed md:sticky inset-y-0 left-0 z-40 w-64 h-screen bg-gradient-to-b from-[#1a5632] to-[#0d3520] text-white shadow-2xl flex flex-col transition-transform duration-300 ease-in-out md:translate-x-0"
+  class="fixed md:sticky inset-y-0 left-0 z-40 w-64 h-screen bg-gradient-to-b from-[#1a5632] via-[#155229] to-[#0d3520] text-white shadow-2xl flex flex-col transition-transform duration-300 ease-in-out md:translate-x-0"
   [class.translate-x-0]="isOpen"
   [class.-translate-x-full]="!isOpen"
 >
   <!-- Logo Section -->
   <div class="px-6 py-6 border-b border-white/10 bg-white/5">
     <div class="flex items-center gap-3">
-      <div class="relative">
-        <img
-          src="assets/Toprec_Title_and_Logo.png"
-          alt="TOPREC Logo"
-          class="w-12 h-12 object-contain animate-fadeIn"
-        />
-      </div>
+      <!-- <div class="relative">
+        
+      </div> -->
       <div class="flex-1">
-        <h1 class="text-xl font-bold tracking-tight">TOPREC</h1>
-        <p class="text-xs text-green-200 font-medium">Admin Portal</p>
+        <img
+          src="assets/toprec_logo.png"
+          alt="TOPREC Logo"
+          class="w-50 h-12 object-contain animate-fadeIn"
+        />
       </div>
     </div>
   </div>
@@ -46,7 +45,7 @@
         </span>
 
         <!-- Label -->
-        <span class="font-medium text-sm">{{ item.label }}</span>
+        <span class="font-medium text-sm pl-5">{{ item.label }}</span>
 
         <!-- Badge (optional) -->
         <span 

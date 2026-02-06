@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { AuthService } from '../../../../core/services/auth.service';
 
 interface Stat {
     label: string;
@@ -50,8 +51,9 @@ export class DashboardHomeComponent implements OnInit {
 
     constructor(
         private router: Router,
-        private sanitizer: DomSanitizer
-    ) {}
+        private sanitizer: DomSanitizer,
+        private authService: AuthService
+    ) { }
 
     ngOnInit(): void {
         this.initializeStats();
@@ -193,21 +195,19 @@ export class DashboardHomeComponent implements OnInit {
     }
 
     getUserFirstName(): string {
-        try {
-            const user = JSON.parse(localStorage.getItem('current_user') || '{}');
-            const fullName = user.fullLegalName || user.firstName || 'User';
-            return fullName.split(' ')[0];
-        } catch {
+        const fullName = this.authService.getCurrentUserName();
+        if (!fullName) {
             return 'User';
         }
+        return fullName.split(' ')[0];
     }
 
     getCurrentDate(): string {
-        const options: Intl.DateTimeFormatOptions = { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+        const options: Intl.DateTimeFormatOptions = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
         };
         return new Date().toLocaleDateString('en-US', options);
     }

@@ -1,118 +1,322 @@
-<div class="max-w-4xl">
+<div class="max-w-5xl mx-auto animate-fadeIn">
   <!-- Header -->
-  <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">My Licenses</h1>
-    <p class="text-gray-600 mt-1">View and manage your professional licenses</p>
+  <div class="mb-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-[#1a5632] to-[#0d3520] rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          My Licenses
+        </h1>
+        <p class="text-gray-600 mt-2 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+          View and manage your professional licenses and certifications
+        </p>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="flex gap-3">
+        <div class="px-4 py-3 bg-green-50 border border-green-200 rounded-xl">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div>
+              <p class="text-xs text-green-600 font-medium">Active Licenses</p>
+              <p class="text-lg font-bold text-green-700">{{ getActiveLicensesCount() }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Licenses List -->
-  <div class="space-y-4">
+  <div class="space-y-6">
     <div
-      *ngFor="let license of licenses"
-      class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+      *ngFor="let license of licenses; let i = index"
+      class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300"
+      [style.animation-delay]="(i * 100) + 'ms'"
+      style="animation: slideUp 0.5s ease-out both"
     >
-      <!-- Status Badge -->
-      <div class="flex items-start justify-between mb-4">
-        <div>
-          <h3 class="text-lg font-bold text-gray-900">
-            {{ license.qualification }}
-          </h3>
-          <p class="text-gray-600 text-sm">License ID: {{ license.id }}</p>
+      <!-- License Header -->
+      <div class="relative bg-gradient-to-r from-[#1a5632] via-[#2a7642] to-[#1a5632] px-6 py-6 overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute top-0 right-0 w-48 h-48 bg-white rounded-full transform translate-x-24 -translate-y-24"></div>
+          <div class="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full transform -translate-x-16 translate-y-16"></div>
         </div>
-        <div class="flex items-center gap-2">
-          <span
-            class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full"
+
+        <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <!-- License Info -->
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center ring-2 ring-white/30">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+            </div>
+            <div class="text-white">
+              <h3 class="text-xl font-bold mb-1">
+                {{ license.qualification }}
+              </h3>
+              <p class="text-sm text-white/80 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                License ID: <span class="font-semibold">{{ license.id }}</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Status Badges -->
+          <div class="flex flex-wrap gap-2">
+            <span
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm"
+              [ngClass]="getStatusClass(license.status)"
+            >
+              <span class="w-2 h-2 rounded-full animate-pulse" [ngClass]="getStatusDotClass(license.status)"></span>
+              {{ license.status }}
+            </span>
+            <span
+              *ngIf="license.verified"
+              class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-blue-700 rounded-lg font-semibold text-sm shadow-sm"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Verified
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- License Body -->
+      <div class="p-6 space-y-6">
+        <!-- Date Information Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Issued Date -->
+          <div class="relative bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-xl border-2 border-blue-200 overflow-hidden group hover:shadow-md transition-all">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-blue-200/20 rounded-full transform translate-x-10 -translate-y-10"></div>
+            <div class="relative">
+              <div class="flex items-center gap-2 mb-2">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p class="text-sm font-semibold text-blue-700 uppercase">Issued Date</p>
+              </div>
+              <p class="text-2xl font-bold text-blue-900">
+                {{ license.issuedDate | date : "MMM d, yyyy" }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Expiry Date -->
+          <div class="relative bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border-2 border-purple-200 overflow-hidden group hover:shadow-md transition-all">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-purple-200/20 rounded-full transform translate-x-10 -translate-y-10"></div>
+            <div class="relative">
+              <div class="flex items-center gap-2 mb-2">
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p class="text-sm font-semibold text-purple-700 uppercase">Expiry Date</p>
+              </div>
+              <p class="text-2xl font-bold text-purple-900">
+                {{ license.expiryDate | date : "MMM d, yyyy" }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Days Until Expiry -->
+          <div class="relative bg-gradient-to-br from-orange-50 to-amber-50 p-5 rounded-xl border-2 border-orange-200 overflow-hidden group hover:shadow-md transition-all">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-orange-200/20 rounded-full transform translate-x-10 -translate-y-10"></div>
+            <div class="relative">
+              <div class="flex items-center gap-2 mb-2">
+                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-sm font-semibold text-orange-700 uppercase">Days Remaining</p>
+              </div>
+              <p class="text-3xl font-bold text-orange-900 flex items-baseline gap-2">
+                {{ license.daysUntilExpiry }}
+                <span class="text-sm font-semibold text-orange-600">days</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- License Details Grid -->
+        <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+          <h4 class="text-sm font-bold text-gray-700 uppercase mb-4 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            License Details
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex items-start gap-3">
+              <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">License Number</p>
+                <p class="text-gray-900 font-semibold">{{ license.id }}</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">Status</p>
+                <p class="text-gray-900 font-semibold">{{ license.status }}</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+                  <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">Qualification Level</p>
+                <p class="text-gray-900 font-semibold">Professional</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="flex-shrink-0 w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">Verification Status</p>
+                <p class="text-emerald-600 font-semibold flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  Verified
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+          <button
+            (click)="downloadLicense(license.id)"
+            class="px-6 py-3 bg-gradient-to-r from-[#1a5632] to-[#2a7642] text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-200 flex items-center gap-2 group"
           >
-            {{ license.status }}
-          </span>
-          <span
-            *ngIf="license.verified"
-            class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full"
+            <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Download License
+          </button>
+
+          <!-- <button
+            (click)="verifyCertificate(license.id)"
+            class="px-6 py-3 border-2 border-[#1a5632] text-[#1a5632] rounded-lg font-semibold hover:bg-green-50 transition-all duration-200 flex items-center gap-2 group"
           >
-            ✓ Verified
-          </span>
-        </div>
-      </div>
+            <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+            Verify Certificate
+          </button> -->
 
-      <!-- License Details Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <!-- Issued Date -->
-        <div class="bg-gray-50 p-4 rounded-lg">
-          <p class="text-gray-600 text-sm">Issued Date</p>
-          <p class="text-lg font-semibold text-gray-900 mt-1">
-            {{ license.issuedDate | date : "MMM d, yyyy" }}
-          </p>
-        </div>
+          <button
+            (click)="shareLicense(license.id)"
+            class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 flex items-center gap-2 group"
+          >
+            <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+            </svg>
+            Share License
+          </button>
 
-        <!-- Expiry Date -->
-        <div class="bg-gray-50 p-4 rounded-lg">
-          <p class="text-gray-600 text-sm">Expiry Date</p>
-          <p class="text-lg font-semibold text-gray-900 mt-1">
-            {{ license.expiryDate | date : "MMM d, yyyy" }}
-          </p>
+          <button
+            (click)="printLicense(license.id)"
+            class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 flex items-center gap-2 group"
+          >
+            <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+            </svg>
+            Print
+          </button>
         </div>
-
-        <!-- Days Until Expiry -->
-        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
-          <p class="text-orange-700 text-sm font-medium">Days Until Expiry</p>
-          <p class="text-2xl font-bold text-orange-900 mt-1">
-            {{ license.daysUntilExpiry }}
-          </p>
-        </div>
-      </div>
-
-      <!-- License Details -->
-      <div class="bg-gray-50 p-4 rounded-lg mb-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p class="text-gray-600 text-sm">License Number</p>
-            <p class="text-gray-900 font-medium">{{ license.id }}</p>
-          </div>
-          <div>
-            <p class="text-gray-600 text-sm">Status</p>
-            <p class="text-gray-900 font-medium">{{ license.status }}</p>
-          </div>
-          <div>
-            <p class="text-gray-600 text-sm">Qualification Level</p>
-            <p class="text-gray-900 font-medium">Professional</p>
-          </div>
-          <div>
-            <p class="text-gray-600 text-sm">Verification Status</p>
-            <p class="text-green-600 font-medium">✓ Verified</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex flex-wrap gap-3">
-        <button
-          (click)="downloadLicense(license.id)"
-          class="px-4 py-2 bg-[#1a5632] text-white rounded-lg font-medium hover:bg-[#2a7642] transition-colors flex items-center gap-2"
-        >
-          <span>📥</span>
-          Download License
-        </button>
-        <button
-          (click)="verifyCertificate(license.id)"
-          class="px-4 py-2 border border-[#1a5632] text-[#1a5632] rounded-lg font-medium hover:bg-green-50 transition-colors flex items-center gap-2"
-        >
-          <span>✓</span>
-          Verify Certificate
-        </button>
       </div>
     </div>
   </div>
 
   <!-- Renewal Information -->
-  <div class="mt-8 bg-amber-50 border border-amber-200 rounded-lg p-6">
-    <h3 class="text-lg font-bold text-amber-900 mb-2">
-      ⏰ License Renewal Reminder
-    </h3>
-    <p class="text-amber-800 text-sm">
-      Your current license will expire in
-      {{ licenses[0].daysUntilExpiry }} days. Please renew your license to
-      maintain active status. Visit the
-      <span class="font-medium">Payments</span> section to process your renewal.
-    </p>
+  <div class="mt-8 relative bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-2 border-amber-300 rounded-xl p-6 overflow-hidden shadow-md">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-5">
+      <div class="absolute top-0 right-0 w-40 h-40 bg-amber-600 rounded-full transform translate-x-20 -translate-y-20"></div>
+      <div class="absolute bottom-0 left-0 w-32 h-32 bg-orange-600 rounded-full transform -translate-x-16 translate-y-16"></div>
+    </div>
+
+    <div class="relative flex items-start gap-4">
+      <!-- Icon -->
+      <div class="flex-shrink-0 w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center shadow-lg">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1">
+        <h3 class="text-lg font-bold text-amber-900 mb-2 flex items-center gap-2">
+          License Renewal Reminder
+          <span class="px-2 py-1 text-xs font-semibold bg-red-500 text-white rounded-full animate-pulse">
+            Action Required
+          </span>
+        </h3>
+        <p class="text-amber-800 text-sm leading-relaxed mb-4">
+          Your current license will expire in <span class="font-bold text-amber-900">{{ licenses.length > 0 ? licenses[0].daysUntilExpiry : 0 }} days</span>. 
+          Please renew your license to maintain active status and continue practicing without interruption.
+        </p>
+        <button
+          (click)="navigateToRenewal()"
+          class="px-6 py-2.5 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+          </svg>
+          Renew License Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State (shown when no licenses) -->
+  <div *ngIf="licenses.length === 0" class="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">No Licenses Found</h3>
+      <p class="text-gray-600 mb-6">
+        You don't have any active licenses yet. Contact support for assistance.
+      </p>
+      <button class="px-6 py-2.5 bg-[#1a5632] text-white rounded-lg font-semibold hover:bg-[#2a7642] transition-colors">
+        Contact Support
+      </button>
+    </div>
   </div>
 </div>

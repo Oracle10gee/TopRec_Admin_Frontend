@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
 import { ApiService } from './api.service';
+import { NotificationService } from './notification.service';
 import {
     AuthResponse,
     ChangePasswordRequest,
@@ -21,6 +22,7 @@ import { ApiResponse } from '../models/api.model';
 export class AuthService {
     private readonly TOKEN_KEY = 'auth_token';
     private readonly REFRESH_TOKEN_KEY = 'refresh_token';
+    private readonly CURRENT_USER_KEY = 'current_user';
 
     private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
     public currentUser$ = this.currentUserSubject.asObservable();
@@ -28,7 +30,10 @@ export class AuthService {
     private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasValidToken());
     public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-    constructor(private apiService: ApiService) {
+    constructor(
+        private apiService: ApiService,
+        private notificationService: NotificationService
+    ) {
         this.checkTokenExpiry();
     }
 
@@ -49,8 +54,15 @@ export class AuthService {
                     console.warn('No token in response!');
                 }
 
-                this.currentUserSubject.next(response.data.user);
+                // Store user data with role and name
+                const user = response.data.user;
+                localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+
+                this.currentUserSubject.next(user);
                 this.isAuthenticatedSubject.next(true);
+
+                // Show success notification with user name
+                this.notificationService.success(`Welcome back, ${user.full_name}!`);
             }),
             map((response) => response.data.user),
             catchError((error) => this.handleAuthError(error))
@@ -78,10 +90,17 @@ export class AuthService {
      * Logout user
      */
     logout(): void {
+        const userName = this.currentUserSubject.value?.full_name || 'User';
+
         localStorage.removeItem(this.TOKEN_KEY);
         localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+        localStorage.removeItem(this.CURRENT_USER_KEY);
+
         this.currentUserSubject.next(null);
         this.isAuthenticatedSubject.next(false);
+
+        // Show logout notification
+        this.notificationService.success(`Goodbye, ${userName}!`);
     }
 
     /**
@@ -314,6 +333,27 @@ export class AuthService {
         return this.apiService.delete(`/auth/users/${userId}`).pipe(
             catchError((error) => this.handleAuthError(error))
         );
+    }
+
+    /**
+     * Get current user's role
+     */
+    getCurrentUserRole(): string {
+        return this.currentUserSubject.value?.role || '';
+    }
+
+    /**
+     * Get current user's full name
+     */
+    getCurrentUserName(): string {
+        return this.currentUserSubject.value?.full_name || '';
+    }
+
+    /**
+     * Check if user has specific role
+     */
+    hasRole(role: string): boolean {
+        return this.getCurrentUserRole() === role;
     }
 }
 

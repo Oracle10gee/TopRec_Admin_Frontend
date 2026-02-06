@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
     standalone: true,
@@ -15,26 +16,26 @@ export class TopbarComponent implements OnInit {
 
     showUserMenu = false;
     showNotifications = false;
-    
+
     // User data
     userInitials = '';
     userName = '';
     userEmail = '';
     userRole = '';
-    
+
     // Page info
     pageTitle = 'Dashboard';
     currentPage = 'Home';
-    
+
     // Notification count
     notificationCount = 3; // Example count
 
-    constructor(private router: Router) {}
+    constructor(private router: Router, private authService: AuthService) { }
 
     ngOnInit(): void {
         this.loadUserData();
         this.updatePageTitle();
-        
+
         // Listen to route changes
         this.router.events
             .pipe(filter(event => event instanceof NavigationEnd))
@@ -44,16 +45,17 @@ export class TopbarComponent implements OnInit {
     }
 
     /**
-     * Load user data from localStorage
+     * Load user data from auth service
      */
     private loadUserData(): void {
         try {
-            const user = JSON.parse(localStorage.getItem('current_user') || '{}');
-            
-            this.userName = user.fullLegalName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
-            this.userEmail = user.email || 'user@toprecng.org';
-            this.userRole = user.role || 'Admin';
-            
+            this.userName = this.authService.getCurrentUserName();
+            this.userRole = this.authService.getCurrentUserRole();
+
+            // Try to get email from current user
+            const user = this.authService['currentUserSubject']?.value;
+            this.userEmail = user?.email || 'user@toprecng.org';
+
             // Generate initials
             const nameParts = this.userName.split(' ');
             if (nameParts.length >= 2) {
@@ -65,7 +67,7 @@ export class TopbarComponent implements OnInit {
             console.error('Error loading user data:', error);
             this.userName = 'User';
             this.userEmail = 'user@toprecng.org';
-            this.userRole = 'Admin';
+            this.userRole = 'User';
             this.userInitials = 'US';
         }
     }
@@ -75,7 +77,7 @@ export class TopbarComponent implements OnInit {
      */
     private updatePageTitle(): void {
         const currentRoute = this.router.url;
-        
+
         // Map routes to titles
         const routeTitles: { [key: string]: { title: string, page: string } } = {
             '/dashboard/home': { title: 'Dashboard', page: 'Home' },
@@ -102,7 +104,7 @@ export class TopbarComponent implements OnInit {
      */
     toggleUserMenu(): void {
         this.showUserMenu = !this.showUserMenu;
-        
+
         // Close notifications if open
         if (this.showUserMenu && this.showNotifications) {
             this.showNotifications = false;
@@ -121,7 +123,7 @@ export class TopbarComponent implements OnInit {
      */
     toggleNotifications(): void {
         this.showNotifications = !this.showNotifications;
-        
+
         // Close user menu if open
         if (this.showNotifications && this.showUserMenu) {
             this.showUserMenu = false;
@@ -149,10 +151,10 @@ export class TopbarComponent implements OnInit {
         // Clear authentication data
         localStorage.removeItem('auth_token');
         localStorage.removeItem('current_user');
-        
+
         // Close dropdowns
         this.closeUserMenu();
-        
+
         // Navigate to login
         this.router.navigate(['/auth/login']);
     }
