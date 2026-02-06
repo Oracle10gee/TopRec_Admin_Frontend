@@ -355,5 +355,53 @@ export class AuthService {
     hasRole(role: string): boolean {
         return this.getCurrentUserRole() === role;
     }
+
+    /**
+     * Get all payment types
+     */
+    getPaymentTypes(): Observable<any> {
+        return this.apiService.get('/payments/payment-types').pipe(
+            catchError((error) => {
+                console.error('Error fetching payment types:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    /**
+     * Create a new payment type
+     */
+    createPaymentType(data: any): Observable<any> {
+        return this.apiService.post('/payments/payment-types', data).pipe(
+            catchError((error) => {
+                console.error('Error creating payment type:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    /**
+     * Update a payment type
+     */
+    updatePaymentType(paymentTypeId: string, data: any): Observable<any> {
+        return this.apiService.patch(`/payments/payment-types/${paymentTypeId}`, data).pipe(
+            catchError((error) => {
+                console.error('Error updating payment type:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    /**
+     * Delete a payment type
+     */
+    deletePaymentType(paymentTypeId: string): Observable<any> {
+        return this.apiService.delete(`/payments/payment-types/${paymentTypeId}`).pipe(
+            catchError((error) => {
+                console.error('Error deleting payment type:', error);
+                return throwError(() => error);
+            })
+        );
+    }
 }
 

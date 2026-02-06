@@ -3,14 +3,15 @@ import { CommonModule } from '@angular/common';
 import { SecuritySettingsComponent } from './components/security-settings/security-settings.component';
 import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
 import { UsersSettingsComponent } from './components/users-settings/users-settings.component';
+import { PaymentSettingsComponent } from './components/payment-settings/payment-settings.component';
 import { AuthService } from '../../../../core/services/auth.service';
 
-type SettingsTab = 'security' | 'notifications' | 'users' | 'account';
+type SettingsTab = 'security' | 'notifications' | 'users' | 'payments' | 'account';
 
 @Component({
     standalone: true,
     selector: 'app-dashboard-settings',
-    imports: [CommonModule, SecuritySettingsComponent, NotificationSettingsComponent, UsersSettingsComponent],
+    imports: [CommonModule, SecuritySettingsComponent, NotificationSettingsComponent, UsersSettingsComponent, PaymentSettingsComponent],
     templateUrl: './settings.component.html',
     styleUrls: ['./settings.component.scss']
 })
@@ -41,8 +42,11 @@ export class DashboardSettingsComponent implements OnInit {
         if (userRole === 'Member') {
             // Members only see Security Settings and Notifications tabs
             this.availableTabs = ['security', 'notifications'];
+        } else if (userRole === 'Superadmin') {
+            // Superadmin sees all tabs including payments
+            this.availableTabs = ['security', 'notifications', 'users', 'payments', 'account'];
         } else {
-            // Other roles (Superadmin, Admin, etc.) see all tabs
+            // Other roles see: Security, Notifications, Users
             this.availableTabs = ['security', 'notifications', 'users', 'account'];
         }
     }

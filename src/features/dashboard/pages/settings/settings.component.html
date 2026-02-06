@@ -201,6 +201,45 @@
         <span>Users</span>
       </button>
 
+      <!-- Payment Settings Tab (Superadmin Only) -->
+      <button
+        *ngIf="isTabVisible('payments')"
+        (click)="setActiveTab('payments')"
+        [ngClass]="
+          activeTab === 'payments'
+            ? 'bg-white text-[#1a5632] shadow-sm'
+            : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+        "
+        class="group flex-1 px-6 py-3.5 font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+      >
+        <div
+          [ngClass]="
+            activeTab === 'payments'
+              ? 'bg-green-100'
+              : 'bg-gray-100 group-hover:bg-gray-200'
+          "
+          class="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200"
+        >
+          <svg
+            class="w-5 h-5"
+            [ngClass]="
+              activeTab === 'payments' ? 'text-green-600' : 'text-gray-600'
+            "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+        <span>Payments</span>
+      </button>
+
       <!-- Account Settings Tab (Future) -->
       <button
         *ngIf="isTabVisible('account')"
@@ -258,6 +297,10 @@
     ></app-notification-settings>
 
     <app-users-settings *ngIf="activeTab === 'users'"></app-users-settings>
+
+    <app-payment-settings
+      *ngIf="activeTab === 'payments'"
+    ></app-payment-settings>
 
     <!-- Account Settings Placeholder -->
     <div

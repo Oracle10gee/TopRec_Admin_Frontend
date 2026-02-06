@@ -1,0 +1,38 @@
+// Payment Settings Component Styles
+:host {
+  display: block;
+}
+
+// Custom scrollbar for modals
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+
+  &:hover {
+    background: #9ca3af;
+  }
+}
+
+// Animation for fade in
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
