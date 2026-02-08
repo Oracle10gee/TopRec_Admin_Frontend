@@ -1,8 +1,32 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 type PaymentsTab = 'renewal' | 'history';
+
+interface PaymentType {
+    id: string;
+    name: string;
+    code: string;
+    description: string;
+    base_amount: string;
+    tax_rate: string;
+    currency: string;
+    is_active: number;
+}
+
+interface CalculatedPayment {
+    subtotal: string;
+    tax: number;
+    tax_rate: string;
+    total: string;
+    currency: string;
+    valid_until: string;
+}
 
 interface PaymentHistory {
     id: string;
@@ -23,7 +47,7 @@ interface PaymentHistory {
 export class DashboardPaymentsComponent implements OnInit {
     activeTab: PaymentsTab = 'renewal';
     paymentForm!: FormGroup;
-    
+
     paymentHistory: PaymentHistory[] = [
         {
             id: 'PAY-2024-001',
@@ -43,25 +67,48 @@ export class DashboardPaymentsComponent implements OnInit {
         }
     ];
 
+    paymentTypes: PaymentType[] = [];
+    calculatedPayment: CalculatedPayment | null = null;
     isProcessing = false;
     paymentSuccess = false;
     errorMessage = '';
+    isLoadingPaymentTypes = false;
+    isCalculating = false;
 
-    // Pricing configuration
-    private pricing = {
-        renewal: { base: 25000, label: 'License Renewal' },
-        upgrade: { base: 35000, label: 'License Upgrade' },
-        additional: { base: 15000, label: 'Additional Services' }
-    };
-
-    private processingFee = 500;
-    private taxRate = 0.075; // 7.5%
-
-    constructor(private fb: FormBuilder) {}
+    constructor(
+        private fb: FormBuilder,
+        private authService: AuthService,
+        private notificationService: NotificationService,
+        private httpClient: HttpClient
+    ) { }
 
     ngOnInit(): void {
         this.initializeForm();
         this.loadUserPreferences();
+        this.loadPaymentTypes();
+
+        // Debug form state
+        console.log('Payment form initialized:', this.paymentForm);
+        console.log('paymentTypeCode control:', this.paymentForm.get('paymentTypeCode'));
+    }
+
+    /**
+     * Load payment types from backend
+     */
+    private loadPaymentTypes(): void {
+        this.isLoadingPaymentTypes = true;
+        this.authService.getPaymentTypes().subscribe({
+            next: (response: any) => {
+                this.paymentTypes = response.data?.paymentTypes || [];
+                this.isLoadingPaymentTypes = false;
+                console.log('✅ Payment types loaded:', this.paymentTypes);
+            },
+            error: (error) => {
+                console.error('❌ Failed to load payment types:', error);
+                this.isLoadingPaymentTypes = false;
+                this.notificationService.error('Failed to load payment types');
+            }
+        });
     }
 
     /**
@@ -69,14 +116,16 @@ export class DashboardPaymentsComponent implements OnInit {
      */
     private initializeForm(): void {
         this.paymentForm = this.fb.group({
-            paymentType: ['renewal', Validators.required],
-            amount: ['₦25,000', Validators.required],
-            paymentMethod: ['card', Validators.required]
+            paymentTypeCode: ['', Validators.required],
+            amount: [{ value: '', disabled: true }, Validators.required],
+            phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]]
         });
 
-        // Update amount when payment type changes
-        this.paymentForm.get('paymentType')?.valueChanges.subscribe(() => {
-            this.updateAmount();
+        // Calculate payment when payment type changes
+        this.paymentForm.get('paymentTypeCode')?.valueChanges.subscribe((code) => {
+            if (code) {
+                this.calculatePayment(code);
+            }
         });
     }
 
@@ -88,6 +137,35 @@ export class DashboardPaymentsComponent implements OnInit {
         if (savedTab && this.isValidTab(savedTab)) {
             this.activeTab = savedTab as PaymentsTab;
         }
+    }
+
+    /**
+     * Calculate payment via backend API
+     */
+    private calculatePayment(paymentTypeCode: string): void {
+        this.isCalculating = true;
+
+        const payload = {
+            payment_type_code: paymentTypeCode
+        };
+
+        console.log('🔄 Calculating payment with payload:', payload);
+
+        this.httpClient.post<any>(`${environment.apiUrl}/payments/calculate`, payload).subscribe({
+            next: (response) => {
+                console.log('✅ Payment calculated:', response.data);
+                this.calculatedPayment = response.data;
+                this.paymentForm.patchValue({
+                    amount: `₦${parseFloat(response.data.total).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+                });
+                this.isCalculating = false;
+            },
+            error: (error) => {
+                console.error('❌ Calculation failed:', error);
+                this.isCalculating = false;
+                this.notificationService.error('Failed to calculate payment amount');
+            }
+        });
     }
 
     /**
@@ -107,58 +185,41 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
-     * Update amount based on payment type
-     */
-    private updateAmount(): void {
-        const paymentType = this.paymentForm.get('paymentType')?.value as keyof typeof this.pricing;
-        const baseAmount = this.pricing[paymentType]?.base || 25000;
-        this.paymentForm.patchValue({
-            amount: `₦${baseAmount.toLocaleString()}`
-        });
-    }
-
-    /**
-     * Handle payment type change
-     */
-    onPaymentTypeChange(): void {
-        this.updateAmount();
-    }
-
-    /**
-     * Calculate subtotal
+     * Get subtotal from calculated payment
      */
     getSubtotal(): string {
-        const paymentType = this.paymentForm.get('paymentType')?.value as keyof typeof this.pricing;
-        const amount = this.pricing[paymentType]?.base || 25000;
-        return `₦${amount.toLocaleString()}`;
+        if (this.calculatedPayment) {
+            return `₦${parseFloat(this.calculatedPayment.subtotal).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        }
+        return '₦0.00';
     }
 
     /**
-     * Get processing fee
-     */
-    getProcessingFee(): string {
-        return `₦${this.processingFee.toLocaleString()}`;
-    }
-
-    /**
-     * Calculate tax
+     * Get tax from calculated payment
      */
     getTax(): string {
-        const paymentType = this.paymentForm.get('paymentType')?.value as keyof typeof this.pricing;
-        const baseAmount = this.pricing[paymentType]?.base || 25000;
-        const tax = (baseAmount + this.processingFee) * this.taxRate;
-        return `₦${Math.round(tax).toLocaleString()}`;
+        if (this.calculatedPayment) {
+            return `₦${this.calculatedPayment.tax.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        }
+        return '₦0.00';
     }
 
     /**
-     * Calculate total amount
+     * Get total from calculated payment
      */
     getTotal(): string {
-        const paymentType = this.paymentForm.get('paymentType')?.value as keyof typeof this.pricing;
-        const baseAmount = this.pricing[paymentType]?.base || 25000;
-        const tax = (baseAmount + this.processingFee) * this.taxRate;
-        const total = baseAmount + this.processingFee + tax;
-        return `₦${Math.round(total).toLocaleString()}`;
+        if (this.calculatedPayment) {
+            return `₦${parseFloat(this.calculatedPayment.total).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        }
+        return '₦0.00';
+    }
+
+    /**
+     * Format currency for display
+     */
+    formatCurrency(amount: string | number): string {
+        const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+        return `₦${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
     /**
@@ -167,10 +228,10 @@ export class DashboardPaymentsComponent implements OnInit {
     getLicenseExpiry(): string {
         const today = new Date();
         const expiryDate = new Date(today.setFullYear(today.getFullYear() + 1));
-        return expiryDate.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+        return expiryDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
         });
     }
 
@@ -181,13 +242,13 @@ export class DashboardPaymentsComponent implements OnInit {
         if (this.paymentHistory.length === 0) {
             return '0';
         }
-        
+
         const total = this.paymentHistory.reduce((sum, payment) => {
             // Remove ₦ and commas, then parse
             const amount = parseFloat(payment.amount.replace(/₦|,/g, ''));
             return sum + amount;
         }, 0);
-        
+
         return total.toLocaleString();
     }
 
@@ -195,8 +256,13 @@ export class DashboardPaymentsComponent implements OnInit {
      * Handle payment submission
      */
     onPaymentSubmit(): void {
+        console.log('🔄 Payment submission initiated');
+        console.log('Form valid?', this.paymentForm.valid);
+        console.log('Form value:', this.paymentForm.value);
+
         if (this.paymentForm.invalid) {
             this.errorMessage = 'Please fill in all required fields correctly';
+            this.notificationService.error(this.errorMessage);
             this.clearMessage('error', 5000);
             return;
         }
@@ -205,38 +271,79 @@ export class DashboardPaymentsComponent implements OnInit {
         this.errorMessage = '';
         this.paymentSuccess = false;
 
-        // Simulate payment processing
-        setTimeout(() => {
-            // Simulate random success/failure for demo
-            const isSuccess = Math.random() > 0.1; // 90% success rate
+        // Get current user information
+        const currentUser = this.authService['currentUserSubject']?.value;
+        console.log('Current user:', currentUser);
 
-            if (isSuccess) {
-                console.log('Payment Submitted:', this.paymentForm.value);
-                this.paymentSuccess = true;
+        if (!currentUser) {
+            this.errorMessage = 'User information not found. Please log in again.';
+            this.isProcessing = false;
+            this.notificationService.error(this.errorMessage);
+            console.error('❌ User not found');
+            return;
+        }
+
+        // Get form values
+        const paymentTypeCode = this.paymentForm.get('paymentTypeCode')?.value;
+        const phone = this.paymentForm.get('phone')?.value;
+
+        console.log('📝 Payment submission data:', {
+            paymentTypeCode,
+            phone,
+            payer_name: currentUser.full_name,
+            payer_email: currentUser.email
+        });
+
+        // Prepare payload for initiate payment API
+        const payload = {
+            payment_type_code: paymentTypeCode,
+            payer_name: currentUser.full_name || 'Customer',
+            payer_email: currentUser.email || 'no-email@example.com',
+            payer_phone: phone
+        };
+
+        console.log('🚀 Calling backend initiate payment API with payload:', payload);
+
+        // Call backend initiate payment API
+        this.httpClient.post<any>(`${environment.apiUrl}/payments/initiate`, payload).subscribe({
+            next: (response) => {
+                console.log('✅ Payment initiated successfully:', response);
                 this.isProcessing = false;
 
-                // Add to payment history
-                this.addToHistory();
-
-                // Clear success message after 5 seconds
-                this.clearMessage('success', 5000);
-            } else {
-                this.errorMessage = 'Payment processing failed. Please try again or contact support.';
+                // If response contains a payment link/URL, redirect to it
+                if (response.data?.payment_link || response.data?.redirect_url) {
+                    console.log('🔗 Redirecting to payment gateway...');
+                    window.location.href = response.data.payment_link || response.data.redirect_url;
+                } else {
+                    // Otherwise show success and add to history
+                    this.paymentSuccess = true;
+                    this.notificationService.success('Payment initiated successfully!');
+                    this.addToHistory();
+                    this.clearMessage('success', 7000);
+                }
+            },
+            error: (error) => {
+                console.error('❌ Payment initiation failed:', error);
                 this.isProcessing = false;
+                this.errorMessage = error.error?.message || error.message || 'Payment initiation failed. Please try again.';
+                this.notificationService.error(this.errorMessage);
                 this.clearMessage('error', 5000);
             }
-        }, 2500);
+        });
     }
 
     /**
      * Add successful payment to history
      */
     private addToHistory(): void {
+        const paymentTypeCode = this.paymentForm.get('paymentTypeCode')?.value;
+        const paymentType = this.paymentTypes.find(p => p.code === paymentTypeCode);
+
         const newPayment: PaymentHistory = {
             id: `PAY-${new Date().getFullYear()}-${String(this.paymentHistory.length + 1).padStart(3, '0')}`,
             amount: this.getTotal(),
             date: new Date().toISOString(),
-            description: this.pricing[this.paymentForm.get('paymentType')?.value as keyof typeof this.pricing].label + ' ' + new Date().getFullYear(),
+            description: (paymentType?.name || 'Payment') + ' ' + new Date().getFullYear(),
             status: 'Successful',
             statusColor: 'green'
         };
@@ -245,7 +352,7 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
-     * Clear message after timeout
+     * Clear message after delay
      */
     private clearMessage(type: 'success' | 'error', delay: number): void {
         setTimeout(() => {
@@ -258,11 +365,27 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
+     * Debug method to check select field state
+     */
+    debugSelectField(): void {
+        const control = this.paymentForm.get('paymentTypeCode');
+        console.log('Select field state:', {
+            control: control,
+            enabled: control?.enabled,
+            disabled: control?.disabled,
+            value: control?.value,
+            formValid: this.paymentForm.valid,
+            isLoadingPaymentTypes: this.isLoadingPaymentTypes,
+            paymentTypesCount: this.paymentTypes.length
+        });
+    }
+
+    /**
      * Download payment receipt
      */
     downloadReceipt(paymentId: string): void {
         console.log('Downloading receipt for:', paymentId);
-        
+
         // TODO: Implement actual download logic
         alert(`Downloading receipt for ${paymentId}.\n\nThis will generate a PDF receipt with:\n- Payment details\n- Transaction ID\n- Official TOPREC stamp\n\nFeature coming soon!`);
     }
@@ -272,7 +395,7 @@ export class DashboardPaymentsComponent implements OnInit {
      */
     exportHistory(): void {
         console.log('Exporting payment history');
-        
+
         if (this.paymentHistory.length === 0) {
             alert('No payment history to export');
             return;
@@ -280,7 +403,7 @@ export class DashboardPaymentsComponent implements OnInit {
 
         // TODO: Implement actual export logic
         alert(`Exporting ${this.paymentHistory.length} payment records.\n\nFormats available:\n- PDF\n- Excel (XLSX)\n- CSV\n\nFeature coming soon!`);
-        
+
         // Example of CSV export (for future implementation):
         // const csv = this.generateCSV();
         // const blob = new Blob([csv], { type: 'text/csv' });
