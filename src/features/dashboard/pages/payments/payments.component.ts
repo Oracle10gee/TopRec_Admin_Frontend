@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
+import { ApiService } from '../../../../core/services/api.service';
 
 type PaymentsTab = 'renewal' | 'history';
 
@@ -79,7 +78,7 @@ export class DashboardPaymentsComponent implements OnInit {
         private fb: FormBuilder,
         private authService: AuthService,
         private notificationService: NotificationService,
-        private httpClient: HttpClient
+        private apiService: ApiService
     ) { }
 
     ngOnInit(): void {
@@ -151,7 +150,7 @@ export class DashboardPaymentsComponent implements OnInit {
 
         console.log('🔄 Calculating payment with payload:', payload);
 
-        this.httpClient.post<any>(`${environment.apiUrl}/payments/calculate`, payload).subscribe({
+        this.apiService.post<any>('/payments/calculate', payload).subscribe({
             next: (response) => {
                 console.log('✅ Payment calculated:', response.data);
                 this.calculatedPayment = response.data;
@@ -305,7 +304,7 @@ export class DashboardPaymentsComponent implements OnInit {
         console.log('🚀 Calling backend initiate payment API with payload:', payload);
 
         // Call backend initiate payment API
-        this.httpClient.post<any>(`${environment.apiUrl}/payments/initiate`, payload).subscribe({
+        this.apiService.post<any>('/payments/initiate', payload).subscribe({
             next: (response) => {
                 console.log('✅ Payment initiated successfully:', response);
                 this.isProcessing = false;
