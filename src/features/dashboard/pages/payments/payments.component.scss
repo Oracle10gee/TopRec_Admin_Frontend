@@ -69,6 +69,7 @@ button {
     background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
     transform: scale(0);
     transition: transform 0.4s ease;
+    pointer-events: none;
   }
 
   &:active::before {
@@ -254,6 +255,7 @@ button:disabled {
       transparent
     );
     animation: shimmer 3s infinite;
+    pointer-events: none;
   }
 }
 
@@ -397,6 +399,7 @@ span.bg-green-100 {
     mask-composite: exclude;
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none;
   }
 
   &:hover::before {
