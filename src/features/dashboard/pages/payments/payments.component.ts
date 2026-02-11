@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -79,7 +79,8 @@ export class DashboardPaymentsComponent implements OnInit {
         private fb: FormBuilder,
         private authService: AuthService,
         private notificationService: NotificationService,
-        private httpClient: HttpClient
+        private httpClient: HttpClient,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -88,8 +89,31 @@ export class DashboardPaymentsComponent implements OnInit {
         this.loadPaymentTypes();
 
         // Debug form state
-        console.log('Payment form initialized:', this.paymentForm);
-        console.log('paymentTypeCode control:', this.paymentForm.get('paymentTypeCode'));
+        setTimeout(() => {
+            console.log('=== FORM STATE DEBUG ===');
+            console.log('Payment form:', this.paymentForm);
+            console.log('Form enabled:', this.paymentForm?.enabled);
+            console.log('Form disabled:', this.paymentForm?.disabled);
+            console.log('Form status:', this.paymentForm?.status);
+            console.log('paymentTypeCode:', {
+                control: this.paymentForm.get('paymentTypeCode'),
+                enabled: this.paymentForm.get('paymentTypeCode')?.enabled,
+                disabled: this.paymentForm.get('paymentTypeCode')?.disabled,
+                value: this.paymentForm.get('paymentTypeCode')?.value
+            });
+            console.log('amount:', {
+                control: this.paymentForm.get('amount'),
+                enabled: this.paymentForm.get('amount')?.enabled,
+                disabled: this.paymentForm.get('amount')?.disabled,
+                value: this.paymentForm.get('amount')?.value
+            });
+            console.log('phone:', {
+                control: this.paymentForm.get('phone'),
+                enabled: this.paymentForm.get('phone')?.enabled,
+                disabled: this.paymentForm.get('phone')?.disabled,
+                value: this.paymentForm.get('phone')?.value
+            });
+        }, 100);
     }
 
     /**
@@ -99,9 +123,15 @@ export class DashboardPaymentsComponent implements OnInit {
         this.isLoadingPaymentTypes = true;
         this.authService.getPaymentTypes().subscribe({
             next: (response: any) => {
-                this.paymentTypes = response.data?.paymentTypes || [];
+                console.log('📦 Raw response:', response);
+                const types = response.data?.paymentTypes || response.paymentTypes || [];
+                this.paymentTypes = Array.isArray(types) ? types : [];
                 this.isLoadingPaymentTypes = false;
                 console.log('✅ Payment types loaded:', this.paymentTypes);
+                console.log('✅ paymentTypes array length:', this.paymentTypes.length);
+                // Explicitly trigger change detection
+                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             },
             error: (error) => {
                 console.error('❌ Failed to load payment types:', error);
@@ -123,9 +153,15 @@ export class DashboardPaymentsComponent implements OnInit {
 
         // Calculate payment when payment type changes
         this.paymentForm.get('paymentTypeCode')?.valueChanges.subscribe((code) => {
+            console.log('💬 Payment type changed:', code);
             if (code) {
                 this.calculatePayment(code);
             }
+        });
+
+        // Monitor form value changes
+        this.paymentForm.valueChanges.subscribe((value) => {
+            console.log('📝 Form value changed:', value);
         });
     }
 
@@ -368,16 +404,37 @@ export class DashboardPaymentsComponent implements OnInit {
      * Debug method to check select field state
      */
     debugSelectField(): void {
-        const control = this.paymentForm.get('paymentTypeCode');
-        console.log('Select field state:', {
-            control: control,
-            enabled: control?.enabled,
-            disabled: control?.disabled,
-            value: control?.value,
-            formValid: this.paymentForm.valid,
-            isLoadingPaymentTypes: this.isLoadingPaymentTypes,
-            paymentTypesCount: this.paymentTypes.length
-        });
+        console.log('=== ALL FORM CONTROLS DEBUG ===');
+        const typeControl = this.paymentForm.get('paymentTypeCode');
+        const amountControl = this.paymentForm.get('amount');
+        const phoneControl = this.paymentForm.get('phone');
+
+        console.log('Form instance:', this.paymentForm ? '✓ EXISTS' : '✗ NULL');
+        console.log('Form enabled:', this.paymentForm?.enabled, 'disabled:', this.paymentForm?.disabled);
+        console.log('Form status:', this.paymentForm?.status);
+        console.log('');
+        console.log('paymentTypeCode:');
+        console.log('  - exists:', typeControl ? '✓' : '✗');
+        console.log('  - enabled:', typeControl?.enabled);
+        console.log('  - disabled:', typeControl?.disabled);
+        console.log('  - value:', typeControl?.value);
+        console.log('');
+        console.log('amount:');
+        console.log('  - exists:', amountControl ? '✓' : '✗');
+        console.log('  - enabled:', amountControl?.enabled);
+        console.log('  - disabled:', amountControl?.disabled);
+        console.log('  - value:', amountControl?.value);
+        console.log('');
+        console.log('phone:');
+        console.log('  - exists:', phoneControl ? '✓' : '✗');
+        console.log('  - enabled:', phoneControl?.enabled);
+        console.log('  - disabled:', phoneControl?.disabled);
+        console.log('  - value:', phoneControl?.value);
+        console.log('');
+        console.log('Other state:');
+        console.log('  - isProcessing:', this.isProcessing);
+        console.log('  - isLoadingPaymentTypes:', this.isLoadingPaymentTypes);
+        console.log('  - paymentTypes count:', this.paymentTypes.length);
     }
 
     /**
