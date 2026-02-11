@@ -155,9 +155,16 @@ export class SidebarComponent implements OnInit {
     }
 
     onLogout(): void {
-        // Logout through auth service (which will show notification)
-        this.authService.logout();
-        // Navigate to login
-        this.router.navigate(['/auth/login']);
+        // Call logout API and navigate after it completes
+        this.authService.logout().subscribe({
+            next: () => {
+                console.log('✅ Logout complete, navigating to login');
+                this.router.navigate(['/auth/login']);
+            },
+            error: (error) => {
+                console.error('❌ Logout error, still navigating to login:', error);
+                this.router.navigate(['/auth/login']);
+            }
+        });
     }
 }

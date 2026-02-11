@@ -185,6 +185,9 @@ export class DashboardPaymentsComponent implements OnInit {
             payment_type_code: paymentTypeCode
         };
 
+        // DEBUG: Check if token exists
+        const token = this.authService.getAccessToken();
+        console.log('🔑 Token status before calculate:', token ? '✅ Token found' : '❌ NO TOKEN');
         console.log('🔄 Calculating payment with payload:', payload);
 
         this.httpClient.post<any>(`${environment.apiUrl}/payments/calculate`, payload).subscribe({

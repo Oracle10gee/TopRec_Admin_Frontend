@@ -89,18 +89,42 @@ export class AuthService {
     /**
      * Logout user
      */
-    logout(): void {
+    logout(): Observable<any> {
         const userName = this.currentUserSubject.value?.full_name || 'User';
 
-        localStorage.removeItem(this.TOKEN_KEY);
-        localStorage.removeItem(this.REFRESH_TOKEN_KEY);
-        localStorage.removeItem(this.CURRENT_USER_KEY);
+        // Call logout API endpoint
+        return this.apiService.post('/auth/logout', {}).pipe(
+            tap(() => {
+                console.log('✅ Logout API call successful');
+                // Clear token and user data from localStorage
+                localStorage.removeItem(this.TOKEN_KEY);
+                localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+                localStorage.removeItem(this.CURRENT_USER_KEY);
 
-        this.currentUserSubject.next(null);
-        this.isAuthenticatedSubject.next(false);
+                // Reset auth state
+                this.currentUserSubject.next(null);
+                this.isAuthenticatedSubject.next(false);
 
-        // Show logout notification
-        this.notificationService.success(`Goodbye, ${userName}!`);
+                // Show logout notification
+                this.notificationService.success(`Goodbye, ${userName}!`);
+            }),
+            catchError((error) => {
+                console.error('❌ Logout API call failed:', error);
+                // Still clear local storage even if logout API fails
+                localStorage.removeItem(this.TOKEN_KEY);
+                localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+                localStorage.removeItem(this.CURRENT_USER_KEY);
+
+                // Reset auth state
+                this.currentUserSubject.next(null);
+                this.isAuthenticatedSubject.next(false);
+
+                // Show notification
+                this.notificationService.success(`Goodbye, ${userName}!`);
+
+                return of(null); // Return a successful observable so component can proceed
+            })
+        );
     }
 
     /**

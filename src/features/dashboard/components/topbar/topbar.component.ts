@@ -148,15 +148,19 @@ export class TopbarComponent implements OnInit {
      * Logout user
      */
     onLogout(): void {
-        // Clear authentication data
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('current_user');
-
-        // Close dropdowns
-        this.closeUserMenu();
-
-        // Navigate to login
-        this.router.navigate(['/auth/login']);
+        // Call logout API and navigate after it completes
+        this.authService.logout().subscribe({
+            next: () => {
+                console.log('✅ Logout complete, navigating to login');
+                this.closeUserMenu();
+                this.router.navigate(['/auth/login']);
+            },
+            error: (error) => {
+                console.error('❌ Logout error, still navigating to login:', error);
+                this.closeUserMenu();
+                this.router.navigate(['/auth/login']);
+            }
+        });
     }
 
     /**
