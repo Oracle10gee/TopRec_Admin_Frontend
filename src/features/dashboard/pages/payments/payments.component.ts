@@ -78,7 +78,7 @@ export class DashboardPaymentsComponent implements OnInit {
         private fb: FormBuilder,
         private authService: AuthService,
         private notificationService: NotificationService,
-        private httpClient: HttpClient,
+        private apiService: ApiService,
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -132,7 +132,7 @@ export class DashboardPaymentsComponent implements OnInit {
                 this.cdr.markForCheck();
                 this.cdr.detectChanges();
             },
-            error: (error) => {
+            error: (error: any) => {
                 console.error('❌ Failed to load payment types:', error);
                 this.isLoadingPaymentTypes = false;
                 this.notificationService.error('Failed to load payment types');
@@ -190,7 +190,7 @@ export class DashboardPaymentsComponent implements OnInit {
         console.log('🔄 Calculating payment with payload:', payload);
 
         this.apiService.post<any>('/payments/calculate', payload).subscribe({
-            next: (response) => {
+            next: (response: any) => {
                 console.log('✅ Payment calculated:', response.data);
                 this.calculatedPayment = response.data;
                 this.paymentForm.patchValue({
@@ -198,7 +198,7 @@ export class DashboardPaymentsComponent implements OnInit {
                 });
                 this.isCalculating = false;
             },
-            error: (error) => {
+            error: (error: any) => {
                 console.error('❌ Calculation failed:', error);
                 this.isCalculating = false;
                 this.notificationService.error('Failed to calculate payment amount');
@@ -344,7 +344,7 @@ export class DashboardPaymentsComponent implements OnInit {
 
         // Call backend initiate payment API
         this.apiService.post<any>('/payments/initiate', payload).subscribe({
-            next: (response) => {
+            next: (response: any) => {
                 console.log('✅ Payment initiated successfully:', response);
                 this.isProcessing = false;
 
@@ -360,7 +360,7 @@ export class DashboardPaymentsComponent implements OnInit {
                     this.clearMessage('success', 7000);
                 }
             },
-            error: (error) => {
+            error: (error: any) => {
                 console.error('❌ Payment initiation failed:', error);
                 this.isProcessing = false;
                 this.errorMessage = error.error?.message || error.message || 'Payment initiation failed. Please try again.';

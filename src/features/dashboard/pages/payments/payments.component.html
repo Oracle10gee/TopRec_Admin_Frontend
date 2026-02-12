@@ -334,12 +334,12 @@
                   *ngFor="let paymentType of paymentTypes"
                   [value]="paymentType.code"
                 >
-                  {{ paymentType.name }} -
-                  {{ formatCurrency(paymentType.base_amount) }}
+                  {{ paymentType.name }} 
                 </option>
               </select>
             </div>
-
+                  <!-- {{ formatCurrency(paymentType.base_amount) }} -->
+                    
             <!-- Amount Display -->
             <div class="space-y-2">
               <label
