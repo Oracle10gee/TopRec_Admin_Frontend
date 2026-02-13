@@ -334,12 +334,12 @@
                   *ngFor="let paymentType of paymentTypes"
                   [value]="paymentType.code"
                 >
-                  {{ paymentType.name }} 
+                  {{ paymentType.name }}
                 </option>
               </select>
             </div>
-                  <!-- {{ formatCurrency(paymentType.base_amount) }} -->
-                    
+            <!-- {{ formatCurrency(paymentType.base_amount) }} -->
+
             <!-- Amount Display -->
             <div class="space-y-2">
               <label
@@ -885,6 +885,140 @@
           class="px-6 py-2.5 bg-[#1a5632] text-white rounded-lg font-semibold hover:bg-[#2a7642] transition-colors"
         >
           Make Your First Payment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Details Modal -->
+  <div
+    *ngIf="showPaymentDetailsModal"
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn"
+  >
+    <div
+      class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 transform transition-all animate-slideIn overflow-hidden"
+    >
+      <!-- Modal Header -->
+      <div
+        class="bg-gradient-to-r from-[#1a5632] to-[#2a7642] px-8 py-6 flex items-center gap-3"
+      >
+        <div
+          class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center"
+        >
+          <svg
+            class="w-6 h-6 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-white">Payment Initiated</h3>
+          <p class="text-green-100 text-sm">Your payment is ready to process</p>
+        </div>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="px-8 py-6 space-y-6">
+        <!-- Payment Reference -->
+        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+          <label
+            class="text-xs font-semibold text-blue-600 uppercase tracking-wide"
+            >Payment Reference</label
+          >
+          <p class="text-lg font-bold text-blue-900 mt-2 font-mono">
+            {{ paymentDetails?.paymentReference }}
+          </p>
+          <p class="text-xs text-blue-600 mt-1">
+            Keep this reference for your records
+          </p>
+        </div>
+
+        <!-- RRR Details -->
+        <div class="bg-purple-50 rounded-lg p-4 border border-purple-200">
+          <label
+            class="text-xs font-semibold text-purple-600 uppercase tracking-wide"
+            >Remita RRR (Payment Code)</label
+          >
+          <p class="text-2xl font-bold text-purple-900 mt-2 font-mono">
+            {{ paymentDetails?.rrr }}
+          </p>
+          <p class="text-xs text-purple-600 mt-1">
+            Your unique Remita identification code
+          </p>
+        </div>
+
+        <!-- Amount -->
+        <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+          <label
+            class="text-xs font-semibold text-green-600 uppercase tracking-wide"
+            >Amount to Pay</label
+          >
+          <p class="text-3xl font-bold text-green-900 mt-2">
+            ₦{{ paymentDetails?.amount }}
+          </p>
+        </div>
+
+        <!-- Info Text -->
+        <div class="bg-amber-50 rounded-lg p-4 border border-amber-200">
+          <div class="flex gap-3">
+            <svg
+              class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <div>
+              <p class="text-sm font-semibold text-amber-900">Next Step</p>
+              <p class="text-xs text-amber-700 mt-1">
+                Click "Continue to Remita" below to complete your payment
+                securely.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-8 py-6 bg-gray-50 border-t border-gray-200 flex gap-3">
+        <button
+          (click)="closePaymentDetailsModal()"
+          class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="confirmAndProceedToPayment()"
+          class="flex-1 px-4 py-3 bg-gradient-to-r from-[#1a5632] to-[#2a7642] text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+          Continue to Remita
         </button>
       </div>
     </div>

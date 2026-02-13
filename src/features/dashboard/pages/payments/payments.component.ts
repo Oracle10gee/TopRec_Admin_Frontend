@@ -6,6 +6,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { ApiService } from '../../../../core/services/api.service';
 
 type PaymentsTab = 'renewal' | 'history';
+type UserRole = 'Superadmin' | 'Member' | 'Consulting Firm' | 'Practice Firm';
 
 interface PaymentType {
     id: string;
@@ -16,6 +17,12 @@ interface PaymentType {
     tax_rate: string;
     currency: string;
     is_active: number;
+}
+
+interface PaymentTypeForNonAdmin extends PaymentType {
+    metadata: any;
+    created_at: string;
+    updated_at: string;
 }
 
 interface CalculatedPayment {
@@ -34,6 +41,27 @@ interface PaymentHistory {
     description: string;
     status: string;
     statusColor: string;
+}
+
+interface PaymentInitiateResponse {
+    payment: {
+        id: string;
+        payment_reference: string;
+        rrr: string;
+        remita_order_id: string;
+        amount: string;
+        status: string;
+        created_at: string;
+    };
+    payment_url: string;
+    checkout_url: string;
+}
+
+interface PaymentDetails {
+    rrr: string;
+    paymentReference: string;
+    amount: string;
+    checkoutUrl: string;
 }
 
 @Component({
@@ -74,6 +102,15 @@ export class DashboardPaymentsComponent implements OnInit {
     isLoadingPaymentTypes = false;
     isCalculating = false;
 
+    // Role-based workflow properties
+    currentUserRole: UserRole | string = '';
+    isSuperadmin = false;
+    cachedPaymentTypes: PaymentTypeForNonAdmin[] = [];
+
+    // Payment details modal properties
+    showPaymentDetailsModal = false;
+    paymentDetails: PaymentDetails | null = null;
+
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,
@@ -85,6 +122,8 @@ export class DashboardPaymentsComponent implements OnInit {
     ngOnInit(): void {
         this.initializeForm();
         this.loadUserPreferences();
+        this.determineUserRole();
+        this.loadUserPhone();
         this.loadPaymentTypes();
 
         // Debug form state
@@ -116,24 +155,119 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
-     * Load payment types from backend
+     * Determine current user's role and set superadmin flag
+     */
+    private determineUserRole(): void {
+        this.currentUserRole = this.authService.getCurrentUserRole();
+        this.isSuperadmin = this.currentUserRole === 'Superadmin';
+        console.log(`👤 Current user role: ${this.currentUserRole}`);
+        console.log(`🔐 Is Superadmin: ${this.isSuperadmin}`);
+    }
+
+    /**
+     * Load user phone number from profile and auto-populate form
+     */
+    private loadUserPhone(): void {
+        console.log('📞 Loading user phone number from profile...');
+        
+        this.apiService.get<any>('/auth/profile').subscribe({
+            next: (response: any) => {
+                const phoneNumber = response.data?.user?.phone_number;
+                
+                if (phoneNumber) {
+                    console.log('✅ Phone number retrieved:', phoneNumber);
+                    
+                    // Auto-populate the phone field with user's phone number
+                    this.paymentForm.patchValue({
+                        phone: phoneNumber
+                    });
+                    
+                    console.log('✅ Phone field auto-populated');
+                } else {
+                    console.warn('⚠️ No phone number found in profile');
+                }
+            },
+            error: (error: any) => {
+                console.error('❌ Failed to load user profile:', error);
+                // Don't show error to user - phone field can be filled manually
+            }
+        });
+    }
+
+    /**
+     * Load payment types from backend based on user role
+     * Superadmin: POST /api/v1/payments/payment-types
+     * Others: GET /api/v1/payments/types
      */
     private loadPaymentTypes(): void {
         this.isLoadingPaymentTypes = true;
+
+        if (this.isSuperadmin) {
+            this.loadSuperadminPaymentTypes();
+        } else {
+            this.loadNonAdminPaymentTypes();
+        }
+    }
+
+    /**
+     * Load payment types for Superadmin users (POST endpoint)
+     */
+    private loadSuperadminPaymentTypes(): void {
         this.authService.getPaymentTypes().subscribe({
             next: (response: any) => {
-                console.log('📦 Raw response:', response);
+                console.log('📦 Superadmin payment types response:', response);
                 const types = response.data?.paymentTypes || response.paymentTypes || [];
                 this.paymentTypes = Array.isArray(types) ? types : [];
                 this.isLoadingPaymentTypes = false;
-                console.log('✅ Payment types loaded:', this.paymentTypes);
+                console.log('✅ Superadmin payment types loaded:', this.paymentTypes);
                 console.log('✅ paymentTypes array length:', this.paymentTypes.length);
                 // Explicitly trigger change detection
                 this.cdr.markForCheck();
                 this.cdr.detectChanges();
             },
             error: (error: any) => {
-                console.error('❌ Failed to load payment types:', error);
+                console.error('❌ Failed to load superadmin payment types:', error);
+                this.isLoadingPaymentTypes = false;
+                this.notificationService.error('Failed to load payment types');
+            }
+        });
+    }
+
+    /**
+     * Load payment types for non-admin users (GET endpoint)
+     * Response includes base_amount which is used directly for amount population
+     */
+    private loadNonAdminPaymentTypes(): void {
+        this.apiService.get<any>('/payments/types').subscribe({
+            next: (response: any) => {
+                console.log('📦 Non-admin payment types response:', response);
+                const types = response.data?.types || [];
+
+                // Cache the full response data for later lookup
+                this.cachedPaymentTypes = Array.isArray(types) ? types : [];
+
+                // Create simplified paymentTypes array using code as the identifier
+                this.paymentTypes = this.cachedPaymentTypes.map(type => ({
+                    id: type.id,
+                    name: type.name,
+                    code: type.code,
+                    description: type.description,
+                    base_amount: type.base_amount,
+                    tax_rate: type.tax_rate,
+                    currency: type.currency,
+                    is_active: type.is_active
+                }));
+
+                this.isLoadingPaymentTypes = false;
+                console.log('✅ Non-admin payment types loaded:', this.paymentTypes);
+                console.log('✅ Cached payment types:', this.cachedPaymentTypes);
+                console.log('✅ paymentTypes array length:', this.paymentTypes.length);
+                // Explicitly trigger change detection
+                this.cdr.markForCheck();
+                this.cdr.detectChanges();
+            },
+            error: (error: any) => {
+                console.error('❌ Failed to load non-admin payment types:', error);
                 this.isLoadingPaymentTypes = false;
                 this.notificationService.error('Failed to load payment types');
             }
@@ -150,11 +284,17 @@ export class DashboardPaymentsComponent implements OnInit {
             phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]]
         });
 
-        // Calculate payment when payment type changes
+        // Calculate/populate amount when payment type changes based on user role
         this.paymentForm.get('paymentTypeCode')?.valueChanges.subscribe((code) => {
             console.log('💬 Payment type changed:', code);
             if (code) {
-                this.calculatePayment(code);
+                if (this.isSuperadmin) {
+                    // For Superadmin: call calculate API
+                    this.calculatePayment(code);
+                } else {
+                    // For other roles: populate from cached data
+                    this.populateAmountFromCache(code);
+                }
             }
         });
 
@@ -175,7 +315,49 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
-     * Calculate payment via backend API
+     * Populate amount field from cached payment types data (non-admin users)
+     * Looks up the base_amount directly from the cached response
+     */
+    private populateAmountFromCache(paymentTypeCode: string): void {
+        this.isCalculating = true;
+        console.log('🔍 Looking up payment type code:', paymentTypeCode);
+        console.log('📦 Cached payment types:', this.cachedPaymentTypes);
+
+        // Find the payment type in cached data
+        const paymentType = this.cachedPaymentTypes.find(type => type.code === paymentTypeCode);
+
+        if (paymentType) {
+            console.log('✅ Found payment type:', paymentType);
+
+            // Populate the amount field directly with base_amount
+            const baseAmount = parseFloat(paymentType.base_amount);
+            const formattedAmount = `₦${baseAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+            this.paymentForm.patchValue({
+                amount: formattedAmount
+            });
+
+            // Create a calculated payment object for display purposes
+            this.calculatedPayment = {
+                subtotal: paymentType.base_amount,
+                tax: baseAmount * parseFloat(paymentType.tax_rate),
+                tax_rate: paymentType.tax_rate,
+                total: (baseAmount + (baseAmount * parseFloat(paymentType.tax_rate))).toString(),
+                currency: paymentType.currency,
+                valid_until: '' // Not applicable for non-admin flow
+            };
+
+            console.log('💰 Calculated payment object:', this.calculatedPayment);
+        } else {
+            console.error('❌ Payment type not found:', paymentTypeCode);
+            this.notificationService.error('Selected payment type not found');
+        }
+
+        this.isCalculating = false;
+    }
+
+    /**
+     * Calculate payment via backend API (Superadmin only)
      */
     private calculatePayment(paymentTypeCode: string): void {
         this.isCalculating = true;
@@ -343,13 +525,30 @@ export class DashboardPaymentsComponent implements OnInit {
         console.log('🚀 Calling backend initiate payment API with payload:', payload);
 
         // Call backend initiate payment API
-        this.apiService.post<any>('/payments/initiate', payload).subscribe({
+        this.apiService.post<PaymentInitiateResponse>('/payments/initiate', payload).subscribe({
             next: (response: any) => {
                 console.log('✅ Payment initiated successfully:', response);
                 this.isProcessing = false;
 
-                // If response contains a payment link/URL, redirect to it
-                if (response.data?.payment_link || response.data?.redirect_url) {
+                // Handle Remita payment response
+                if (response.data?.payment && response.data?.checkout_url) {
+                    console.log('🔗 Payment details received from Remita');
+
+                    // Store payment details for modal display
+                    this.paymentDetails = {
+                        rrr: response.data.payment.rrr,
+                        paymentReference: response.data.payment.payment_reference,
+                        amount: response.data.payment.amount,
+                        checkoutUrl: response.data.checkout_url
+                    };
+
+                    console.log('💰 Payment Details:', this.paymentDetails);
+
+                    // Show payment details modal
+                    this.showPaymentDetailsModal = true;
+                    this.notificationService.success('Payment details ready. Please confirm to proceed.');
+                } else if (response.data?.payment_link || response.data?.redirect_url) {
+                    // Fallback for other payment URLs
                     console.log('🔗 Redirecting to payment gateway...');
                     window.location.href = response.data.payment_link || response.data.redirect_url;
                 } else {
@@ -368,6 +567,37 @@ export class DashboardPaymentsComponent implements OnInit {
                 this.clearMessage('error', 5000);
             }
         });
+    }
+
+    /**
+     * Confirm payment and proceed to Remita checkout
+     */
+    confirmAndProceedToPayment(): void {
+        if (!this.paymentDetails) {
+            console.error('❌ Payment details not found');
+            this.notificationService.error('Payment details not found');
+            return;
+        }
+
+        console.log('🚀 Proceeding to Remita payment gateway');
+        console.log('📍 Checkout URL:', this.paymentDetails.checkoutUrl);
+        console.log('💳 RRR:', this.paymentDetails.rrr);
+
+        // Close modal
+        this.showPaymentDetailsModal = false;
+
+        // Redirect to Remita checkout URL
+        window.location.href = this.paymentDetails.checkoutUrl;
+    }
+
+    /**
+     * Close payment details modal and clear data
+     */
+    closePaymentDetailsModal(): void {
+        console.log('❌ Payment cancelled by user');
+        this.showPaymentDetailsModal = false;
+        this.paymentDetails = null;
+        this.notificationService.info('Payment cancelled');
     }
 
     /**

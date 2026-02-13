@@ -53,7 +53,8 @@
 }
 
 @keyframes gradientShift {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -113,7 +114,8 @@ textarea.border-red-300 {
 }
 
 @keyframes errorShake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   25% {
@@ -132,7 +134,8 @@ textarea.border-red-300 {
 }
 
 @keyframes iconPulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
   }
   50% {
@@ -146,12 +149,13 @@ button {
   overflow: hidden;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
     transform: scale(0);
     transition: transform 0.4s ease;
+    pointer-events: none;
   }
 
   &:active::before {
@@ -162,7 +166,9 @@ button {
 /* Gradient button animation */
 .bg-gradient-to-r.from-\[\#1a5632\] {
   background-size: 200% 100%;
-  transition: background-position 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    background-position 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover:not(:disabled) {
     background-position: right center;
@@ -228,7 +234,9 @@ svg.w-3.h-3 {
 
 /* Smooth transitions */
 * {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-property:
+    background-color, border-color, color, fill, stroke, opacity, box-shadow,
+    transform;
   transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -254,7 +262,8 @@ button:disabled {
 }
 
 @keyframes patternFloat {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -367,7 +376,8 @@ button:disabled {
 }
 
 @keyframes loadingPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -380,17 +390,20 @@ button:disabled {
   position: relative;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
     padding: 1px;
     background: linear-gradient(135deg, #1a5632, transparent);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none;
   }
 
   &:hover::before {
@@ -427,7 +440,8 @@ button.absolute {
 }
 
 @keyframes cameraFloat {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
