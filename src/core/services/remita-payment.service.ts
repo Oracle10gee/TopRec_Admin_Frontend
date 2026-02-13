@@ -57,8 +57,8 @@ export class RemitaPaymentService {
             try {
                 const script = document.createElement('script');
                 script.id = 'remita-script';
-                // Try primary URL first
-                script.src = `${this.remitaConfig.baseUrl}/payment/script/remita-inline-checkout.js`;
+                // Use the RRR-compatible inline payment bundle
+                script.src = `${this.remitaConfig.baseUrl}/payment/v1/remita-pay-inline.bundle.js`;
                 script.async = true;
                 script.defer = true;
                 script.type = 'text/javascript';
@@ -221,6 +221,86 @@ export class RemitaPaymentService {
                         RmPaymentEngine.showPaymentEngine(payload);
                     } catch (error) {
                         console.error('✗ Error calling RmPaymentEngine.showPaymentEngine:', error);
+                        observer.error({
+                            success: false,
+                            message: 'Error initiating payment: ' + (error instanceof Error ? error.message : 'Unknown error')
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('✗ Error ensuring script loaded:', error);
+                    observer.error({
+                        success: false,
+                        message: 'Failed to load payment engine: ' + (error instanceof Error ? error.message : 'Unknown error')
+                    });
+                });
+        });
+    }
+
+    /**
+     * Pay an existing RRR using Remita inline payment widget
+     */
+    payWithRrr(rrr: string): Observable<any> {
+        console.log('🔄 Opening Remita inline payment for RRR:', rrr);
+
+        return new Observable((observer) => {
+            this.ensureScriptLoaded()
+                .then(() => {
+                    if (typeof RmPaymentEngine === 'undefined') {
+                        console.error('✗ RmPaymentEngine is not defined after script load');
+                        observer.error({
+                            success: false,
+                            message: 'Payment engine not available. Please refresh and try again.'
+                        });
+                        return;
+                    }
+
+                    try {
+                        const transactionId = Math.floor(Math.random() * 1101233);
+
+                        const paymentEngine = RmPaymentEngine.init({
+                            key: this.remitaConfig.publicKey,
+                            processRrr: true,
+                            transactionId: transactionId,
+                            extendedData: {
+                                customFields: [
+                                    {
+                                        name: "rrr",
+                                        value: rrr
+                                    }
+                                ]
+                            },
+                            onSuccess: (response: any) => {
+                                console.log('✓ Remita RRR payment successful:', response);
+                                observer.next({
+                                    success: true,
+                                    message: 'Payment completed successfully',
+                                    rrr: rrr,
+                                    response: response
+                                });
+                                observer.complete();
+                            },
+                            onError: (response: any) => {
+                                console.error('✗ Remita RRR payment error:', response);
+                                observer.error({
+                                    success: false,
+                                    message: response.message || 'Payment failed',
+                                    rrr: rrr
+                                });
+                            },
+                            onClose: () => {
+                                console.log('⚠ Remita payment widget closed by user');
+                                observer.error({
+                                    success: false,
+                                    message: 'Payment cancelled by user',
+                                    rrr: rrr
+                                });
+                            }
+                        });
+
+                        paymentEngine.showPaymentWidget();
+                    } catch (error) {
+                        console.error('✗ Error calling RmPaymentEngine.init:', error);
                         observer.error({
                             success: false,
                             message: 'Error initiating payment: ' + (error instanceof Error ? error.message : 'Unknown error')
