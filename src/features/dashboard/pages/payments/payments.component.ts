@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { ApiService } from '../../../../core/services/api.service';
+import { RemitaPaymentService } from '../../../../core/services/remita-payment.service';
 
 type PaymentsTab = 'renewal' | 'history';
 type UserRole = 'Superadmin' | 'Member' | 'Consulting Firm' | 'Practice Firm';
@@ -116,7 +117,8 @@ export class DashboardPaymentsComponent implements OnInit {
         private authService: AuthService,
         private notificationService: NotificationService,
         private apiService: ApiService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private remitaPaymentService: RemitaPaymentService
     ) { }
 
     ngOnInit(): void {
@@ -570,7 +572,7 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
-     * Confirm payment and proceed to Remita checkout
+     * Confirm payment and proceed to Remita checkout via inline widget
      */
     confirmAndProceedToPayment(): void {
         if (!this.paymentDetails) {
@@ -579,15 +581,34 @@ export class DashboardPaymentsComponent implements OnInit {
             return;
         }
 
-        console.log('🚀 Proceeding to Remita payment gateway');
-        console.log('📍 Checkout URL:', this.paymentDetails.checkoutUrl);
+        console.log('🚀 Opening Remita inline payment widget');
         console.log('💳 RRR:', this.paymentDetails.rrr);
 
-        // Close modal
+        // Close modal before opening Remita widget
         this.showPaymentDetailsModal = false;
 
-        // Redirect to Remita checkout URL
-        window.location.href = this.paymentDetails.checkoutUrl;
+        // Use Remita inline payment widget with RRR
+        this.remitaPaymentService.payWithRrr(this.paymentDetails.rrr).subscribe({
+            next: (response: any) => {
+                console.log('✅ Payment completed:', response);
+                this.paymentSuccess = true;
+                this.notificationService.success('Payment completed successfully!');
+                this.addToHistory();
+                this.clearMessage('success', 7000);
+                this.cdr.detectChanges();
+            },
+            error: (error: any) => {
+                console.error('❌ Payment failed or cancelled:', error);
+                if (error.message === 'Payment cancelled by user') {
+                    this.notificationService.info('Payment was cancelled');
+                } else {
+                    this.errorMessage = error.message || 'Payment failed. Please try again.';
+                    this.notificationService.error(this.errorMessage);
+                    this.clearMessage('error', 5000);
+                }
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     /**
