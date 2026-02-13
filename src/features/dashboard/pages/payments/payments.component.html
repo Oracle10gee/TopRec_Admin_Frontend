@@ -684,7 +684,27 @@
 
   <!-- Payment History Tab Content -->
   <div *ngIf="activeTab === 'history'" class="animate-slideIn">
+    <!-- Loading State -->
     <div
+      *ngIf="isLoadingHistory"
+      class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden p-8"
+    >
+      <div class="flex flex-col items-center justify-center py-12">
+        <div class="relative w-12 h-12 mb-4">
+          <div
+            class="absolute inset-0 border-4 border-gray-200 rounded-full"
+          ></div>
+          <div
+            class="absolute inset-0 border-4 border-[#1a5632] rounded-full border-t-transparent animate-spin"
+          ></div>
+        </div>
+        <p class="text-gray-600 font-medium">Loading payment history...</p>
+      </div>
+    </div>
+
+    <!-- Data Loaded -->
+    <div
+      *ngIf="!isLoadingHistory"
       class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden"
     >
       <!-- History Header -->
@@ -737,6 +757,116 @@
             Export
           </button>
         </div>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div
+        class="px-8 py-4 bg-white border-b border-gray-200 flex gap-3 flex-wrap"
+      >
+        <button
+          (click)="filterByStatus('all')"
+          [ngClass]="
+            historyStatusFilter === 'all'
+              ? 'bg-[#1a5632] text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          "
+          class="px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200"
+        >
+          <span class="flex items-center gap-2">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4M7 12a5 5 0 1110 0A5 5 0 017 12z"
+              />
+            </svg>
+            All Payments
+          </span>
+        </button>
+        <button
+          (click)="filterByStatus('successful')"
+          [ngClass]="
+            historyStatusFilter === 'successful'
+              ? 'bg-green-600 text-white'
+              : 'bg-green-100 text-green-700 hover:bg-green-200'
+          "
+          class="px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200"
+        >
+          <span class="flex items-center gap-2">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            Successful
+          </span>
+        </button>
+        <button
+          (click)="filterByStatus('pending')"
+          [ngClass]="
+            historyStatusFilter === 'pending'
+              ? 'bg-yellow-600 text-white'
+              : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+          "
+          class="px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200"
+        >
+          <span class="flex items-center gap-2">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            Pending
+          </span>
+        </button>
+        <button
+          (click)="filterByStatus('failed')"
+          [ngClass]="
+            historyStatusFilter === 'failed'
+              ? 'bg-red-600 text-white'
+              : 'bg-red-100 text-red-700 hover:bg-red-200'
+          "
+          class="px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200"
+        >
+          <span class="flex items-center gap-2">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+            Failed
+          </span>
+        </button>
       </div>
 
       <!-- Table -->
@@ -794,7 +924,7 @@
                     />
                   </svg>
                   <span class="font-semibold text-gray-900">{{
-                    payment.date | date: "MMM d, yyyy"
+                    payment.date
                   }}</span>
                 </div>
               </td>
@@ -813,19 +943,20 @@
               </td>
               <td class="px-8 py-5 text-sm">
                 <span
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200"
+                  [ngClass]="getStatusColor(payment.status)"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border"
                 >
                   <svg
                     class="w-3 h-3"
                     fill="none"
                     stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    [attr.viewBox]="getStatusIcon(payment.status).viewBox"
                   >
                     <path
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      d="M5 13l4 4L19 7"
+                      [attr.d]="getStatusIcon(payment.status).path"
                     />
                   </svg>
                   {{ payment.status }}
@@ -857,8 +988,74 @@
         </table>
       </div>
 
+      <!-- Pagination Controls -->
+      <div
+        class="px-8 py-6 bg-white border-t border-gray-200 flex items-center justify-between"
+      >
+        <div class="text-sm text-gray-600">
+          Showing
+          <span class="font-semibold text-gray-900">{{
+            paymentHistory.length
+          }}</span>
+          of
+          <span class="font-semibold text-gray-900">{{ totalPayments }}</span>
+          payments
+        </div>
+        <div class="flex items-center gap-3">
+          <button
+            (click)="previousPage()"
+            [disabled]="currentPage === 1"
+            class="px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-[#1a5632] hover:text-[#1a5632] hover:bg-green-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-700 disabled:hover:bg-white flex items-center gap-2"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            Previous
+          </button>
+          <div
+            class="px-4 py-2 bg-gray-100 rounded-lg text-sm font-semibold text-gray-900"
+          >
+            Page <span class="text-[#1a5632]">{{ currentPage }}</span> of
+            <span class="text-[#1a5632]">{{ totalPages }}</span>
+          </div>
+          <button
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages || totalPages === 0"
+            class="px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-[#1a5632] hover:text-[#1a5632] hover:bg-green-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-700 disabled:hover:bg-white flex items-center gap-2"
+          >
+            Next
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
       <!-- Empty State -->
-      <div *ngIf="paymentHistory.length === 0" class="text-center py-16 px-4">
+      <div
+        *ngIf="!isLoadingHistory && paymentHistory.length === 0"
+        class="text-center py-16 px-4"
+      >
         <div
           class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4"
         >
@@ -889,11 +1086,15 @@
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Payment Details Modal -->
+<!-- Payment Details Modal -->
+<div
+  *ngIf="showPaymentDetailsModal"
+  class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn"
+>
   <div
-    *ngIf="showPaymentDetailsModal"
-    class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn"
+    class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 transform transition-all animate-slideIn overflow-hidden"
   >
     <div
       class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 transform transition-all animate-slideIn overflow-hidden"
