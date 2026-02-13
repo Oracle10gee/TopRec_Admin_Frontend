@@ -169,19 +169,19 @@ export class DashboardPaymentsComponent implements OnInit {
      */
     private loadUserPhone(): void {
         console.log('📞 Loading user phone number from profile...');
-        
+
         this.apiService.get<any>('/auth/profile').subscribe({
             next: (response: any) => {
                 const phoneNumber = response.data?.user?.phone_number;
-                
+
                 if (phoneNumber) {
                     console.log('✅ Phone number retrieved:', phoneNumber);
-                    
+
                     // Auto-populate the phone field with user's phone number
                     this.paymentForm.patchValue({
                         phone: phoneNumber
                     });
-                    
+
                     console.log('✅ Phone field auto-populated');
                 } else {
                     console.warn('⚠️ No phone number found in profile');
