@@ -39,6 +39,24 @@ export interface StatesResponse {
     };
 }
 
+export interface Qualification {
+    value: string;
+    label: string;
+}
+
+export interface QualificationsResponse {
+    success: boolean;
+    message: string;
+    data: {
+        qualifications: Qualification[];
+    };
+    error: null | string;
+    meta: {
+        requestId: string;
+        timestamp: string;
+    };
+}
+
 // API Response Models
 export interface AuthResponse {
     success: boolean;
