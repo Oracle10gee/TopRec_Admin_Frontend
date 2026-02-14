@@ -110,12 +110,12 @@ export class SidebarComponent implements OnInit {
         // Filter menu items based on user role
         const userRole = this.authService.getCurrentUserRole();
         this.menuItems = allMenuItems.filter(item => {
-            // Hide 'Member' item for 'Member' role
-            if (userRole === 'Member' && item.id === 'member') {
+            // Hide 'Member' item for 'Member', 'Consulting Firm', and 'Practice Firm' roles
+            if ((userRole === 'Member' || userRole === 'Consulting Firm' || userRole === 'Practice Firm') && item.id === 'member') {
                 return false;
             }
-            // Hide 'Profile' item for 'Superadmin' role
-            if (userRole === 'Superadmin' && (item.id === 'profile' || item.id === 'license')) {
+            // Hide 'Home', 'Payments' items and 'Profile', 'License' for 'Superadmin' role
+            if (userRole === 'Superadmin' && (item.id === 'home' || item.id === 'payments' || item.id === 'profile' || item.id === 'license')) {
                 return false;
             }
             return true;
