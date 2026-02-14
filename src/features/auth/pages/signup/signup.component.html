@@ -239,6 +239,34 @@
               </p>
             </div>
           </div>
+
+          <!-- Gender (Only for Members) -->
+          <div *ngIf="isGenderVisible()">
+            <label
+              for="gender"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
+              Gender <span class="text-red-500">*</span>
+            </label>
+            <select
+              id="gender"
+              formControlName="gender"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
+              [class.border-red-500]="gender?.invalid && gender?.touched"
+            >
+              <option value="">-- Select gender --</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+            <div *ngIf="gender?.invalid && gender?.touched" class="mt-1">
+              <p
+                *ngIf="gender?.errors?.['required']"
+                class="text-xs text-red-500"
+              >
+                Gender is required
+              </p>
+            </div>
+          </div>
         </div>
 
         <!-- Professional Information Section -->
@@ -276,6 +304,40 @@
                 class="text-xs text-red-500"
               >
                 Membership number is required
+              </p>
+            </div>
+          </div>
+
+          <!-- State of Practice -->
+          <div>
+            <label
+              for="state_of_practice"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
+              State of Practice <span class="text-red-500">*</span>
+            </label>
+            <select
+              id="state_of_practice"
+              formControlName="state_of_practice"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
+              [class.border-red-500]="
+                state_of_practice?.invalid && state_of_practice?.touched
+              "
+            >
+              <option value="">-- Select state of practice --</option>
+              <option *ngFor="let state of states" [value]="state.name">
+                {{ state.name }}
+              </option>
+            </select>
+            <div
+              *ngIf="state_of_practice?.invalid && state_of_practice?.touched"
+              class="mt-1"
+            >
+              <p
+                *ngIf="state_of_practice?.errors?.['required']"
+                class="text-xs text-red-500"
+              >
+                State of practice is required
               </p>
             </div>
           </div>

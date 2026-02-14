@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ApiService } from '../../../../core/services/api.service';
+import { State } from '../../../../core/models/auth.model';
 
 @Component({
     standalone: true,
@@ -19,15 +21,18 @@ export class SignUpComponent implements OnInit {
     errorMessage = '';
     successMessage = '';
     selectedRole: string = '';
+    states: State[] = [];
 
     constructor(
         private fb: FormBuilder,
         private router: Router,
-        private authService: AuthService
+        private authService: AuthService,
+        private apiService: ApiService
     ) { }
 
     ngOnInit(): void {
         this.initializeForm();
+        this.fetchStates();
     }
 
     initializeForm(): void {
@@ -36,6 +41,8 @@ export class SignUpComponent implements OnInit {
             full_name: ['', [Validators.required, Validators.minLength(3)]],
             membership_number: ['', Validators.required],
             qualification: [''],
+            gender: [''],
+            state_of_practice: ['', Validators.required],
             registration_date: ['', Validators.required],
             address: ['', [Validators.required, Validators.minLength(5)]],
             phone_number: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
@@ -46,15 +53,27 @@ export class SignUpComponent implements OnInit {
             validators: [this.passwordMatchValidator, this.qualificationRequiredValidator.bind(this)]
         });
 
-        // Subscribe to role changes to update qualification requirement
+        // Subscribe to role changes to update qualification and gender requirement
         this.signUpForm.get('role')?.valueChanges.subscribe((role) => {
             this.selectedRole = role;
             this.updateQualificationValidation(role);
+            this.updateGenderValidation(role);
 
-            // Auto-set qualification to "test" for non-Member roles
+            // Auto-set qualification to "Associate" for non-Member roles
             const qualificationControl = this.signUpForm.get('qualification');
             if (role === 'Consulting Firm' || role === 'Practice Firm') {
                 qualificationControl?.setValue('Associate', { emitEvent: false });
+            }
+        });
+    }
+
+    private fetchStates(): void {
+        this.apiService.get<any>('/states').subscribe({
+            next: (response) => {
+                this.states = response.data.states;
+            },
+            error: (error) => {
+                console.error('Failed to fetch states:', error);
             }
         });
     }
@@ -71,6 +90,20 @@ export class SignUpComponent implements OnInit {
             qualificationControl?.reset();
         }
         qualificationControl?.updateValueAndValidity();
+    }
+
+    /**
+     * Update gender field validation based on role
+     */
+    private updateGenderValidation(role: string): void {
+        const genderControl = this.signUpForm.get('gender');
+        if (role === 'Member') {
+            genderControl?.setValidators([Validators.required]);
+        } else {
+            genderControl?.setValidators([]);
+            genderControl?.reset();
+        }
+        genderControl?.updateValueAndValidity();
     }
 
     /**
@@ -144,10 +177,25 @@ export class SignUpComponent implements OnInit {
         return this.signUpForm.get('role');
     }
 
+    get gender() {
+        return this.signUpForm.get('gender');
+    }
+
+    get state_of_practice() {
+        return this.signUpForm.get('state_of_practice');
+    }
+
     /**
      * Check if qualification field should be visible
      */
     isQualificationVisible(): boolean {
+        return this.selectedRole === 'Member';
+    }
+
+    /**
+     * Check if gender field should be visible (only for Members)
+     */
+    isGenderVisible(): boolean {
         return this.selectedRole === 'Member';
     }
 
