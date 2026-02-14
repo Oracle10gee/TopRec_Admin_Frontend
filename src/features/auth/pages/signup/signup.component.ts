@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ApiService } from '../../../../core/services/api.service';
-import { State } from '../../../../core/models/auth.model';
+import { State, Qualification } from '../../../../core/models/auth.model';
 
 @Component({
     standalone: true,
@@ -22,6 +22,7 @@ export class SignUpComponent implements OnInit {
     successMessage = '';
     selectedRole: string = '';
     states: State[] = [];
+    qualifications: Qualification[] = [];
 
     constructor(
         private fb: FormBuilder,
@@ -33,6 +34,7 @@ export class SignUpComponent implements OnInit {
     ngOnInit(): void {
         this.initializeForm();
         this.fetchStates();
+        this.fetchQualifications();
     }
 
     initializeForm(): void {
@@ -74,6 +76,17 @@ export class SignUpComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Failed to fetch states:', error);
+            }
+        });
+    }
+
+    private fetchQualifications(): void {
+        this.apiService.get<any>('/auth/qualifications').subscribe({
+            next: (response) => {
+                this.qualifications = response.data.qualifications;
+            },
+            error: (error) => {
+                console.error('Failed to fetch qualifications:', error);
             }
         });
     }
