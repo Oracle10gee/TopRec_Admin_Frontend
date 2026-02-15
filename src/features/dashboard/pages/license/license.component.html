@@ -62,7 +62,7 @@
           </div>
           My License
         </h1>
-        <p class="text-gray-600 mt-2">Your professional license to practice as a Town Planner</p>
+        <p class="text-gray-600 mt-2">Your professional license to practice{{ user?.role === 'Consulting Firm' ? ' as a Consulting Firm' : user?.role === 'Practice Firm' ? ' as a Practice Firm' : ' as a Town Planner' }}</p>
       </div>
 
       <!-- Action Buttons -->
@@ -176,7 +176,7 @@
             <!-- Description Text -->
             <div class="cert-description">
               <p>
-                has been duly <strong>registered and licensed</strong> as a Town Planner in accordance with the provisions of the law governing urban and
+                {{ certificateDescription }} in accordance with the provisions of the law governing urban and
                 regional planning practice in the Federal Republic of Nigeria. It authenticates his <strong>professional competence, ethical
                 standing, and authorization to engage in the practice of Town Planning</strong> under the authority of the Town Planners
                 Registration Council of Nigeria (TOPREC).
