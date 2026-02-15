@@ -145,12 +145,20 @@
       <div class="certificate-border">
         <div class="certificate-inner">
 
-          <!-- Concentric circles background (right side) -->
+          <!-- Concentric circles background (centered green spiral) -->
           <div class="circles-bg">
             <div class="circle circle-1"></div>
             <div class="circle circle-2"></div>
             <div class="circle circle-3"></div>
             <div class="circle circle-4"></div>
+            <div class="circle circle-5"></div>
+            <div class="circle circle-6"></div>
+            <div class="circle circle-7"></div>
+          </div>
+
+          <!-- Certified Seal (top-right) - shown for Consulting Firm & Practice Firm -->
+          <div class="certified-seal" *ngIf="user.role === 'Consulting Firm' || user.role === 'Practice Firm'">
+            <img src="assets/Asset 2.png" alt="Certified Seal" class="certified-seal-img" />
           </div>
 
           <!-- Certificate Content -->
