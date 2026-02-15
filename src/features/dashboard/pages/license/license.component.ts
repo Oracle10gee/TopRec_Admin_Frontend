@@ -1,16 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
-interface License {
-    id: string;
-    status: 'Active' | 'Expired' | 'Pending' | 'Suspended';
-    issuedDate: string;
-    expiryDate: string;
-    qualification: string;
-    verified: boolean;
-    daysUntilExpiry: number;
-}
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { User } from '../../../../core/models/auth.model';
 
 @Component({
     standalone: true,
@@ -19,169 +14,116 @@ interface License {
     templateUrl: './license.component.html',
     styleUrls: ['./license.component.scss']
 })
-export class DashboardLicenseComponent implements OnInit {
-    licenses: License[] = [
-        {
-            id: 'RTP/2024/001',
-            status: 'Active',
-            issuedDate: '2024-01-15',
-            expiryDate: '2025-01-15',
-            qualification: 'Professional Town Planner',
-            verified: true,
-            daysUntilExpiry: 30
-        }
-    ];
+export class DashboardLicenseComponent implements OnInit, OnDestroy {
+    user: User | null = null;
+    licenseStatus: 'Active' | 'Expired' = 'Active';
+    issuedDate: string = '';
+    expiryDate: string = '';
+    daysUntilExpiry: number = 0;
+    validYear: number = new Date().getFullYear();
+    canViewLicense: boolean = false;
+    financialBlockMessage: string = '';
+    isLoading: boolean = true;
 
-    constructor(private router: Router) {}
+    private destroy$ = new Subject<void>();
+
+    constructor(
+        private router: Router,
+        private authService: AuthService,
+        private notificationService: NotificationService
+    ) {}
 
     ngOnInit(): void {
-        this.loadLicenseData();
-        this.calculateDaysUntilExpiry();
+        this.loadUserData();
     }
 
-    /**
-     * Load license data from API
-     */
-    private loadLicenseData(): void {
-        // TODO: Implement API call to fetch licenses
-        console.log('Loading license data...');
-        
-        // Mock data is already in the licenses array
-        // In production, this would be an API call
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
-    /**
-     * Calculate days until expiry for each license
-     */
-    private calculateDaysUntilExpiry(): void {
-        const today = new Date();
-        
-        this.licenses = this.licenses.map(license => {
-            const expiryDate = new Date(license.expiryDate);
-            const diffTime = expiryDate.getTime() - today.getTime();
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            return {
-                ...license,
-                daysUntilExpiry: diffDays
-            };
-        });
-    }
-
-    /**
-     * Get count of active licenses
-     */
-    getActiveLicensesCount(): number {
-        return this.licenses.filter(l => l.status === 'Active').length;
-    }
-
-    /**
-     * Get status badge CSS class
-     */
-    getStatusClass(status: string): string {
-        const classes = {
-            'Active': 'bg-green-100 text-green-800 border border-green-200',
-            'Expired': 'bg-red-100 text-red-800 border border-red-200',
-            'Pending': 'bg-yellow-100 text-yellow-800 border border-yellow-200',
-            'Suspended': 'bg-gray-100 text-gray-800 border border-gray-200'
-        };
-        return classes[status as keyof typeof classes] || 'bg-gray-100 text-gray-800';
-    }
-
-    /**
-     * Get status dot CSS class
-     */
-    getStatusDotClass(status: string): string {
-        const classes = {
-            'Active': 'bg-green-500',
-            'Expired': 'bg-red-500',
-            'Pending': 'bg-yellow-500',
-            'Suspended': 'bg-gray-500'
-        };
-        return classes[status as keyof typeof classes] || 'bg-gray-500';
-    }
-
-    /**
-     * Download license certificate as PDF
-     */
-    downloadLicense(licenseId: string): void {
-        console.log('Downloading license:', licenseId);
-        
-        // TODO: Implement actual download logic
-        // This would typically call an API endpoint that generates a PDF
-        
-        // Simulate download
-        alert(`Downloading license ${licenseId}. This feature will be implemented soon.`);
-        
-        // In production, you might do something like:
-        // this.licenseService.downloadLicense(licenseId).subscribe(blob => {
-        //   const url = window.URL.createObjectURL(blob);
-        //   const link = document.createElement('a');
-        //   link.href = url;
-        //   link.download = `license-${licenseId}.pdf`;
-        //   link.click();
-        // });
-    }
-
-    /**
-     * Verify certificate authenticity
-     */
-    verifyCertificate(licenseId: string): void {
-        console.log('Verifying certificate:', licenseId);
-        
-        // TODO: Implement verification logic
-        // This would show a modal or navigate to a verification page
-        
-        alert(`Certificate verification for ${licenseId}. 
-
-This will display:
-- Certificate authenticity status
-- QR code for verification
-- Shareable verification link
-- Expiry status
-
-Feature coming soon!`);
-    }
-
-    /**
-     * Share license via email or social media
-     */
-    shareLicense(licenseId: string): void {
-        console.log('Sharing license:', licenseId);
-        
-        // TODO: Implement share functionality
-        // Could use Web Share API or show a modal with share options
-        
-        if (navigator.share) {
-            navigator.share({
-                title: 'My Professional License',
-                text: 'Check out my TOPREC professional license',
-                url: `https://toprecng.org/verify/${licenseId}`
-            }).then(() => {
-                console.log('License shared successfully');
-            }).catch((error) => {
-                console.log('Error sharing:', error);
+    private loadUserData(): void {
+        this.authService.currentUser$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(user => {
+                this.user = user;
+                if (user) {
+                    this.checkFinancialStatus(user);
+                    this.calculateLicenseDates();
+                }
+                this.isLoading = false;
             });
+    }
+
+    /**
+     * Check the user's current_financial_status.
+     * If 0 or null => no outstanding levy => allow license view/download.
+     * If any actual figure => user is owing => block license view/download.
+     */
+    private checkFinancialStatus(user: User): void {
+        const status = user.current_financial_status;
+
+        if (status === null || status === '0' || status === '' || Number(status) === 0) {
+            this.canViewLicense = true;
+            this.financialBlockMessage = '';
         } else {
-            // Fallback for browsers that don't support Web Share API
-            alert('Share options:\n\n- Copy verification link\n- Share via email\n- Share on LinkedIn\n\nFeature coming soon!');
+            this.canViewLicense = false;
+            this.financialBlockMessage =
+                'You have an outstanding levy balance. Please settle your license fees before you can view or download your license.';
+            this.notificationService.error(this.financialBlockMessage, 7000);
         }
     }
 
     /**
-     * Print license certificate
+     * License expiry logic:
+     * - Renewals run on a 12-month calendar period (Jan 1 - Dec 31).
+     * - A license always expires on December 31st of every year.
+     * - Issued date is January 1st of the current year (or the user's registration date).
      */
-    printLicense(licenseId: string): void {
-        console.log('Printing license:', licenseId);
-        
-        // TODO: Implement print functionality
-        // This would open a print-friendly version of the license
-        
-        alert(`Opening print dialog for license ${licenseId}. Feature coming soon!`);
-        
-        // In production:
-        // window.print();
-        // Or navigate to a print-friendly page
+    private calculateLicenseDates(): void {
+        const today = new Date();
+        const currentYear = today.getFullYear();
+
+        // License is always valid from Jan 1 to Dec 31 of the current year
+        this.issuedDate = `${currentYear}-01-01`;
+        this.expiryDate = `${currentYear}-12-31`;
+        this.validYear = currentYear;
+
+        const expiry = new Date(currentYear, 11, 31); // Dec 31
+        const diffTime = expiry.getTime() - today.getTime();
+        this.daysUntilExpiry = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (this.daysUntilExpiry < 0) {
+            this.licenseStatus = 'Expired';
+        } else {
+            this.licenseStatus = 'Active';
+        }
+    }
+
+    /**
+     * Download license as PDF (print-based)
+     */
+    downloadLicense(): void {
+        if (!this.canViewLicense) {
+            this.notificationService.error(
+                'You have an outstanding levy balance. Please settle your license fees before downloading your license.'
+            );
+            return;
+        }
+        this.printLicense();
+    }
+
+    /**
+     * Print the license certificate
+     */
+    printLicense(): void {
+        if (!this.canViewLicense) {
+            this.notificationService.error(
+                'You have an outstanding levy balance. Please settle your license fees before printing your license.'
+            );
+            return;
+        }
+        window.print();
     }
 
     /**
@@ -189,28 +131,5 @@ Feature coming soon!`);
      */
     navigateToRenewal(): void {
         this.router.navigate(['/dashboard/payments']);
-    }
-
-    /**
-     * Check if license is expiring soon (within 60 days)
-     */
-    isExpiringSoon(license: License): boolean {
-        return license.daysUntilExpiry <= 60 && license.daysUntilExpiry > 0;
-    }
-
-    /**
-     * Check if license is expired
-     */
-    isExpired(license: License): boolean {
-        return license.daysUntilExpiry < 0;
-    }
-
-    /**
-     * Get expiry warning level
-     */
-    getExpiryWarningLevel(license: License): 'safe' | 'warning' | 'danger' {
-        if (license.daysUntilExpiry > 90) return 'safe';
-        if (license.daysUntilExpiry > 30) return 'warning';
-        return 'danger';
     }
 }

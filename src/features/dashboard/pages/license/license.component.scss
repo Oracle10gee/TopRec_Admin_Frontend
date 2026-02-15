@@ -1,439 +1,355 @@
-/* Modern License Component Styles */
-
 /* Page animations */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-out;
 }
 
-/* License card slide up */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ==================== CERTIFICATE STYLES ==================== */
+
+.certificate-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
 }
 
-/* License header gradient animation */
-.bg-gradient-to-r {
-  background-size: 200% 100%;
-  animation: gradientShift 8s ease infinite;
+.certificate {
+  aspect-ratio: 1.414 / 1; /* A4 landscape ratio */
+  width: 100%;
+  position: relative;
 }
 
-@keyframes gradientShift {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+.certificate-border {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1a5632 0%, #2a7642 30%, #1a5632 70%, #0d3520 100%);
+  padding: 12px;
 }
 
-/* Shield icon animation */
-.w-16.h-16 svg {
-  animation: shieldPulse 2s ease-in-out infinite;
-}
-
-@keyframes shieldPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-/* Status badge pulse */
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-/* Date card hover effect */
-.group:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Date card background circle */
-.w-20.h-20 {
-  animation: circleFloat 3s ease-in-out infinite;
-}
-
-@keyframes circleFloat {
-  0%, 100% {
-    transform: translate(2.5rem, -2.5rem);
-  }
-  50% {
-    transform: translate(3rem, -3rem);
-  }
-}
-
-/* Button hover effects */
-button {
+.certificate-inner {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f8faf9 0%, #ffffff 40%, #f5f7f6 100%);
   position: relative;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
-    transform: scale(0);
-    transition: transform 0.4s ease;
-  }
-
-  &:active::before {
-    transform: scale(1);
-  }
 }
 
-/* Gradient button animation */
-.bg-gradient-to-r.from-\[\#1a5632\] {
-  background-size: 200% 100%;
-  transition: background-position 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover:not(:disabled) {
-    background-position: right center;
-    box-shadow: 0 10px 25px rgba(26, 86, 50, 0.3);
-  }
+/* Concentric circles background */
+.circles-bg {
+  position: absolute;
+  top: 50%;
+  right: 25%;
+  transform: translate(50%, -50%);
+  width: 70%;
+  height: 120%;
+  pointer-events: none;
 }
 
-/* Icon scale on hover */
-.group:hover svg {
-  transform: scale(1.1);
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid rgba(26, 86, 50, 0.06);
 }
 
-/* Renewal banner background pattern */
-.bg-gradient-to-r.from-amber-50 {
+.circle-1 {
+  width: 30%;
+  height: 0;
+  padding-bottom: 30%;
+  border-color: rgba(26, 86, 50, 0.08);
+}
+
+.circle-2 {
+  width: 50%;
+  height: 0;
+  padding-bottom: 50%;
+  border-color: rgba(26, 86, 50, 0.06);
+}
+
+.circle-3 {
+  width: 70%;
+  height: 0;
+  padding-bottom: 70%;
+  border-color: rgba(26, 86, 50, 0.04);
+}
+
+.circle-4 {
+  width: 90%;
+  height: 0;
+  padding-bottom: 90%;
+  border-color: rgba(26, 86, 50, 0.03);
+}
+
+/* Certificate content layout */
+.certificate-content {
   position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 5% 6%;
+}
+
+/* Logo header */
+.cert-header {
+  margin-bottom: 4%;
+}
+
+.cert-logo {
+  height: auto;
+  width: clamp(180px, 30%, 350px);
+  object-fit: contain;
+}
+
+/* Title section */
+.cert-title-section {
+  margin-bottom: 2%;
+}
+
+.cert-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(28px, 5vw, 56px);
+  font-weight: 700;
+  font-style: italic;
+  color: #1a5632;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.cert-subtitle {
+  font-family: 'Arial', 'Helvetica Neue', sans-serif;
+  font-size: clamp(10px, 1.5vw, 16px);
+  font-weight: 700;
+  color: #333;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 4px 0 0;
+}
+
+.cert-auth-text {
+  font-family: 'Arial', 'Helvetica Neue', sans-serif;
+  font-size: clamp(9px, 1.2vw, 14px);
+  color: #555;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+/* Name section */
+.cert-name-section {
+  margin-bottom: 3%;
+  flex-shrink: 0;
+}
+
+.cert-name {
+  font-family: 'Brush Script MT', 'Segoe Script', 'Dancing Script', cursive;
+  font-size: clamp(30px, 5.5vw, 64px);
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.2;
+  font-weight: 400;
+}
+
+/* Description */
+.cert-description {
+  flex-shrink: 0;
+  margin-bottom: auto;
+
+  p {
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: clamp(9px, 1.2vw, 14px);
+    color: #444;
+    line-height: 1.7;
+    margin: 0;
+    text-align: justify;
+
+    strong {
+      color: #222;
+      font-weight: 700;
+    }
+  }
+}
+
+/* Footer */
+.cert-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-top: 3%;
+  margin-top: auto;
+  gap: 4%;
+}
+
+.cert-valid {
+  flex-shrink: 0;
+
+  .valid-label {
+    font-family: 'Arial', 'Helvetica Neue', sans-serif;
+    font-size: clamp(12px, 1.8vw, 20px);
+    font-weight: 800;
+    font-style: italic;
+    color: #1a5632;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+}
+
+/* QR Code */
+.cert-qr {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.qr-placeholder {
+  width: clamp(50px, 8vw, 90px);
+  height: clamp(50px, 8vw, 90px);
+  margin: 0 auto;
+}
+
+.qr-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.qr-label {
+  font-family: 'Arial', 'Helvetica Neue', sans-serif;
+  font-size: clamp(5px, 0.7vw, 8px);
+  color: white;
+  background: #1a5632;
+  padding: 2px 8px;
+  margin-top: 4px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: inline-block;
+  border-radius: 2px;
+}
+
+/* President signature */
+.cert-president {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.president-name {
+  font-family: 'Brush Script MT', 'Segoe Script', 'Dancing Script', cursive;
+  font-size: clamp(14px, 2.2vw, 24px);
+  color: #1a1a1a;
+  margin: 0;
+  padding-bottom: 2px;
+  border-bottom: 1.5px solid #333;
+  font-style: italic;
+}
+
+.president-title {
+  font-family: 'Arial', 'Helvetica Neue', sans-serif;
+  font-size: clamp(10px, 1.2vw, 14px);
+  font-weight: 700;
+  color: #1a5632;
+  margin-top: 4px;
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+.no-print {
+  display: block;
+}
+
+@media print {
+  /* Hide everything except the certificate */
+  .no-print,
+  app-dashboard-sidebar,
+  app-dashboard-topbar,
+  nav,
+  header,
+  footer {
+    display: none !important;
+  }
+
+  /* Reset page layout for print */
+  :host {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .certificate-wrapper {
+    box-shadow: none;
+    border-radius: 0;
+    margin: 0;
     width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.5),
-      transparent
-    );
-    animation: shimmer 3s infinite;
+  }
+
+  .certificate {
+    width: 100%;
+    page-break-inside: avoid;
+  }
+
+  .certificate-border {
+    padding: 10px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .certificate-inner {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .circles-bg .circle {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Ensure colors print correctly */
+  .cert-title,
+  .valid-label,
+  .president-title,
+  .qr-label {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
   }
 }
 
-@keyframes shimmer {
-  to {
-    left: 100%;
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 768px) {
+  .certificate-content {
+    padding: 4% 5%;
   }
-}
 
-/* Renewal icon pulse */
-.w-12.h-12 {
-  animation: iconPulse 2s ease-in-out infinite;
-}
-
-@keyframes iconPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+  .cert-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
   }
-  50% {
-    box-shadow: 0 0 0 12px rgba(245, 158, 11, 0);
+
+  .cert-qr {
+    align-self: center;
   }
-}
 
-/* Action required badge pulse */
-.animate-pulse.bg-red-500 {
-  animation: badgePulse 1.5s ease-in-out infinite;
-}
-
-@keyframes badgePulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
+  .cert-president {
+    align-self: flex-end;
   }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-/* Empty state animation */
-.inline-flex.w-20.h-20 {
-  animation: emptyStatePulse 2s ease-in-out infinite;
-}
-
-@keyframes emptyStatePulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.9;
-  }
-}
-
-/* Details grid icons */
-.w-8.h-8.bg-blue-100,
-.w-8.h-8.bg-green-100,
-.w-8.h-8.bg-purple-100,
-.w-8.h-8.bg-emerald-100 {
-  transition: all 0.3s ease;
-}
-
-.flex:hover .w-8.h-8 {
-  transform: scale(1.1) rotate(5deg);
-}
-
-/* Smooth transitions */
-* {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Focus states for accessibility */
 button:focus-visible {
   outline: 2px solid #1a5632;
   outline-offset: 2px;
-}
-
-/* License card shadow enhancement */
-.shadow-lg:hover {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-/* Status dot animation */
-.w-2.h-2.animate-pulse {
-  animation: dotPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes dotPulse {
-  0%, 100% {
-    opacity: 1;
-    box-shadow: 0 0 0 0 currentColor;
-  }
-  50% {
-    opacity: 0.7;
-    box-shadow: 0 0 0 3px currentColor;
-  }
-}
-
-/* Background pattern float */
-.absolute.inset-0.opacity-10 {
-  animation: patternFloat 20s ease-in-out infinite;
-}
-
-@keyframes patternFloat {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(10px) rotate(5deg);
-  }
-}
-
-/* Border glow on hover */
-.border-2.border-blue-200:hover,
-.border-2.border-purple-200:hover,
-.border-2.border-orange-200:hover {
-  box-shadow: 0 0 15px currentColor;
-}
-
-/* Button ripple effect */
-button {
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-  }
-  
-  &:active::after {
-    width: 300px;
-    height: 300px;
-  }
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  /* Stack date cards */
-  .grid.lg\:grid-cols-3 {
-    grid-template-columns: 1fr;
-  }
-
-  /* Stack buttons */
-  .flex-wrap {
-    flex-direction: column;
-
-    button {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-
-  /* Reduce padding */
-  .p-6 {
-    padding: 1.25rem;
-  }
-
-  /* Smaller shield icon */
-  .w-16.h-16 {
-    width: 3rem;
-    height: 3rem;
-
-    svg {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
-  }
-}
-
-/* License header responsive */
-@media (max-width: 640px) {
-  .md\:flex-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .flex-wrap {
-    width: 100%;
-  }
-}
-
-/* Days remaining emphasis */
-.text-3xl.font-bold.text-orange-900 {
-  animation: numberPulse 2s ease-in-out infinite;
-}
-
-@keyframes numberPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-/* Card border animation */
-.border.border-gray-200 {
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, #1a5632, transparent);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover::before {
-    opacity: 0.3;
-  }
-}
-
-/* Verification icon animation */
-.text-emerald-600 svg {
-  animation: verifyPop 0.5s ease-out;
-}
-
-@keyframes verifyPop {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Quick stats shimmer */
-.bg-green-50 {
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.4),
-      transparent
-    );
-    animation: shimmer 3s infinite;
-  }
-}
-
-/* Loading state (for future use) */
-.loading {
-  position: relative;
-  pointer-events: none;
-  opacity: 0.6;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.5),
-      transparent
-    );
-    animation: loading 1.5s infinite;
-  }
-}
-
-@keyframes loading {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
 }
