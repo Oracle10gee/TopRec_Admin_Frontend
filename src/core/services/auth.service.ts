@@ -411,7 +411,7 @@ export class AuthService {
      * Update a payment type
      */
     updatePaymentType(paymentTypeId: string, data: any): Observable<any> {
-        return this.apiService.patch(`/payments/payment-types/${paymentTypeId}`, data).pipe(
+        return this.apiService.put(`/payments/payment-types/${paymentTypeId}`, data).pipe(
             catchError((error) => {
                 console.error('Error updating payment type:', error);
                 return throwError(() => error);

@@ -56,9 +56,10 @@ export class LoginComponent implements OnInit {
             const credentials = this.signInForm.value;
 
             this.authService.login(credentials).subscribe({
-                next: (user) => {
+                next: (user: any) => {
                     this.isLoading = false;
-                    this.router.navigate(['/dashboard/home']);
+                    const route = user?.role === 'Superadmin' ? '/dashboard/member' : '/dashboard/home';
+                    this.router.navigate([route]);
                 },
                 error: (error) => {
                     this.isLoading = false;
