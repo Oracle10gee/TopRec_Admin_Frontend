@@ -270,7 +270,10 @@ export class AuthService {
      * Handle authentication errors
      */
     private handleAuthError(error: any): Observable<never> {
-        const errorMessage = error?.error?.message || 'An authentication error occurred';
+        const errorDetails = error?.error?.error?.details;
+        const errorMessage = (typeof errorDetails === 'string' ? errorDetails : null)
+            || error?.error?.message
+            || 'An authentication error occurred';
         return throwError(() => new Error(errorMessage));
     }
 
