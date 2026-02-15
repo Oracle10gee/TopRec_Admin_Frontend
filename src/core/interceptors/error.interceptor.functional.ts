@@ -11,10 +11,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
                 // Client-side error
                 errorMessage = error.error.message;
             } else {
-                // Server-side error
-                errorMessage =
-                    error.error?.message ||
-                    `Error Code: ${error.status}\nMessage: ${error.message}`;
+                // Server-side error - prefer detailed error from backend
+                const errorDetails = error.error?.error?.details;
+                errorMessage = (typeof errorDetails === 'string' ? errorDetails : null)
+                    || error.error?.message
+                    || `Error Code: ${error.status}\nMessage: ${error.message}`;
             }
 
             console.error('HTTP Error:', errorMessage);
