@@ -61,10 +61,12 @@ export class SignUpComponent implements OnInit {
             this.updateQualificationValidation(role);
             this.updateGenderValidation(role);
 
-            // Auto-set qualification to "Associate" for non-Member roles
+            // Auto-set qualification and gender defaults for non-Member roles
             const qualificationControl = this.signUpForm.get('qualification');
+            const genderControl = this.signUpForm.get('gender');
             if (role === 'Consulting Firm' || role === 'Practice Firm') {
                 qualificationControl?.setValue('Associate', { emitEvent: false });
+                genderControl?.setValue('prefer_not_to_say', { emitEvent: false });
             }
         });
     }
