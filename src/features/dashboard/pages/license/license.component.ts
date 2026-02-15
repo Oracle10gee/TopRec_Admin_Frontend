@@ -24,6 +24,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
     canViewLicense: boolean = false;
     financialBlockMessage: string = '';
     isLoading: boolean = true;
+    certificateDescription: string = '';
 
     private destroy$ = new Subject<void>();
 
@@ -50,6 +51,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
                 if (user) {
                     this.checkFinancialStatus(user);
                     this.calculateLicenseDates();
+                    this.setCertificateDescription(user);
                 }
                 this.isLoading = false;
             });
@@ -71,6 +73,23 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
             this.financialBlockMessage =
                 'You have an outstanding levy balance. Please settle your license fees before you can view or download your license.';
             this.notificationService.error(this.financialBlockMessage, 7000);
+        }
+    }
+
+    /**
+     * Set the certificate description text based on user role.
+     */
+    private setCertificateDescription(user: User): void {
+        switch (user.role) {
+            case 'Consulting Firm':
+                this.certificateDescription = 'has been duly registered and licensed as a Consulting Firm';
+                break;
+            case 'Practice Firm':
+                this.certificateDescription = 'has been duly registered and licensed as a Practice Firm';
+                break;
+            default:
+                this.certificateDescription = 'has been duly registered and licensed as a Town Planner';
+                break;
         }
     }
 
