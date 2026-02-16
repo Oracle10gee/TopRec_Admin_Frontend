@@ -1,10 +1,28 @@
-<div class="space-y-6 animate-fadeIn">
+<!-- Loading State -->
+<div *ngIf="isLoading" class="space-y-6 animate-fadeIn">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+    <div>
+      <div class="h-9 w-64 bg-gray-200 rounded-lg animate-pulse"></div>
+      <div class="h-5 w-48 bg-gray-200 rounded mt-2 animate-pulse"></div>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div *ngFor="let i of [1,2,3,4]" class="bg-white rounded-xl p-6 border border-gray-200">
+      <div class="h-4 w-24 bg-gray-200 rounded animate-pulse mb-3"></div>
+      <div class="h-8 w-20 bg-gray-200 rounded animate-pulse mb-2"></div>
+      <div class="h-3 w-32 bg-gray-200 rounded animate-pulse"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div *ngIf="!isLoading && user" class="space-y-6 animate-fadeIn">
   <!-- Header Section -->
   <div class="flex flex-col md:flex-row md:items-center md:justify-between">
     <div>
       <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
         <span class="animate-slideIn">Welcome, {{ getUserFirstName() }}!</span>
-        <span class="text-2xl">👋</span>
+        <span class="text-2xl">&#x1F44B;</span>
       </h1>
       <p class="text-gray-600 mt-2 flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -13,184 +31,185 @@
         {{ getCurrentDate() }}
       </p>
     </div>
-    <!-- Quick Stats Summary -->
+    <!-- License Status Badge -->
     <div class="mt-4 md:mt-0 flex items-center gap-4">
-      <div class="px-4 py-2 bg-green-50 border border-green-200 rounded-lg">
-        <p class="text-xs text-green-600 font-medium">License Status</p>
-        <p class="text-sm font-bold text-green-700">Active</p>
+      <div class="px-4 py-2 border rounded-lg" [ngClass]="getLicenseStatusClass()">
+        <p class="text-xs font-medium">License Status</p>
+        <p class="text-sm font-bold flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full" [ngClass]="getLicenseStatusDotClass()"></span>
+          {{ licenseStatus }}
+        </p>
       </div>
     </div>
   </div>
 
   <!-- Stats Cards Grid -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+    <!-- License Status Card -->
     <div
-      *ngFor="let stat of stats; let i = index"
       class="group relative bg-white rounded-xl p-6 border border-gray-200 hover:border-[#1a5632] transition-all duration-300 hover:shadow-lg cursor-pointer overflow-hidden"
-      [style.animation-delay]="(i * 100) + 'ms'"
       style="animation: slideUp 0.5s ease-out both"
     >
-      <!-- Background Pattern -->
-      <div class="absolute top-0 right-0 w-32 h-32 opacity-5 group-hover:opacity-10 transition-opacity">
-        <svg class="w-full h-full" [innerHTML]="stat.icon"></svg>
-      </div>
-
-      <!-- Content -->
       <div class="relative flex items-start justify-between">
         <div class="flex-1">
           <div class="flex items-center gap-2 mb-2">
-            <p class="text-sm font-medium text-gray-600">{{ stat.label }}</p>
-            <span 
-              *ngIf="stat.badge" 
+            <p class="text-sm font-medium text-gray-600">License Status</p>
+            <span
               class="px-2 py-0.5 text-xs font-semibold rounded-full"
-              [ngClass]="stat.badgeClass"
+              [ngClass]="licenseStatus === 'Active' ? 'bg-green-100 text-green-700' : licenseStatus === 'Expired' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'"
             >
-              {{ stat.badge }}
+              {{ licenseStatus }}
             </span>
           </div>
-          <p class="text-3xl font-bold text-gray-900 mb-2">{{ stat.value }}</p>
-          <div class="flex items-center gap-1 text-sm">
-            <span 
-              class="flex items-center gap-1"
-              [ngClass]="stat.changePositive ? 'text-green-600' : 'text-red-600'"
-            >
-              <svg *ngIf="stat.changePositive" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
-              </svg>
-              <svg *ngIf="!stat.changePositive" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-              </svg>
-              <span class="font-semibold">{{ stat.change }}</span>
-            </span>
-            <span class="text-gray-500">vs last month</span>
-          </div>
+          <p class="text-3xl font-bold text-gray-900 mb-2">{{ daysUntilExpiry > 0 ? daysUntilExpiry : 0 }}</p>
+          <p class="text-sm text-gray-500">days remaining in {{ validYear }}</p>
         </div>
-
-        <!-- Icon -->
-        <div 
-          class="w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-          [ngClass]="stat.iconBg"
-        >
-          <svg class="w-7 h-7" [ngClass]="stat.iconColor" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path [attr.d]="stat.iconPath" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center bg-blue-100 transition-all duration-300 group-hover:scale-110">
+          <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
           </svg>
         </div>
       </div>
+      <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#1a5632] to-[#2a7642] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+    </div>
 
-      <!-- Hover Effect Border -->
+    <!-- Financial Status Card -->
+    <div
+      class="group relative bg-white rounded-xl p-6 border border-gray-200 hover:border-[#1a5632] transition-all duration-300 hover:shadow-lg cursor-pointer overflow-hidden"
+      style="animation: slideUp 0.5s ease-out both; animation-delay: 100ms"
+    >
+      <div class="relative flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-2">
+            <p class="text-sm font-medium text-gray-600">Levy Balance</p>
+            <span
+              class="px-2 py-0.5 text-xs font-semibold rounded-full"
+              [ngClass]="hasOutstandingBalance ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'"
+            >
+              {{ financialStatusLabel }}
+            </span>
+          </div>
+          <p class="text-3xl font-bold text-gray-900 mb-2">{{ financialStatusAmount }}</p>
+          <p class="text-sm text-gray-500">current financial status</p>
+        </div>
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+             [ngClass]="hasOutstandingBalance ? 'bg-red-100' : 'bg-green-100'">
+          <svg class="w-7 h-7" [ngClass]="hasOutstandingBalance ? 'text-red-600' : 'text-green-600'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#1a5632] to-[#2a7642] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+    </div>
+
+    <!-- Profile Completion Card -->
+    <div
+      class="group relative bg-white rounded-xl p-6 border border-gray-200 hover:border-[#1a5632] transition-all duration-300 hover:shadow-lg cursor-pointer overflow-hidden"
+      (click)="handleQuickAction('profile')"
+      style="animation: slideUp 0.5s ease-out both; animation-delay: 200ms"
+    >
+      <div class="relative flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-2">
+            <p class="text-sm font-medium text-gray-600">Profile Completion</p>
+            <span
+              class="px-2 py-0.5 text-xs font-semibold rounded-full"
+              [ngClass]="profileCompletionPercent === 100 ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'"
+            >
+              {{ profileCompletionPercent === 100 ? 'Complete' : 'Incomplete' }}
+            </span>
+          </div>
+          <p class="text-3xl font-bold text-gray-900 mb-2">{{ profileCompletionPercent }}%</p>
+          <p class="text-sm text-gray-500">{{ profileFieldsFilled }}/{{ profileFieldsTotal }} fields completed</p>
+        </div>
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center bg-purple-100 transition-all duration-300 group-hover:scale-110">
+          <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+      <!-- Inline progress bar -->
+      <div class="mt-3 w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div
+          class="h-full rounded-full transition-all duration-500"
+          [ngClass]="profileCompletionPercent === 100 ? 'bg-green-500' : 'bg-purple-500'"
+          [style.width.%]="profileCompletionPercent"
+        ></div>
+      </div>
+      <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#1a5632] to-[#2a7642] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+    </div>
+
+    <!-- Member Since Card -->
+    <div
+      class="group relative bg-white rounded-xl p-6 border border-gray-200 hover:border-[#1a5632] transition-all duration-300 hover:shadow-lg cursor-pointer overflow-hidden"
+      style="animation: slideUp 0.5s ease-out both; animation-delay: 300ms"
+    >
+      <div class="relative flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-2">
+            <p class="text-sm font-medium text-gray-600">Member Since</p>
+          </div>
+          <p class="text-2xl font-bold text-gray-900 mb-2">{{ memberSinceDate }}</p>
+          <p class="text-sm text-gray-500">{{ user.role }}</p>
+        </div>
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center bg-orange-100 transition-all duration-300 group-hover:scale-110">
+          <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
       <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#1a5632] to-[#2a7642] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
     </div>
   </div>
 
-  <!-- Main Content Grid -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Quick Actions -->
-    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <svg class="w-6 h-6 text-[#1a5632]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-          </svg>
-          Quick Actions
-        </h2>
-        <button class="text-sm text-[#1a5632] hover:text-[#2a7642] font-medium flex items-center gap-1">
-          View All
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <button
-          *ngFor="let action of quickActions"
-          (click)="handleQuickAction(action.id)"
-          class="group relative p-5 border-2 border-gray-200 rounded-xl hover:border-[#1a5632] hover:bg-green-50 transition-all duration-300 text-left overflow-hidden"
-        >
-          <!-- Background Gradient -->
-          <div class="absolute inset-0 bg-gradient-to-br from-[#1a5632]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-          <!-- Content -->
-          <div class="relative">
-            <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110"
-              [ngClass]="action.bgColor">
-              <svg class="w-6 h-6" [ngClass]="action.iconColor" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path [attr.d]="action.iconPath" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-              </svg>
-            </div>
-            <p class="font-semibold text-gray-900 mb-1">{{ action.title }}</p>
-            <p class="text-sm text-gray-500">{{ action.description }}</p>
-          </div>
-
-          <!-- Arrow -->
-          <div class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-            <svg class="w-4 h-4 text-[#1a5632]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-        </button>
-      </div>
+  <!-- Quick Actions (full width) -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+        <svg class="w-6 h-6 text-[#1a5632]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        Quick Actions
+      </h2>
     </div>
 
-    <!-- Recent Activities -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <svg class="w-6 h-6 text-[#1a5632]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          Recent Activities
-        </h2>
-      </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <button
+        *ngFor="let action of quickActions"
+        (click)="handleQuickAction(action.id)"
+        class="group relative p-5 border-2 border-gray-200 rounded-xl hover:border-[#1a5632] hover:bg-green-50 transition-all duration-300 text-left overflow-hidden"
+      >
+        <!-- Background Gradient -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#1a5632]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-      <div class="space-y-4">
-        <div
-          *ngFor="let activity of recentActivities"
-          class="group flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
-        >
-          <!-- Icon -->
-          <div 
-            class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
-            [ngClass]="activity.bgColor"
-          >
-            <svg class="w-5 h-5" [ngClass]="activity.iconColor" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path [attr.d]="activity.iconPath" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <!-- Content -->
+        <div class="relative">
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-3 transition-all duration-300 group-hover:scale-110"
+            [ngClass]="action.bgColor">
+            <svg class="w-6 h-6" [ngClass]="action.iconColor" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path [attr.d]="action.iconPath" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
             </svg>
           </div>
-
-          <!-- Content -->
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-gray-900 mb-1">{{ activity.type }}</p>
-            <p class="text-xs text-gray-500 flex items-center gap-1">
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              {{ activity.timestamp }}
-            </p>
-          </div>
-
-          <!-- Status Badge -->
-          <span 
-            class="px-2 py-1 text-xs font-medium rounded-full"
-            [ngClass]="activity.statusClass"
-          >
-            {{ activity.status }}
-          </span>
+          <p class="font-semibold text-gray-900 mb-1">{{ action.title }}</p>
+          <p class="text-sm text-gray-500">{{ action.description }}</p>
         </div>
-      </div>
 
-      <!-- View All Link -->
-      <button class="w-full mt-4 pt-4 border-t border-gray-200 text-sm text-[#1a5632] hover:text-[#2a7642] font-medium flex items-center justify-center gap-1 group">
-        View All Activities
-        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
+        <!-- Arrow -->
+        <div class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+          <svg class="w-4 h-4 text-[#1a5632]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
       </button>
     </div>
   </div>
 
-  <!-- Announcement Banner -->
-  <div class="relative bg-gradient-to-r from-[#1a5632] to-[#0d3520] rounded-xl p-6 text-white shadow-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300">
+  <!-- Announcement Banner (only show when license is expiring within 60 days) -->
+  <div
+    *ngIf="daysUntilExpiry <= 60 && daysUntilExpiry > 0"
+    class="relative bg-gradient-to-r from-[#1a5632] to-[#0d3520] rounded-xl p-6 text-white shadow-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300"
+  >
     <!-- Background Pattern -->
     <div class="absolute inset-0 opacity-10">
       <div class="absolute top-0 right-0 w-64 h-64 bg-white rounded-full transform translate-x-32 -translate-y-32"></div>
@@ -209,19 +228,48 @@
       <!-- Text -->
       <div class="flex-1">
         <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
-          Important Notice
+          License Renewal Reminder
           <span class="px-2 py-1 text-xs font-semibold bg-yellow-400 text-yellow-900 rounded-full animate-pulse">
             Action Required
           </span>
         </h3>
         <p class="text-sm opacity-90 leading-relaxed">
-          Your license will expire in <span class="font-bold">30 days</span>. Renew now to maintain your active status and avoid service interruption.
+          Your license will expire on <span class="font-bold">December 31, {{ validYear }}</span> (<span class="font-bold">{{ daysUntilExpiry }}</span> days remaining). Renew now to maintain your active status and avoid service interruption.
         </p>
       </div>
 
       <!-- Action Button -->
-      <button class="flex-shrink-0 px-6 py-2 bg-white text-[#1a5632] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 hover:shadow-lg">
+      <button
+        (click)="navigateToRenewal()"
+        class="flex-shrink-0 px-6 py-2 bg-white text-[#1a5632] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
+      >
         Renew Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Outstanding Balance Warning (show when there's an outstanding balance) -->
+  <div
+    *ngIf="hasOutstandingBalance"
+    class="relative bg-gradient-to-r from-red-600 to-red-800 rounded-xl p-6 text-white shadow-lg overflow-hidden"
+  >
+    <div class="relative flex items-start gap-4">
+      <div class="flex-shrink-0 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+        </svg>
+      </div>
+      <div class="flex-1">
+        <h3 class="text-lg font-bold mb-1">Outstanding Levy Balance</h3>
+        <p class="text-sm opacity-90 leading-relaxed">
+          You have an outstanding balance of <span class="font-bold">{{ financialStatusAmount }}</span>. Please settle your levy fees to access your license and maintain your active status.
+        </p>
+      </div>
+      <button
+        (click)="navigateToRenewal()"
+        class="flex-shrink-0 px-6 py-2 bg-white text-red-700 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-105"
+      >
+        Pay Now
       </button>
     </div>
   </div>
@@ -230,19 +278,53 @@
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-lg font-bold text-gray-900">License Validity Period</h3>
-      <span class="px-3 py-1 text-sm font-semibold text-orange-700 bg-orange-100 rounded-full">
-        30 days remaining
+      <span
+        class="px-3 py-1 text-sm font-semibold rounded-full"
+        [ngClass]="daysUntilExpiry > 60 ? 'text-green-700 bg-green-100' : daysUntilExpiry > 0 ? 'text-orange-700 bg-orange-100' : 'text-red-700 bg-red-100'"
+      >
+        {{ daysUntilExpiry > 0 ? daysUntilExpiry + ' days remaining' : 'Expired' }}
       </span>
     </div>
-    
+
     <!-- Progress Bar -->
     <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-      <div class="h-full bg-gradient-to-r from-[#1a5632] to-[#2a7642] rounded-full transition-all duration-500" style="width: 75%"></div>
+      <div
+        class="h-full bg-gradient-to-r from-[#1a5632] to-[#2a7642] rounded-full transition-all duration-500"
+        [style.width.%]="licenseProgressPercent"
+      ></div>
     </div>
-    
+
     <div class="flex items-center justify-between mt-2 text-sm text-gray-600">
-      <span>Issued: Jan 1, 2024</span>
-      <span>Expires: Dec 31, 2024</span>
+      <span>Issued: Jan 1, {{ validYear }}</span>
+      <span>Expires: Dec 31, {{ validYear }}</span>
+    </div>
+  </div>
+
+  <!-- User Info Summary -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+      <svg class="w-5 h-5 text-[#1a5632]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+      </svg>
+      Your Information
+    </h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="p-3 bg-gray-50 rounded-lg">
+        <p class="text-xs text-gray-500 font-medium uppercase mb-1">Membership No.</p>
+        <p class="text-sm font-semibold text-gray-900">{{ user.membership_number || 'N/A' }}</p>
+      </div>
+      <div class="p-3 bg-gray-50 rounded-lg">
+        <p class="text-xs text-gray-500 font-medium uppercase mb-1">Role</p>
+        <p class="text-sm font-semibold text-gray-900">{{ user.role || 'N/A' }}</p>
+      </div>
+      <div class="p-3 bg-gray-50 rounded-lg">
+        <p class="text-xs text-gray-500 font-medium uppercase mb-1">Qualification</p>
+        <p class="text-sm font-semibold text-gray-900">{{ user.qualification || 'N/A' }}</p>
+      </div>
+      <div class="p-3 bg-gray-50 rounded-lg">
+        <p class="text-xs text-gray-500 font-medium uppercase mb-1">Email</p>
+        <p class="text-sm font-semibold text-gray-900 truncate">{{ user.email || 'N/A' }}</p>
+      </div>
     </div>
   </div>
 </div>
