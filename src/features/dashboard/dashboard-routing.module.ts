@@ -7,6 +7,7 @@ import { DashboardLicenseComponent } from './pages/license/license.component';
 import { DashboardPaymentsComponent } from './pages/payments/payments.component';
 import { DashboardSettingsComponent } from './pages/settings/settings.component';
 import { DashboardMemberComponent } from './pages/member/member.component';
+import { PaymentReportComponent } from './pages/payment-report/payment-report.component';
 
 const routes: Routes = [
     {
@@ -32,6 +33,10 @@ const routes: Routes = [
             {
                 path: 'payments',
                 component: DashboardPaymentsComponent
+            },
+            {
+                path: 'payment-report',
+                component: PaymentReportComponent
             },
             {
                 path: 'settings',
