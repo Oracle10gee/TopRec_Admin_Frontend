@@ -37,19 +37,19 @@
             for="identifier"
             class="block text-sm font-medium text-gray-700 mb-2"
           >
-            Email / RTP Number
+            Membership Number
           </label>
           <input
             type="text"
             id="identifier"
             formControlName="identifier"
-            placeholder="Enter your email or RTP number"
+            placeholder="Enter Membership number (e.g., RTP/1*** or PFN/5**)"
             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200"
             [class.border-red-500]="identifier?.invalid && identifier?.touched"
           />
           <div *ngIf="identifier?.invalid && identifier?.touched" class="mt-1">
             <p
-              *ngIf="identifier?.errors?.['required']"
+              *ngIf="identifier?.errors?.['required']"  
               class="text-xs text-red-500"
             >
               Email or username is required
