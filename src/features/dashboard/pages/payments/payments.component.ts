@@ -707,12 +707,18 @@ export class DashboardPaymentsComponent implements OnInit {
         });
 
         // Prepare payload for initiate payment API
-        const payload = {
+        const payload: any = {
             payment_type_code: paymentTypeCode,
             payer_name: currentUser.full_name || 'Customer',
             payer_email: currentUser.email || 'no-email@example.com',
             payer_phone: phone
         };
+
+        // For existing users with a custom financial status amount, include the overridden amount
+        if (this.isExistingUser && this.existingUserAmount !== null) {
+            payload.amount = this.existingUserAmount;
+            console.log(`💰 Existing user: sending custom amount in payload: ${this.existingUserAmount}`);
+        }
 
         console.log('🚀 Calling backend initiate payment API with payload:', payload);
 
