@@ -116,6 +116,10 @@ export class DashboardPaymentsComponent implements OnInit {
     isSuperadmin = false;
     cachedPaymentTypes: PaymentTypeForNonAdmin[] = [];
 
+    // Existing user properties
+    isExistingUser = false;
+    existingUserAmount: number | null = null;
+
     // Payment details modal properties
     showPaymentDetailsModal = false;
     paymentDetails: PaymentDetails | null = null;
@@ -181,6 +185,17 @@ export class DashboardPaymentsComponent implements OnInit {
         this.isSuperadmin = this.currentUserRole === 'Superadmin';
         console.log(`👤 Current user role: ${this.currentUserRole}`);
         console.log(`🔐 Is Superadmin: ${this.isSuperadmin}`);
+
+        // Check if user is an existing user with a custom financial status amount
+        const currentUser = this.authService.getCurrentUserSync();
+        if (currentUser && (currentUser as any).is_existing === true) {
+            const financialStatus = (currentUser as any).current_financial_status;
+            if (financialStatus !== null && financialStatus !== undefined && Number(financialStatus) !== 0) {
+                this.isExistingUser = true;
+                this.existingUserAmount = parseFloat(financialStatus);
+                console.log(`💰 Existing user detected. Custom amount: ${this.existingUserAmount}`);
+            }
+        }
     }
 
     /**
@@ -484,7 +499,9 @@ export class DashboardPaymentsComponent implements OnInit {
 
     /**
      * Populate amount field from cached payment types data (non-admin users)
-     * Looks up the base_amount directly from the cached response
+     * Looks up the base_amount directly from the cached response.
+     * For existing users with a non-null/non-zero current_financial_status,
+     * the amount is overridden with that value.
      */
     private populateAmountFromCache(paymentTypeCode: string): void {
         this.isCalculating = true;
@@ -497,8 +514,14 @@ export class DashboardPaymentsComponent implements OnInit {
         if (paymentType) {
             console.log('✅ Found payment type:', paymentType);
 
-            // Populate the amount field directly with base_amount
-            const baseAmount = parseFloat(paymentType.base_amount);
+            let baseAmount = parseFloat(paymentType.base_amount);
+
+            // Override amount for existing users with a custom financial status
+            if (this.isExistingUser && this.existingUserAmount !== null) {
+                console.log(`💰 Existing user: overriding base amount ${baseAmount} with ${this.existingUserAmount}`);
+                baseAmount = this.existingUserAmount;
+            }
+
             const formattedAmount = `₦${baseAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
             this.paymentForm.patchValue({
@@ -506,11 +529,12 @@ export class DashboardPaymentsComponent implements OnInit {
             });
 
             // Create a calculated payment object for display purposes
+            const taxRate = parseFloat(paymentType.tax_rate);
             this.calculatedPayment = {
-                subtotal: paymentType.base_amount,
-                tax: baseAmount * parseFloat(paymentType.tax_rate),
+                subtotal: baseAmount.toString(),
+                tax: baseAmount * taxRate,
                 tax_rate: paymentType.tax_rate,
-                total: (baseAmount + (baseAmount * parseFloat(paymentType.tax_rate))).toString(),
+                total: (baseAmount + (baseAmount * taxRate)).toString(),
                 currency: paymentType.currency,
                 valid_until: '' // Not applicable for non-admin flow
             };
