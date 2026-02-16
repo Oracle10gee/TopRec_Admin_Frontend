@@ -100,6 +100,12 @@ export class SidebarComponent implements OnInit {
                 badge: 3 // Example badge
             },
             {
+                id: 'payment-report',
+                label: 'Payment Report',
+                icon: this.sanitizer.bypassSecurityTrustHtml(this.icons.reports),
+                route: '/dashboard/payment-report'
+            },
+            {
                 id: 'settings',
                 label: 'Settings',
                 icon: this.sanitizer.bypassSecurityTrustHtml(this.icons.settings),
@@ -116,6 +122,10 @@ export class SidebarComponent implements OnInit {
             }
             // Hide 'Home', 'Payments' items and 'Profile', 'License' for 'Superadmin' role
             if (userRole === 'Superadmin' && (item.id === 'home' || item.id === 'payments' || item.id === 'profile' || item.id === 'license')) {
+                return false;
+            }
+            // Hide 'Payment Report' for non-Superadmin roles
+            if (userRole !== 'Superadmin' && item.id === 'payment-report') {
                 return false;
             }
             return true;
