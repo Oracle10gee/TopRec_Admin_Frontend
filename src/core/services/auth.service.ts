@@ -345,10 +345,18 @@ export class AuthService {
     }
 
     /**
-     * Update user by ID
+     * Update user by ID (PATCH)
      */
     updateUser(userId: string, data: any): Observable<any> {
         return this.apiService.patch(`/auth/users/${userId}`, data).pipe(
+            tap((response) => {
+                // Update stored user data after successful PATCH
+                if (response?.data?.user) {
+                    const updatedUser = response.data.user;
+                    localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(updatedUser));
+                    this.currentUserSubject.next(updatedUser);
+                }
+            }),
             catchError((error) => this.handleAuthError(error))
         );
     }
