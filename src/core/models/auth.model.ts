@@ -83,6 +83,9 @@ export interface User {
     role: string;
     registration_date: string;
     current_financial_status: null | string;
+    gender?: string;
+    state_of_practice?: string | null;
+    is_existing?: boolean;
     status: 'active' | 'inactive';
     created_at: string;
 }
