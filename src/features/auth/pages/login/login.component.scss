@@ -106,3 +106,42 @@ button[type="button"]:focus {
     max-width: 100%;
   }
 }
+
+/* Modal slide-in animation */
+.animate-modalSlideIn {
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modal scrollbar styling */
+.max-h-\[90vh\] {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(26, 86, 50, 0.3) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(26, 86, 50, 0.3);
+    border-radius: 3px;
+
+    &:hover {
+      background-color: rgba(26, 86, 50, 0.5);
+    }
+  }
+}
