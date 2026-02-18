@@ -270,9 +270,17 @@ export class AuthService {
      * Handle authentication errors
      */
     private handleAuthError(error: any): Observable<never> {
-        const errorDetails = error?.error?.error?.details;
-        const errorMessage = (typeof errorDetails === 'string' ? errorDetails : null)
-            || error?.error?.message
+        // Extract the most specific error message from the API response
+        // API error shape: { success, message, data, error: { code, details }, meta }
+        const errorBody = error?.error; // The parsed JSON response body
+        const errorMessage =
+            // 1. error.details string (e.g. "Invalid email/membership number or password")
+            (typeof errorBody?.error?.details === 'string' ? errorBody.error.details : null)
+            // 2. Top-level message from the response body
+            || errorBody?.message
+            // 3. HttpErrorResponse message
+            || error?.message
+            // 4. Fallback
             || 'An authentication error occurred';
         return throwError(() => new Error(errorMessage));
     }
