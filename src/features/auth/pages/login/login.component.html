@@ -37,22 +37,22 @@
             for="identifier"
             class="block text-sm font-medium text-gray-700 mb-2"
           >
-            Membership Number
+            Registration Number
           </label>
           <input
             type="text"
             id="identifier"
             formControlName="identifier"
-            placeholder="Enter Membership number (e.g., RTP/1*** or PFN/5**)"
+            placeholder="Enter Registration Number (e.g., RTP/1*** or PFN/5**)"
             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200"
             [class.border-red-500]="identifier?.invalid && identifier?.touched"
           />
           <div *ngIf="identifier?.invalid && identifier?.touched" class="mt-1">
             <p
-              *ngIf="identifier?.errors?.['required']"  
+              *ngIf="identifier?.errors?.['required']"
               class="text-xs text-red-500"
             >
-              Membership number is required
+              Registration Number is required
             </p>
           </div>
         </div>
@@ -209,18 +209,36 @@
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
   <!-- Modal Content -->
-  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-modalSlideIn">
+  <div
+    class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-modalSlideIn"
+  >
     <!-- Modal Header -->
-    <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-5 rounded-t-2xl z-10">
+    <div
+      class="sticky top-0 bg-white border-b border-gray-200 px-6 py-5 rounded-t-2xl z-10"
+    >
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 bg-[#1a5632]/10 rounded-full flex items-center justify-center">
-          <svg class="w-6 h-6 text-[#1a5632]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        <div
+          class="w-12 h-12 bg-[#1a5632]/10 rounded-full flex items-center justify-center"
+        >
+          <svg
+            class="w-6 h-6 text-[#1a5632]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
           </svg>
         </div>
         <div>
           <h2 class="text-xl font-bold text-gray-900">Complete Your Profile</h2>
-          <p class="text-sm text-gray-500">Please review and update your information to continue</p>
+          <p class="text-sm text-gray-500">
+            Please review and update your information to continue
+          </p>
         </div>
       </div>
     </div>
@@ -232,22 +250,39 @@
         *ngIf="updateErrorMessage"
         class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2"
       >
-        <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        <svg
+          class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            clip-rule="evenodd"
+          />
         </svg>
         <p class="text-sm text-red-600">{{ updateErrorMessage }}</p>
       </div>
 
-      <form [formGroup]="existingUserForm" (ngSubmit)="onUpdateProfile()" class="space-y-5">
+      <form
+        [formGroup]="existingUserForm"
+        (ngSubmit)="onUpdateProfile()"
+        class="space-y-5"
+      >
         <!-- Account Type Section -->
         <div class="bg-gray-50 rounded-lg p-5 space-y-4">
-          <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+          <h3
+            class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3"
+          >
             Account Type
           </h3>
 
           <!-- Role (Disabled) -->
           <div>
-            <label for="eu_role" class="block text-sm font-medium text-gray-700 mb-1.5">
+            <label
+              for="eu_role"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
               Role
             </label>
             <input
@@ -262,13 +297,18 @@
 
         <!-- Personal Information Section -->
         <div class="bg-gray-50 rounded-lg p-5 space-y-4">
-          <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+          <h3
+            class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3"
+          >
             Personal Information
           </h3>
 
           <!-- Full Legal Name -->
           <div>
-            <label for="eu_full_name" class="block text-sm font-medium text-gray-700 mb-1.5">
+            <label
+              for="eu_full_name"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
               Full Legal Name <span class="text-red-500">*</span>
             </label>
             <input
@@ -277,13 +317,24 @@
               formControlName="full_name"
               placeholder="Enter your full legal name"
               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
-              [class.border-red-500]="eu_full_name?.invalid && eu_full_name?.touched"
+              [class.border-red-500]="
+                eu_full_name?.invalid && eu_full_name?.touched
+              "
             />
-            <div *ngIf="eu_full_name?.invalid && eu_full_name?.touched" class="mt-1">
-              <p *ngIf="eu_full_name?.errors?.['required']" class="text-xs text-red-500">
+            <div
+              *ngIf="eu_full_name?.invalid && eu_full_name?.touched"
+              class="mt-1"
+            >
+              <p
+                *ngIf="eu_full_name?.errors?.['required']"
+                class="text-xs text-red-500"
+              >
                 Name is required
               </p>
-              <p *ngIf="eu_full_name?.errors?.['minlength']" class="text-xs text-red-500">
+              <p
+                *ngIf="eu_full_name?.errors?.['minlength']"
+                class="text-xs text-red-500"
+              >
                 Name must be at least 3 characters
               </p>
             </div>
@@ -291,7 +342,10 @@
 
           <!-- Email -->
           <div>
-            <label for="eu_email" class="block text-sm font-medium text-gray-700 mb-1.5">
+            <label
+              for="eu_email"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
               Email Address <span class="text-red-500">*</span>
             </label>
             <input
@@ -303,10 +357,16 @@
               [class.border-red-500]="eu_email?.invalid && eu_email?.touched"
             />
             <div *ngIf="eu_email?.invalid && eu_email?.touched" class="mt-1">
-              <p *ngIf="eu_email?.errors?.['required']" class="text-xs text-red-500">
+              <p
+                *ngIf="eu_email?.errors?.['required']"
+                class="text-xs text-red-500"
+              >
                 Email is required
               </p>
-              <p *ngIf="eu_email?.errors?.['email']" class="text-xs text-red-500">
+              <p
+                *ngIf="eu_email?.errors?.['email']"
+                class="text-xs text-red-500"
+              >
                 Please enter a valid email
               </p>
             </div>
@@ -314,7 +374,10 @@
 
           <!-- Phone Number -->
           <div>
-            <label for="eu_phone_number" class="block text-sm font-medium text-gray-700 mb-1.5">
+            <label
+              for="eu_phone_number"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
               Phone Number <span class="text-red-500">*</span>
             </label>
             <input
@@ -323,13 +386,24 @@
               formControlName="phone_number"
               placeholder="e.g., 08012345678"
               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
-              [class.border-red-500]="eu_phone_number?.invalid && eu_phone_number?.touched"
+              [class.border-red-500]="
+                eu_phone_number?.invalid && eu_phone_number?.touched
+              "
             />
-            <div *ngIf="eu_phone_number?.invalid && eu_phone_number?.touched" class="mt-1">
-              <p *ngIf="eu_phone_number?.errors?.['required']" class="text-xs text-red-500">
+            <div
+              *ngIf="eu_phone_number?.invalid && eu_phone_number?.touched"
+              class="mt-1"
+            >
+              <p
+                *ngIf="eu_phone_number?.errors?.['required']"
+                class="text-xs text-red-500"
+              >
                 Phone number is required
               </p>
-              <p *ngIf="eu_phone_number?.errors?.['pattern']" class="text-xs text-red-500">
+              <p
+                *ngIf="eu_phone_number?.errors?.['pattern']"
+                class="text-xs text-red-500"
+              >
                 Please enter a valid phone number
               </p>
             </div>
@@ -337,7 +411,10 @@
 
           <!-- Address -->
           <div>
-            <label for="eu_address" class="block text-sm font-medium text-gray-700 mb-1.5">
+            <label
+              for="eu_address"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
               Address <span class="text-red-500">*</span>
             </label>
             <textarea
@@ -346,13 +423,24 @@
               placeholder="Enter your full address"
               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm resize-none bg-white"
               rows="2"
-              [class.border-red-500]="eu_address?.invalid && eu_address?.touched"
+              [class.border-red-500]="
+                eu_address?.invalid && eu_address?.touched
+              "
             ></textarea>
-            <div *ngIf="eu_address?.invalid && eu_address?.touched" class="mt-1">
-              <p *ngIf="eu_address?.errors?.['required']" class="text-xs text-red-500">
+            <div
+              *ngIf="eu_address?.invalid && eu_address?.touched"
+              class="mt-1"
+            >
+              <p
+                *ngIf="eu_address?.errors?.['required']"
+                class="text-xs text-red-500"
+              >
                 Address is required
               </p>
-              <p *ngIf="eu_address?.errors?.['minlength']" class="text-xs text-red-500">
+              <p
+                *ngIf="eu_address?.errors?.['minlength']"
+                class="text-xs text-red-500"
+              >
                 Address must be at least 5 characters
               </p>
             </div>
@@ -360,7 +448,10 @@
 
           <!-- Gender (Only for Members) -->
           <div *ngIf="isGenderVisible()">
-            <label for="eu_gender" class="block text-sm font-medium text-gray-700 mb-1.5">
+            <label
+              for="eu_gender"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
               Gender <span class="text-red-500">*</span>
             </label>
             <select
@@ -376,7 +467,10 @@
               <option value="prefer_not_to_say">Prefer not to say</option>
             </select>
             <div *ngIf="eu_gender?.invalid && eu_gender?.touched" class="mt-1">
-              <p *ngIf="eu_gender?.errors?.['required']" class="text-xs text-red-500">
+              <p
+                *ngIf="eu_gender?.errors?.['required']"
+                class="text-xs text-red-500"
+              >
                 Gender is required
               </p>
             </div>
@@ -385,14 +479,19 @@
 
         <!-- Professional Details Section -->
         <div class="bg-gray-50 rounded-lg p-5 space-y-4">
-          <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+          <h3
+            class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3"
+          >
             Professional Details
           </h3>
 
-          <!-- Membership Number (Disabled) -->
+          <!-- Registration Number (Disabled) -->
           <div>
-            <label for="eu_membership_number" class="block text-sm font-medium text-gray-700 mb-1.5">
-              Membership Number
+            <label
+              for="eu_membership_number"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
+              Registration Number
             </label>
             <input
               type="text"
@@ -405,22 +504,35 @@
 
           <!-- State of Practice -->
           <div>
-            <label for="eu_state_of_practice" class="block text-sm font-medium text-gray-700 mb-1.5">
+            <label
+              for="eu_state_of_practice"
+              class="block text-sm font-medium text-gray-700 mb-1.5"
+            >
               State of Practice <span class="text-red-500">*</span>
             </label>
             <select
               id="eu_state_of_practice"
               formControlName="state_of_practice"
               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
-              [class.border-red-500]="eu_state_of_practice?.invalid && eu_state_of_practice?.touched"
+              [class.border-red-500]="
+                eu_state_of_practice?.invalid && eu_state_of_practice?.touched
+              "
             >
               <option value="">-- Select state of practice --</option>
               <option *ngFor="let state of states" [value]="state.id">
                 {{ state.name }}
               </option>
             </select>
-            <div *ngIf="eu_state_of_practice?.invalid && eu_state_of_practice?.touched" class="mt-1">
-              <p *ngIf="eu_state_of_practice?.errors?.['required']" class="text-xs text-red-500">
+            <div
+              *ngIf="
+                eu_state_of_practice?.invalid && eu_state_of_practice?.touched
+              "
+              class="mt-1"
+            >
+              <p
+                *ngIf="eu_state_of_practice?.errors?.['required']"
+                class="text-xs text-red-500"
+              >
                 State of practice is required
               </p>
             </div>
@@ -430,22 +542,33 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Qualification (Only for Members) -->
             <div *ngIf="isQualificationVisible()">
-              <label for="eu_qualification" class="block text-sm font-medium text-gray-700 mb-1.5">
+              <label
+                for="eu_qualification"
+                class="block text-sm font-medium text-gray-700 mb-1.5"
+              >
                 Qualification
               </label>
               <select
                 id="eu_qualification"
                 formControlName="qualification"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
-                [class.border-red-500]="eu_qualification?.invalid && eu_qualification?.touched"
+                [class.border-red-500]="
+                  eu_qualification?.invalid && eu_qualification?.touched
+                "
               >
                 <option value="">Select qualification</option>
                 <option *ngFor="let q of qualifications" [value]="q.value">
                   {{ q.label }}
                 </option>
               </select>
-              <div *ngIf="eu_qualification?.invalid && eu_qualification?.touched" class="mt-1">
-                <p *ngIf="eu_qualification?.errors?.['required']" class="text-xs text-red-500">
+              <div
+                *ngIf="eu_qualification?.invalid && eu_qualification?.touched"
+                class="mt-1"
+              >
+                <p
+                  *ngIf="eu_qualification?.errors?.['required']"
+                  class="text-xs text-red-500"
+                >
                   Required
                 </p>
               </div>
@@ -453,7 +576,10 @@
 
             <!-- Registration Date -->
             <div [ngClass]="{ 'md:col-span-2': !isQualificationVisible() }">
-              <label for="eu_registration_date" class="block text-sm font-medium text-gray-700 mb-1.5">
+              <label
+                for="eu_registration_date"
+                class="block text-sm font-medium text-gray-700 mb-1.5"
+              >
                 Registration Date <span class="text-red-500">*</span>
               </label>
               <input
@@ -461,10 +587,20 @@
                 id="eu_registration_date"
                 formControlName="registration_date"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
-                [class.border-red-500]="eu_registration_date?.invalid && eu_registration_date?.touched"
+                [class.border-red-500]="
+                  eu_registration_date?.invalid && eu_registration_date?.touched
+                "
               />
-              <div *ngIf="eu_registration_date?.invalid && eu_registration_date?.touched" class="mt-1">
-                <p *ngIf="eu_registration_date?.errors?.['required']" class="text-xs text-red-500">
+              <div
+                *ngIf="
+                  eu_registration_date?.invalid && eu_registration_date?.touched
+                "
+                class="mt-1"
+              >
+                <p
+                  *ngIf="eu_registration_date?.errors?.['required']"
+                  class="text-xs text-red-500"
+                >
                   Required
                 </p>
               </div>
@@ -473,7 +609,9 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="sticky bottom-0 bg-white pt-4 pb-2 border-t border-gray-200 -mx-6 px-6">
+        <div
+          class="sticky bottom-0 bg-white pt-4 pb-2 border-t border-gray-200 -mx-6 px-6"
+        >
           <button
             type="submit"
             [disabled]="isUpdating"
