@@ -71,7 +71,7 @@ export class ForgotPasswordComponent implements OnInit {
             });
         } else {
             this.forgotPasswordForm.markAllAsTouched();
-            this.errorMessage = 'Please enter your email or membership number';
+            this.errorMessage = 'Please Enter your email or registration number';
         }
     }
 
