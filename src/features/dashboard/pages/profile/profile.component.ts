@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ApiService } from '../../../../core/services/api.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { State, Qualification } from '../../../../core/models/auth.model';
 
 @Component({
     standalone: true,
@@ -18,15 +20,22 @@ export class DashboardProfileComponent implements OnInit {
     isLoading = true;
     successMessage = '';
     errorMessage = '';
+    userRole = '';
+
+    states: State[] = [];
+    qualifications: Qualification[] = [];
 
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,
+        private apiService: ApiService,
         private notificationService: NotificationService
     ) { }
 
     ngOnInit(): void {
         this.initializeForm();
+        this.fetchStates();
+        this.fetchQualifications();
         this.loadProfile();
     }
 
@@ -39,7 +48,30 @@ export class DashboardProfileComponent implements OnInit {
             qualification: [{ value: '', disabled: true }, Validators.required],
             address: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(5)]],
             registration_date: [{ value: '', disabled: true }, Validators.required],
-            bio: [{ value: '', disabled: true }, Validators.minLength(10)]
+            gender: [{ value: '', disabled: true }],
+            state_of_practice: [{ value: '', disabled: true }, Validators.required]
+        });
+    }
+
+    private fetchStates(): void {
+        this.apiService.get<any>('/states').subscribe({
+            next: (response) => {
+                this.states = response.data.states;
+            },
+            error: (error) => {
+                console.error('Failed to fetch states:', error);
+            }
+        });
+    }
+
+    private fetchQualifications(): void {
+        this.apiService.get<any>('/auth/qualifications').subscribe({
+            next: (response) => {
+                this.qualifications = response.data.qualifications;
+            },
+            error: (error) => {
+                console.error('Failed to fetch qualifications:', error);
+            }
         });
     }
 
@@ -47,12 +79,9 @@ export class DashboardProfileComponent implements OnInit {
         this.isLoading = true;
         this.errorMessage = '';
 
-        // Debug: check if token exists
-        const token = this.authService.getAccessToken();
-        console.log('Token in ProfileComponent:', token);
-
         this.authService.getProfile().subscribe({
             next: (user) => {
+                this.userRole = user.role || '';
                 this.profileForm.patchValue({
                     full_name: user.full_name,
                     email: user.email,
@@ -61,7 +90,8 @@ export class DashboardProfileComponent implements OnInit {
                     qualification: user.qualification,
                     address: user.address,
                     registration_date: user.registration_date,
-                    bio: ''
+                    gender: user.gender || '',
+                    state_of_practice: user.state_of_practice || ''
                 });
                 // Ensure form is in disabled state after loading
                 if (!this.isEditing) {
@@ -77,17 +107,67 @@ export class DashboardProfileComponent implements OnInit {
         });
     }
 
+    /**
+     * Check if gender field should be visible (only for Members)
+     */
+    isGenderVisible(): boolean {
+        return this.userRole === 'Member';
+    }
+
+    /**
+     * Check if qualification field should be visible (only for Members)
+     */
+    isQualificationVisible(): boolean {
+        return this.userRole === 'Member';
+    }
+
+    /**
+     * Get the display label for a state ID
+     */
+    getStateName(stateId: string): string {
+        if (!stateId) return '';
+        const state = this.states.find(s => s.id === stateId);
+        return state ? state.name : stateId;
+    }
+
+    /**
+     * Get the display label for a qualification value
+     */
+    getQualificationLabel(qualValue: string): string {
+        if (!qualValue) return '';
+        const qual = this.qualifications.find(q => q.value === qualValue);
+        return qual ? qual.label : qualValue;
+    }
+
+    /**
+     * Get the display label for a gender value
+     */
+    getGenderLabel(genderValue: string): string {
+        const genderMap: Record<string, string> = {
+            'male': 'Male',
+            'female': 'Female',
+            'other': 'Other',
+            'prefer_not_to_say': 'Prefer not to say'
+        };
+        return genderMap[genderValue] || genderValue || '';
+    }
+
     toggleEdit(): void {
         this.isEditing = !this.isEditing;
-        
+
         if (this.isEditing) {
             // Enable only editable fields
             this.profileForm.get('email')?.enable();
             this.profileForm.get('phone_number')?.enable();
             this.profileForm.get('address')?.enable();
-            this.profileForm.get('qualification')?.enable();
-            this.profileForm.get('bio')?.enable();
-            
+            this.profileForm.get('state_of_practice')?.enable();
+
+            // Enable role-specific fields
+            if (this.userRole === 'Member') {
+                this.profileForm.get('qualification')?.enable();
+                this.profileForm.get('gender')?.enable();
+            }
+
             // Keep these fields disabled (read-only)
             this.profileForm.get('full_name')?.disable();
             this.profileForm.get('membership_number')?.disable();
@@ -108,7 +188,8 @@ export class DashboardProfileComponent implements OnInit {
         this.profileForm.get('qualification')?.disable();
         this.profileForm.get('address')?.disable();
         this.profileForm.get('registration_date')?.disable();
-        this.profileForm.get('bio')?.disable();
+        this.profileForm.get('gender')?.disable();
+        this.profileForm.get('state_of_practice')?.disable();
     }
 
     onSubmit(): void {
@@ -124,29 +205,15 @@ export class DashboardProfileComponent implements OnInit {
         const emailValid = this.profileForm.get('email')?.valid;
         const phoneValid = this.profileForm.get('phone_number')?.valid;
         const addressValid = this.profileForm.get('address')?.valid;
-        const qualificationValid = this.profileForm.get('qualification')?.valid;
-        const bioControl = this.profileForm.get('bio');
-        const bioValid = !bioControl?.value || bioControl?.valid; // bio is optional
+        const stateValid = this.profileForm.get('state_of_practice')?.valid;
 
-        const allEditableFieldsValid = emailValid && phoneValid && addressValid && qualificationValid && bioValid;
+        let allEditableFieldsValid = emailValid && phoneValid && addressValid && stateValid;
 
-        console.log('Form validation status:', {
-            emailValid,
-            phoneValid,
-            addressValid,
-            qualificationValid,
-            bioValid,
-            allEditableFieldsValid,
-            formValid: this.profileForm.valid,
-            email: this.profileForm.get('email')?.value,
-            errors: {
-                email: this.profileForm.get('email')?.errors,
-                phone: this.profileForm.get('phone_number')?.errors,
-                address: this.profileForm.get('address')?.errors,
-                qualification: this.profileForm.get('qualification')?.errors,
-                bio: this.profileForm.get('bio')?.errors
-            }
-        });
+        // Check role-specific fields
+        if (this.userRole === 'Member') {
+            const qualificationValid = this.profileForm.get('qualification')?.valid;
+            allEditableFieldsValid = allEditableFieldsValid && qualificationValid;
+        }
 
         if (!allEditableFieldsValid) {
             this.errorMessage = 'Please fill in all required fields correctly';
@@ -161,7 +228,7 @@ export class DashboardProfileComponent implements OnInit {
         this.successMessage = '';
 
         // Get the current user ID
-        const currentUser = this.authService['currentUserSubject']?.value;
+        const currentUser = this.authService.getCurrentUserSync();
         const userId = currentUser?.id;
 
         if (!userId) {
@@ -172,13 +239,18 @@ export class DashboardProfileComponent implements OnInit {
         }
 
         // Prepare the update payload (only editable fields)
-        const updateData = {
+        const updateData: any = {
             email: this.profileForm.get('email')?.value,
             phone_number: this.profileForm.get('phone_number')?.value,
-            qualification: this.profileForm.get('qualification')?.value,
             address: this.profileForm.get('address')?.value,
-            bio: this.profileForm.get('bio')?.value || ''
+            state_of_practice: this.profileForm.get('state_of_practice')?.value
         };
+
+        // Include role-specific fields
+        if (this.userRole === 'Member') {
+            updateData.qualification = this.profileForm.get('qualification')?.value;
+            updateData.gender = this.profileForm.get('gender')?.value;
+        }
 
         console.log('Updating profile with data:', updateData);
 
@@ -216,11 +288,16 @@ export class DashboardProfileComponent implements OnInit {
         const emailValid = this.profileForm.get('email')?.valid ?? false;
         const phoneValid = this.profileForm.get('phone_number')?.valid ?? false;
         const addressValid = this.profileForm.get('address')?.valid ?? false;
-        const qualificationValid = this.profileForm.get('qualification')?.valid ?? false;
-        const bioControl = this.profileForm.get('bio');
-        const bioValid = !bioControl?.value || bioControl?.valid;
+        const stateValid = this.profileForm.get('state_of_practice')?.valid ?? false;
 
-        return emailValid && phoneValid && addressValid && qualificationValid && bioValid;
+        let valid = emailValid && phoneValid && addressValid && stateValid;
+
+        if (this.userRole === 'Member') {
+            const qualificationValid = this.profileForm.get('qualification')?.valid ?? false;
+            valid = valid && qualificationValid;
+        }
+
+        return valid;
     }
 
     get full_name() {
@@ -251,7 +328,11 @@ export class DashboardProfileComponent implements OnInit {
         return this.profileForm.get('registration_date');
     }
 
-    get bio() {
-        return this.profileForm.get('bio');
+    get gender() {
+        return this.profileForm.get('gender');
+    }
+
+    get state_of_practice() {
+        return this.profileForm.get('state_of_practice');
     }
 }
