@@ -1,19 +1,38 @@
 <!-- Loading State -->
 <div *ngIf="isLoading" class="flex items-center justify-center min-h-[400px]">
   <div class="text-center">
-    <div class="w-12 h-12 border-4 border-[#1a5632] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+    <div
+      class="w-12 h-12 border-4 border-[#1a5632] border-t-transparent rounded-full animate-spin mx-auto mb-4"
+    ></div>
     <p class="text-gray-600">Loading license information...</p>
   </div>
 </div>
 
 <!-- Financial Status Block -->
-<div *ngIf="!isLoading && !canViewLicense" class="max-w-3xl mx-auto animate-fadeIn">
-  <div class="bg-white rounded-xl shadow-lg border border-red-200 overflow-hidden">
+<div
+  *ngIf="!isLoading && !canViewLicense"
+  class="max-w-3xl mx-auto animate-fadeIn"
+>
+  <div
+    class="bg-white rounded-xl shadow-lg border border-red-200 overflow-hidden"
+  >
     <div class="bg-gradient-to-r from-red-600 to-red-700 px-6 py-5">
       <div class="flex items-center gap-3 text-white">
-        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+        <div
+          class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center"
+        >
+          <svg
+            class="w-7 h-7 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
           </svg>
         </div>
         <div>
@@ -24,13 +43,27 @@
     </div>
 
     <div class="p-8 text-center">
-      <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-5">
-        <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+      <div
+        class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-5"
+      >
+        <svg
+          class="w-10 h-10 text-red-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+          />
         </svg>
       </div>
 
-      <h3 class="text-xl font-bold text-gray-900 mb-3">Unable to View License</h3>
+      <h3 class="text-xl font-bold text-gray-900 mb-3">
+        Unable to View License
+      </h3>
       <p class="text-gray-600 mb-6 max-w-md mx-auto leading-relaxed">
         {{ financialBlockMessage }}
       </p>
@@ -39,8 +72,18 @@
         (click)="navigateToRenewal()"
         class="px-8 py-3 bg-gradient-to-r from-[#1a5632] to-[#2a7642] text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-200 inline-flex items-center gap-2"
       >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+          />
         </svg>
         Settle License Fees
       </button>
@@ -49,20 +92,45 @@
 </div>
 
 <!-- License Certificate View -->
-<div *ngIf="!isLoading && canViewLicense && user" class="max-w-5xl mx-auto animate-fadeIn">
+<div
+  *ngIf="!isLoading && canViewLicense && user"
+  class="max-w-5xl mx-auto animate-fadeIn"
+>
   <!-- Page Header (hidden on print) -->
   <div class="mb-6 no-print">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div
+      class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+    >
       <div>
         <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-br from-[#1a5632] to-[#0d3520] rounded-xl flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          <div
+            class="w-10 h-10 bg-gradient-to-br from-[#1a5632] to-[#0d3520] rounded-xl flex items-center justify-center"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
           </div>
           My License
         </h1>
-        <p class="text-gray-600 mt-2">Your professional license to practice{{ user.role === 'Consulting Firm' ? ' as a Consulting Firm' : user.role === 'Practice Firm' ? ' as a Practice Firm' : ' as a Town Planner' }}</p>
+        <p class="text-gray-600 mt-2">
+          Your professional license to practice{{
+            user.role === "Consulting Firm"
+              ? " as a Consulting Firm"
+              : user.role === "Practice Firm"
+                ? " as a Practice Firm"
+                : " as a Town Planner"
+          }}
+        </p>
       </div>
 
       <!-- Action Buttons -->
@@ -71,8 +139,18 @@
           (click)="downloadLicense()"
           class="px-5 py-2.5 bg-gradient-to-r from-[#1a5632] to-[#2a7642] text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-200 flex items-center gap-2"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
           </svg>
           Download
         </button>
@@ -80,8 +158,18 @@
           (click)="printLicense()"
           class="px-5 py-2.5 border-2 border-[#1a5632] text-[#1a5632] rounded-lg font-semibold hover:bg-green-50 transition-all duration-200 flex items-center gap-2"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+            />
           </svg>
           Print
         </button>
@@ -94,15 +182,37 @@
     <!-- Status -->
     <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg flex items-center justify-center"
-             [ngClass]="licenseStatus === 'Active' ? 'bg-green-100' : 'bg-red-100'">
-          <svg class="w-5 h-5" [ngClass]="licenseStatus === 'Active' ? 'text-green-600' : 'text-red-600'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <div
+          class="w-10 h-10 rounded-lg flex items-center justify-center"
+          [ngClass]="licenseStatus === 'Active' ? 'bg-green-100' : 'bg-red-100'"
+        >
+          <svg
+            class="w-5 h-5"
+            [ngClass]="
+              licenseStatus === 'Active' ? 'text-green-600' : 'text-red-600'
+            "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         </div>
         <div>
           <p class="text-xs text-gray-500 font-medium uppercase">Status</p>
-          <p class="text-lg font-bold" [ngClass]="licenseStatus === 'Active' ? 'text-green-700' : 'text-red-700'">{{ licenseStatus }}</p>
+          <p
+            class="text-lg font-bold"
+            [ngClass]="
+              licenseStatus === 'Active' ? 'text-green-700' : 'text-red-700'
+            "
+          >
+            {{ licenseStatus }}
+          </p>
         </div>
       </div>
     </div>
@@ -110,9 +220,21 @@
     <!-- Valid Till -->
     <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        <div
+          class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"
+        >
+          <svg
+            class="w-5 h-5 text-blue-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
           </svg>
         </div>
         <div>
@@ -125,14 +247,30 @@
     <!-- Days Remaining -->
     <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-          <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <div
+          class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center"
+        >
+          <svg
+            class="w-5 h-5 text-orange-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         </div>
         <div>
-          <p class="text-xs text-gray-500 font-medium uppercase">Days Remaining</p>
-          <p class="text-lg font-bold text-orange-700">{{ daysUntilExpiry }} days</p>
+          <p class="text-xs text-gray-500 font-medium uppercase">
+            Days Remaining
+          </p>
+          <p class="text-lg font-bold text-orange-700">
+            {{ daysUntilExpiry }} days
+          </p>
         </div>
       </div>
     </div>
@@ -144,7 +282,6 @@
       <!-- Green border frame -->
       <div class="certificate-border">
         <div class="certificate-inner">
-
           <!-- Concentric circles background (centered green spiral) -->
           <div class="circles-bg">
             <div class="circle circle-1"></div>
@@ -157,16 +294,28 @@
           </div>
 
           <!-- Certified Seal (top-right) - shown for Consulting Firm & Practice Firm -->
-          <div class="certified-seal" *ngIf="user.role === 'Consulting Firm' || user.role === 'Practice Firm'">
-            <img src="assets/Asset 2.png" alt="Certified Seal" class="certified-seal-img" />
+          <div
+            class="certified-seal"
+            *ngIf="
+              user.role === 'Consulting Firm' || user.role === 'Practice Firm'
+            "
+          >
+            <img
+              src="assets/Asset 2.png"
+              alt="Certified Seal"
+              class="certified-seal-img"
+            />
           </div>
 
           <!-- Certificate Content -->
           <div class="certificate-content">
-
             <!-- TOPREC Logo Header -->
             <div class="cert-header">
-              <img src="assets/toprec_logo.png" alt="TOPREC Logo" class="cert-logo" />
+              <img
+                src="assets/toprec_logo.png"
+                alt="TOPREC Logo"
+                class="cert-logo"
+              />
             </div>
 
             <!-- Certificate Title -->
@@ -184,10 +333,15 @@
             <!-- Description Text -->
             <div class="cert-description">
               <p>
-                {{ certificateDescription }} in accordance with the provisions of the law governing urban and
-                regional planning practice in the Federal Republic of Nigeria. It authenticates his <strong>professional competence, ethical
-                standing, and authorization to engage in the practice of Town Planning</strong> under the authority of the Town Planners
-                Registration Council of Nigeria (TOPREC).
+                {{ certificateDescription }} in accordance with the provisions
+                of the law governing urban and regional planning practice in the
+                Federal Republic of Nigeria. It authenticates his
+                <strong
+                  >professional competence, ethical standing, and authorization
+                  to engage in the practice of Town Planning</strong
+                >
+                under the authority of the Town Planners Registration Council of
+                Nigeria (TOPREC).
               </p>
             </div>
 
@@ -203,54 +357,117 @@
                 <div class="qr-placeholder">
                   <svg viewBox="0 0 100 100" class="qr-svg">
                     <!-- QR code pattern -->
-                    <rect x="5" y="5" width="25" height="25" fill="#1a5632" rx="2"/>
-                    <rect x="70" y="5" width="25" height="25" fill="#1a5632" rx="2"/>
-                    <rect x="5" y="70" width="25" height="25" fill="#1a5632" rx="2"/>
-                    <rect x="10" y="10" width="15" height="15" fill="white" rx="1"/>
-                    <rect x="75" y="10" width="15" height="15" fill="white" rx="1"/>
-                    <rect x="10" y="75" width="15" height="15" fill="white" rx="1"/>
-                    <rect x="14" y="14" width="7" height="7" fill="#1a5632" rx="1"/>
-                    <rect x="79" y="14" width="7" height="7" fill="#1a5632" rx="1"/>
-                    <rect x="14" y="79" width="7" height="7" fill="#1a5632" rx="1"/>
-                    <rect x="35" y="5" width="5" height="5" fill="#1a5632"/>
-                    <rect x="45" y="5" width="5" height="5" fill="#1a5632"/>
-                    <rect x="55" y="5" width="5" height="5" fill="#1a5632"/>
-                    <rect x="35" y="15" width="5" height="5" fill="#1a5632"/>
-                    <rect x="50" y="15" width="5" height="5" fill="#1a5632"/>
-                    <rect x="35" y="25" width="5" height="5" fill="#1a5632"/>
-                    <rect x="45" y="25" width="5" height="5" fill="#1a5632"/>
-                    <rect x="60" y="25" width="5" height="5" fill="#1a5632"/>
-                    <rect x="35" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="45" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="55" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="70" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="85" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="5" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="15" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="25" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="5" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="20" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="35" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="50" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="65" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="80" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="5" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="15" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="25" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="40" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="55" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="70" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="90" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="35" y="65" width="5" height="5" fill="#1a5632"/>
-                    <rect x="50" y="65" width="5" height="5" fill="#1a5632"/>
-                    <rect x="60" y="65" width="5" height="5" fill="#1a5632"/>
-                    <rect x="75" y="70" width="5" height="5" fill="#1a5632"/>
-                    <rect x="90" y="70" width="5" height="5" fill="#1a5632"/>
-                    <rect x="70" y="80" width="5" height="5" fill="#1a5632"/>
-                    <rect x="85" y="80" width="5" height="5" fill="#1a5632"/>
-                    <rect x="75" y="90" width="5" height="5" fill="#1a5632"/>
-                    <rect x="85" y="90" width="5" height="5" fill="#1a5632"/>
-                    <rect x="90" y="75" width="5" height="5" fill="#1a5632"/>
+                    <rect
+                      x="5"
+                      y="5"
+                      width="25"
+                      height="25"
+                      fill="#1a5632"
+                      rx="2"
+                    />
+                    <rect
+                      x="70"
+                      y="5"
+                      width="25"
+                      height="25"
+                      fill="#1a5632"
+                      rx="2"
+                    />
+                    <rect
+                      x="5"
+                      y="70"
+                      width="25"
+                      height="25"
+                      fill="#1a5632"
+                      rx="2"
+                    />
+                    <rect
+                      x="10"
+                      y="10"
+                      width="15"
+                      height="15"
+                      fill="white"
+                      rx="1"
+                    />
+                    <rect
+                      x="75"
+                      y="10"
+                      width="15"
+                      height="15"
+                      fill="white"
+                      rx="1"
+                    />
+                    <rect
+                      x="10"
+                      y="75"
+                      width="15"
+                      height="15"
+                      fill="white"
+                      rx="1"
+                    />
+                    <rect
+                      x="14"
+                      y="14"
+                      width="7"
+                      height="7"
+                      fill="#1a5632"
+                      rx="1"
+                    />
+                    <rect
+                      x="79"
+                      y="14"
+                      width="7"
+                      height="7"
+                      fill="#1a5632"
+                      rx="1"
+                    />
+                    <rect
+                      x="14"
+                      y="79"
+                      width="7"
+                      height="7"
+                      fill="#1a5632"
+                      rx="1"
+                    />
+                    <rect x="35" y="5" width="5" height="5" fill="#1a5632" />
+                    <rect x="45" y="5" width="5" height="5" fill="#1a5632" />
+                    <rect x="55" y="5" width="5" height="5" fill="#1a5632" />
+                    <rect x="35" y="15" width="5" height="5" fill="#1a5632" />
+                    <rect x="50" y="15" width="5" height="5" fill="#1a5632" />
+                    <rect x="35" y="25" width="5" height="5" fill="#1a5632" />
+                    <rect x="45" y="25" width="5" height="5" fill="#1a5632" />
+                    <rect x="60" y="25" width="5" height="5" fill="#1a5632" />
+                    <rect x="35" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="45" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="55" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="70" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="85" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="5" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="15" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="25" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="5" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="20" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="35" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="50" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="65" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="80" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="5" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="15" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="25" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="40" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="55" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="70" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="90" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="35" y="65" width="5" height="5" fill="#1a5632" />
+                    <rect x="50" y="65" width="5" height="5" fill="#1a5632" />
+                    <rect x="60" y="65" width="5" height="5" fill="#1a5632" />
+                    <rect x="75" y="70" width="5" height="5" fill="#1a5632" />
+                    <rect x="90" y="70" width="5" height="5" fill="#1a5632" />
+                    <rect x="70" y="80" width="5" height="5" fill="#1a5632" />
+                    <rect x="85" y="80" width="5" height="5" fill="#1a5632" />
+                    <rect x="75" y="90" width="5" height="5" fill="#1a5632" />
+                    <rect x="85" y="90" width="5" height="5" fill="#1a5632" />
+                    <rect x="90" y="75" width="5" height="5" fill="#1a5632" />
                   </svg>
                 </div>
                 <p class="qr-label">VERIFY MY IDENTITY</p>
@@ -258,11 +475,10 @@
 
               <!-- President Signature -->
               <div class="cert-president">
-                <p class="president-name">Isyaku Muhtar Kura, fnitp</p>
-                <p class="president-title">President</p>
+                <p class="president-name">Tpl Uhiere Samuel Abayomi, fnitp</p>
+                <p class="president-title">Ag. Registrar</p>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -270,29 +486,64 @@
   </div>
 
   <!-- Renewal Info (hidden on print) -->
-  <div *ngIf="daysUntilExpiry <= 60 && daysUntilExpiry > 0" class="mt-6 no-print">
-    <div class="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-2 border-amber-300 rounded-xl p-5 shadow-md">
+  <div
+    *ngIf="daysUntilExpiry <= 60 && daysUntilExpiry > 0"
+    class="mt-6 no-print"
+  >
+    <div
+      class="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-2 border-amber-300 rounded-xl p-5 shadow-md"
+    >
       <div class="flex items-start gap-4">
-        <div class="flex-shrink-0 w-11 h-11 bg-amber-500 rounded-xl flex items-center justify-center shadow">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <div
+          class="flex-shrink-0 w-11 h-11 bg-amber-500 rounded-xl flex items-center justify-center shadow"
+        >
+          <svg
+            class="w-6 h-6 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         </div>
         <div class="flex-1">
-          <h3 class="text-lg font-bold text-amber-900 mb-1 flex items-center gap-2">
+          <h3
+            class="text-lg font-bold text-amber-900 mb-1 flex items-center gap-2"
+          >
             License Renewal Reminder
-            <span class="px-2 py-0.5 text-xs font-semibold bg-red-500 text-white rounded-full">Action Required</span>
+            <span
+              class="px-2 py-0.5 text-xs font-semibold bg-red-500 text-white rounded-full"
+              >Action Required</span
+            >
           </h3>
           <p class="text-amber-800 text-sm leading-relaxed mb-3">
-            Your license expires on <span class="font-bold">December 31, {{ validYear }}</span> ({{ daysUntilExpiry }} days remaining).
-            Please renew to maintain your active status.
+            Your license expires on
+            <span class="font-bold">December 31, {{ validYear }}</span> ({{
+              daysUntilExpiry
+            }}
+            days remaining). Please renew to maintain your active status.
           </p>
           <button
             (click)="navigateToRenewal()"
             class="px-5 py-2 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition-all duration-200 flex items-center gap-2 shadow"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+              />
             </svg>
             Renew License Now
           </button>
