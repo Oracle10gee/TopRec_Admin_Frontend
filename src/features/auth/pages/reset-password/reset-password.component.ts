@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ApiService } from '../../../../core/services/api.service';
 
 @Component({
     standalone: true,
@@ -17,34 +18,41 @@ export class ResetPasswordComponent implements OnInit {
     isLoading = false;
     errorMessage = '';
     successMessage = '';
-    resetToken = '';
+    identifier = '';
+    otp = '';
 
     constructor(
         private fb: FormBuilder,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private apiService: ApiService
     ) { }
 
     ngOnInit(): void {
-        // Get reset token from URL parameters
+        // Get identifier and otp from query params
         this.route.queryParams.subscribe(params => {
-            this.resetToken = params['token'] || '';
+            this.identifier = params['identifier'] || '';
+            this.otp = params['otp'] || '';
+            if (!this.identifier || !this.otp) {
+                // Missing required params, redirect back to forgot password
+                this.router.navigate(['/auth/forgot-password']);
+            }
         });
         this.initializeForm();
     }
 
     initializeForm(): void {
         this.resetPasswordForm = this.fb.group({
-            password: ['', [Validators.required, Validators.minLength(6)]],
-            confirmPassword: ['', Validators.required]
+            new_password: ['', [Validators.required, Validators.minLength(6)]],
+            confirm_password: ['', Validators.required]
         }, {
             validators: this.passwordMatchValidator
         });
     }
 
     passwordMatchValidator(group: FormGroup): { [key: string]: any } | null {
-        const password = group.get('password')?.value;
-        const confirmPassword = group.get('confirmPassword')?.value;
+        const password = group.get('new_password')?.value;
+        const confirmPassword = group.get('confirm_password')?.value;
 
         if (password && confirmPassword && password !== confirmPassword) {
             return { passwordMismatch: true };
@@ -60,12 +68,12 @@ export class ResetPasswordComponent implements OnInit {
         this.showConfirmPassword = !this.showConfirmPassword;
     }
 
-    get password() {
-        return this.resetPasswordForm.get('password');
+    get new_password() {
+        return this.resetPasswordForm.get('new_password');
     }
 
-    get confirmPassword() {
-        return this.resetPasswordForm.get('confirmPassword');
+    get confirm_password() {
+        return this.resetPasswordForm.get('confirm_password');
     }
 
     onSubmit(): void {
@@ -74,23 +82,35 @@ export class ResetPasswordComponent implements OnInit {
             this.errorMessage = '';
             this.successMessage = '';
 
-            // Simulate API call
-            setTimeout(() => {
-                const { password } = this.resetPasswordForm.value;
+            const payload = {
+                identifier: this.identifier,
+                otp: this.otp,
+                new_password: this.resetPasswordForm.get('new_password')?.value,
+                confirm_password: this.resetPasswordForm.get('confirm_password')?.value
+            };
 
-                // Add your password reset logic here with token
-                console.log('Reset Password Request:', { token: this.resetToken, password });
+            this.apiService.post('/settings/password-reset/reset', payload).subscribe({
+                next: (response) => {
+                    this.isLoading = false;
+                    this.successMessage = response?.message || 'Password reset successfully! Redirecting to sign in...';
 
-                // Show success message
-                this.successMessage = 'Password reset successfully! Redirecting to sign in...';
-                this.isLoading = false;
-
-                // Navigate to login after 2 seconds
-                setTimeout(() => {
-                    this.router.navigate(['/auth/login']);
-                }, 2000);
-            }, 1500);
+                    // Navigate to login after 2 seconds
+                    setTimeout(() => {
+                        this.router.navigate(['/auth/login']);
+                    }, 2000);
+                },
+                error: (error) => {
+                    this.isLoading = false;
+                    const errorBody = error?.error;
+                    this.errorMessage =
+                        (typeof errorBody?.error?.details === 'string' ? errorBody.error.details : null)
+                        || errorBody?.message
+                        || error?.message
+                        || 'Failed to reset password. Please try again.';
+                }
+            });
         } else {
+            this.resetPasswordForm.markAllAsTouched();
             this.errorMessage = 'Please fill in all required fields correctly';
         }
     }
