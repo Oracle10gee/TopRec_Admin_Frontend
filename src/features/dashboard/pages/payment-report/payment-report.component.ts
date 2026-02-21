@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApiService } from '../../../../core/services/api.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 
 interface PaymentReportItem {
@@ -34,7 +36,7 @@ interface PaymentHistoryAPI {
 @Component({
     standalone: true,
     selector: 'app-payment-report',
-    imports: [CommonModule],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './payment-report.component.html',
     styleUrls: ['./payment-report.component.scss']
 })
@@ -52,15 +54,35 @@ export class PaymentReportComponent implements OnInit, OnDestroy {
     // Filtering
     statusFilter: 'all' | 'successful' | 'pending' | 'failed' = 'all';
 
+    // Advanced filter panel
+    filterForm!: FormGroup;
+    showFilterPanel = false;
+    paymentTypes: any[] = [];
+
+    get activeFilterCount(): number {
+        const fv = this.filterForm?.value || {};
+        return [fv.payer_name, fv.start_date, fv.end_date, fv.payment_type]
+            .filter(v => !!v).length;
+    }
+
     private destroy$ = new Subject<void>();
 
     constructor(
+        private fb: FormBuilder,
         private apiService: ApiService,
+        private authService: AuthService,
         private notificationService: NotificationService,
         private cdr: ChangeDetectorRef
     ) {}
 
     ngOnInit(): void {
+        this.filterForm = this.fb.group({
+            payer_name: [''],
+            start_date: [''],
+            end_date: [''],
+            payment_type: ['']
+        });
+        this.loadPaymentTypes();
         this.loadPaymentReport();
     }
 
@@ -80,6 +102,12 @@ export class PaymentReportComponent implements OnInit, OnDestroy {
         if (this.statusFilter !== 'all') {
             url += `&status=${this.statusFilter}`;
         }
+
+        const fv = this.filterForm?.value || {};
+        if (fv.payer_name)   url += `&payer_name=${encodeURIComponent(fv.payer_name)}`;
+        if (fv.start_date)   url += `&start_date=${fv.start_date}`;
+        if (fv.end_date)     url += `&end_date=${fv.end_date}`;
+        if (fv.payment_type) url += `&payment_type=${encodeURIComponent(fv.payment_type)}`;
 
         this.apiService.get<any>(url)
             .pipe(takeUntil(this.destroy$))
@@ -173,6 +201,43 @@ export class PaymentReportComponent implements OnInit, OnDestroy {
         if (this.currentPage > 1) {
             this.loadPaymentReport(this.currentPage - 1);
         }
+    }
+
+    /**
+     * Load available payment types for the filter dropdown
+     */
+    private loadPaymentTypes(): void {
+        this.authService.getPaymentTypes().subscribe({
+            next: (res) => {
+                this.paymentTypes = res?.data?.paymentTypes || res?.data || [];
+            },
+            error: (err) => {
+                console.error('Failed to load payment types:', err);
+            }
+        });
+    }
+
+    // ── Filter panel methods ──────────────────────────────────────────────────
+
+    openFilter(): void {
+        this.showFilterPanel = true;
+    }
+
+    closeFilter(): void {
+        this.showFilterPanel = false;
+    }
+
+    applyFilter(): void {
+        this.currentPage = 1;
+        this.loadPaymentReport();
+        this.closeFilter();
+    }
+
+    clearFilters(): void {
+        this.filterForm.patchValue({ payer_name: '', start_date: '', end_date: '', payment_type: '' });
+        this.currentPage = 1;
+        this.loadPaymentReport();
+        this.closeFilter();
     }
 
     /**
