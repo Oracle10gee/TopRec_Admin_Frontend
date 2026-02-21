@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 import { AuthService } from '../../../../../../core/services/auth.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
 
@@ -75,12 +76,16 @@ export class MembersListComponent implements OnInit, OnChanges {
             status: ['']
         });
 
-        this.filterForm.get('searchTerm')?.valueChanges.subscribe(value => {
-            this.applyFilters();
-        });
+        this.filterForm.get('searchTerm')?.valueChanges
+            .pipe(debounceTime(400))
+            .subscribe(() => {
+                this.currentPage = 1;
+                this.loadMembers();
+            });
 
-        this.filterForm.get('status')?.valueChanges.subscribe(value => {
-            this.applyFilters();
+        this.filterForm.get('status')?.valueChanges.subscribe(() => {
+            this.currentPage = 1;
+            this.loadMembers();
         });
     }
 
@@ -213,6 +218,49 @@ export class MembersListComponent implements OnInit, OnChanges {
             return matchesSearch && matchesStatus;
         });
     }
+
+    // ── Pagination ────────────────────────────────────────────────────────────
+
+    get totalPages(): number {
+        return Math.ceil(this.totalCount / this.pageSize);
+    }
+
+    get pageEnd(): number {
+        return Math.min(this.currentPage * this.pageSize, this.totalCount);
+    }
+
+    get visiblePages(): number[] {
+        const total = this.totalPages;
+        const current = this.currentPage;
+        const pages: number[] = [];
+        const start = Math.max(1, current - 2);
+        const end = Math.min(total, current + 2);
+        for (let i = start; i <= end; i++) pages.push(i);
+        return pages;
+    }
+
+    nextPage(): void {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.loadMembers();
+        }
+    }
+
+    previousPage(): void {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.loadMembers();
+        }
+    }
+
+    goToPage(page: number): void {
+        if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+            this.currentPage = page;
+            this.loadMembers();
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
 
     getInitials(name: string): string {
         const parts = name.split(' ');
