@@ -62,7 +62,6 @@ export class RemitaPaymentService {
                 script.async = true;
                 script.defer = true;
                 script.type = 'text/javascript';
-                script.crossOrigin = 'anonymous';
 
                 script.onload = () => {
                     console.log('✓ Remita payment script loaded successfully from:', script.src);
@@ -80,9 +79,9 @@ export class RemitaPaymentService {
 
                     // Try multiple alternative URLs
                     const alternatives = [
-                        `${this.remitaConfig.baseUrl}/remita-inline-checkout.js`,
-                        `${this.remitaConfig.baseUrl}/payment/remita-inline-checkout.js`,
-                        `https://cdn.remita.net/payment/script/remita-inline-checkout.js`
+                        `https://remitademo.net/payment/v1/remita-pay-inline.bundle.js`,
+                        `https://login.remita.net/payment/v1/remita-pay-inline.bundle.js`,
+                        `https://cdn.remita.net/payment/v1/remita-pay-inline.bundle.js`
                     ];
 
                     let altIndex = 0;
@@ -102,7 +101,6 @@ export class RemitaPaymentService {
                         scriptAlt.src = alternativeUrl;
                         scriptAlt.async = true;
                         scriptAlt.type = 'text/javascript';
-                        scriptAlt.crossOrigin = 'anonymous';
 
                         scriptAlt.onload = () => {
                             console.log('✓ Remita script loaded successfully from alternative URL:', alternativeUrl);
