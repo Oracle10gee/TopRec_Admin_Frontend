@@ -10,6 +10,15 @@ interface License {
     qualification: string;
     verified: boolean;
     daysUntilExpiry: number;
+    holderName?: string;
+}
+
+interface CertificateData {
+    holderName: string;
+    validTill: string;
+    registrarName: string;
+    registrarTitle: string;
+    licenseId: string;
 }
 
 @Component({
@@ -25,12 +34,23 @@ export class DashboardLicenseComponent implements OnInit {
             id: 'RTP/2024/001',
             status: 'Active',
             issuedDate: '2024-01-15',
-            expiryDate: '2025-01-15',
+            expiryDate: '2027-12-31',
             qualification: 'Professional Town Planner',
             verified: true,
-            daysUntilExpiry: 30
+            daysUntilExpiry: 30,
+            holderName: 'Kabiru Peters'
         }
     ];
+
+    // Certificate modal properties
+    showCertificateModal = false;
+    certificateData: CertificateData = {
+        holderName: '',
+        validTill: '',
+        registrarName: 'Tpl. Uhiere Samuel',
+        registrarTitle: 'Ag. Registrar',
+        licenseId: ''
+    };
 
     constructor(private router: Router) {}
 
@@ -102,17 +122,50 @@ export class DashboardLicenseComponent implements OnInit {
     }
 
     /**
+     * View certificate in modal
+     */
+    viewCertificate(license: License): void {
+        const expiryDate = new Date(license.expiryDate);
+        const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+        this.certificateData = {
+            holderName: license.holderName || 'Registered Member',
+            validTill: `${monthNames[expiryDate.getMonth()]}, ${expiryDate.getFullYear()}`,
+            registrarName: 'Tpl. Uhiere Samuel',
+            registrarTitle: 'Ag. Registrar',
+            licenseId: license.id
+        };
+
+        this.showCertificateModal = true;
+    }
+
+    /**
+     * Close certificate modal
+     */
+    closeCertificateModal(): void {
+        this.showCertificateModal = false;
+    }
+
+    /**
+     * Print certificate
+     */
+    printCertificate(event: Event): void {
+        event.stopPropagation();
+        window.print();
+    }
+
+    /**
      * Download license certificate as PDF
      */
     downloadLicense(licenseId: string): void {
         console.log('Downloading license:', licenseId);
-        
+
         // TODO: Implement actual download logic
         // This would typically call an API endpoint that generates a PDF
-        
+
         // Simulate download
         alert(`Downloading license ${licenseId}. This feature will be implemented soon.`);
-        
+
         // In production, you might do something like:
         // this.licenseService.downloadLicense(licenseId).subscribe(blob => {
         //   const url = window.URL.createObjectURL(blob);
@@ -128,19 +181,7 @@ export class DashboardLicenseComponent implements OnInit {
      */
     verifyCertificate(licenseId: string): void {
         console.log('Verifying certificate:', licenseId);
-        
-        // TODO: Implement verification logic
-        // This would show a modal or navigate to a verification page
-        
-        alert(`Certificate verification for ${licenseId}. 
-
-This will display:
-- Certificate authenticity status
-- QR code for verification
-- Shareable verification link
-- Expiry status
-
-Feature coming soon!`);
+        alert(`Certificate verification for ${licenseId}. Feature coming soon!`);
     }
 
     /**
@@ -173,12 +214,12 @@ Feature coming soon!`);
      */
     printLicense(licenseId: string): void {
         console.log('Printing license:', licenseId);
-        
+
         // TODO: Implement print functionality
         // This would open a print-friendly version of the license
-        
+
         alert(`Opening print dialog for license ${licenseId}. Feature coming soon!`);
-        
+
         // In production:
         // window.print();
         // Or navigate to a print-friendly page

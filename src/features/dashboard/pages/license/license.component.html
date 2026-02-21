@@ -302,6 +302,180 @@
     </div>
   </div>
 
+  <!-- Certificate Modal -->
+  <div
+    *ngIf="showCertificateModal"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+    (click)="closeCertificateModal()"
+  >
+    <!-- Modal Controls -->
+    <div class="fixed top-4 right-4 flex gap-2 z-[60]">
+      <button
+        (click)="printCertificate($event)"
+        class="cert-action-btn"
+        title="Print Certificate"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+        </svg>
+      </button>
+      <button
+        (click)="closeCertificateModal()"
+        class="cert-action-btn"
+        title="Close"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Certificate -->
+    <div
+      id="certificate-container"
+      class="certificate-outer"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="certificate-inner">
+        <!-- Concentric Circle Watermark -->
+        <div class="certificate-watermark">
+          <div class="watermark-circle watermark-circle-1"></div>
+          <div class="watermark-circle watermark-circle-2"></div>
+          <div class="watermark-circle watermark-circle-3"></div>
+          <div class="watermark-circle watermark-circle-4"></div>
+          <div class="watermark-circle watermark-circle-5"></div>
+        </div>
+
+        <!-- Diagonal X-Pattern Lines (Infinite Stroke) -->
+        <svg class="certificate-x-lines" viewBox="0 0 800 580" preserveAspectRatio="none">
+          <line x1="0" y1="580" x2="800" y2="0" stroke="#5c3a1e" stroke-width="0.5" opacity="0.15"/>
+          <line x1="0" y1="0" x2="800" y2="580" stroke="#5c3a1e" stroke-width="0.5" opacity="0.15"/>
+        </svg>
+
+        <!-- Certificate Content -->
+        <div class="certificate-content">
+          <!-- Logo Section -->
+          <div class="cert-logo-section">
+            <img src="assets/toprec_logo.png" alt="TOPREC Logo" class="cert-logo" />
+            <p class="cert-org-sub">Established by Decree No. 3 of 1988</p>
+          </div>
+
+          <!-- Title -->
+          <div class="cert-title-section">
+            <div class="cert-title-box">
+              <h1 class="cert-title">Certificate</h1>
+            </div>
+            <div class="cert-subtitle-box">
+              <span class="cert-subtitle">OF LICENSE TO PRACTICE</span>
+            </div>
+          </div>
+
+          <!-- Authentication Text -->
+          <p class="cert-auth-text">THIS CERTIFICATE AUTHENTICATES THAT</p>
+
+          <!-- Dynamic Name -->
+          <h2 class="cert-name">{{ certificateData.holderName }}</h2>
+
+          <!-- Body Text -->
+          <div class="cert-body-text">
+            <p>
+              Having complied with the provisions of SECTION (5) (1) Town Planners (Registration, etc.) Act, CAP T7 LFN 2004, and Section (5) (b) Rules and Regulation for the Control Town Planning Practice, is hereby authorized to practice as a REGISTERED TOWN PLANNER within the Federal Republic of Nigeria.
+            </p>
+          </div>
+
+          <!-- Bottom Section -->
+          <div class="cert-bottom-section">
+            <!-- Valid Till -->
+            <div class="cert-valid-till">
+              <span>VALID TILL {{ certificateData.validTill }}</span>
+            </div>
+
+            <!-- QR Code -->
+            <div class="cert-qr-section">
+              <div class="cert-qr-placeholder">
+                <svg viewBox="0 0 100 100" class="cert-qr-svg">
+                  <!-- QR code pattern -->
+                  <rect x="0" y="0" width="100" height="100" fill="white"/>
+                  <rect x="5" y="5" width="25" height="25" fill="#1a5632"/>
+                  <rect x="70" y="5" width="25" height="25" fill="#1a5632"/>
+                  <rect x="5" y="70" width="25" height="25" fill="#1a5632"/>
+                  <rect x="10" y="10" width="15" height="15" fill="white"/>
+                  <rect x="75" y="10" width="15" height="15" fill="white"/>
+                  <rect x="10" y="75" width="15" height="15" fill="white"/>
+                  <rect x="13" y="13" width="9" height="9" fill="#1a5632"/>
+                  <rect x="78" y="13" width="9" height="9" fill="#1a5632"/>
+                  <rect x="13" y="78" width="9" height="9" fill="#1a5632"/>
+                  <!-- Inner pattern -->
+                  <rect x="35" y="5" width="5" height="5" fill="#1a5632"/>
+                  <rect x="45" y="5" width="5" height="5" fill="#1a5632"/>
+                  <rect x="55" y="5" width="5" height="5" fill="#1a5632"/>
+                  <rect x="35" y="15" width="5" height="5" fill="#1a5632"/>
+                  <rect x="50" y="15" width="5" height="5" fill="#1a5632"/>
+                  <rect x="35" y="25" width="5" height="5" fill="#1a5632"/>
+                  <rect x="45" y="25" width="5" height="5" fill="#1a5632"/>
+                  <rect x="55" y="25" width="5" height="5" fill="#1a5632"/>
+                  <rect x="35" y="35" width="5" height="5" fill="#1a5632"/>
+                  <rect x="45" y="35" width="5" height="5" fill="#1a5632"/>
+                  <rect x="55" y="35" width="5" height="5" fill="#1a5632"/>
+                  <rect x="5" y="35" width="5" height="5" fill="#1a5632"/>
+                  <rect x="15" y="35" width="5" height="5" fill="#1a5632"/>
+                  <rect x="25" y="35" width="5" height="5" fill="#1a5632"/>
+                  <rect x="5" y="45" width="5" height="5" fill="#1a5632"/>
+                  <rect x="15" y="45" width="5" height="5" fill="#1a5632"/>
+                  <rect x="5" y="55" width="5" height="5" fill="#1a5632"/>
+                  <rect x="15" y="55" width="5" height="5" fill="#1a5632"/>
+                  <rect x="25" y="55" width="5" height="5" fill="#1a5632"/>
+                  <rect x="35" y="45" width="5" height="5" fill="#1a5632"/>
+                  <rect x="35" y="55" width="5" height="5" fill="#1a5632"/>
+                  <rect x="45" y="45" width="5" height="5" fill="#1a5632"/>
+                  <rect x="55" y="45" width="5" height="5" fill="#1a5632"/>
+                  <rect x="55" y="55" width="5" height="5" fill="#1a5632"/>
+                  <rect x="65" y="35" width="5" height="5" fill="#1a5632"/>
+                  <rect x="75" y="35" width="5" height="5" fill="#1a5632"/>
+                  <rect x="85" y="35" width="5" height="5" fill="#1a5632"/>
+                  <rect x="65" y="45" width="5" height="5" fill="#1a5632"/>
+                  <rect x="75" y="45" width="5" height="5" fill="#1a5632"/>
+                  <rect x="85" y="45" width="5" height="5" fill="#1a5632"/>
+                  <rect x="65" y="55" width="5" height="5" fill="#1a5632"/>
+                  <rect x="85" y="55" width="5" height="5" fill="#1a5632"/>
+                  <rect x="70" y="70" width="5" height="5" fill="#1a5632"/>
+                  <rect x="80" y="70" width="5" height="5" fill="#1a5632"/>
+                  <rect x="90" y="70" width="5" height="5" fill="#1a5632"/>
+                  <rect x="70" y="80" width="5" height="5" fill="#1a5632"/>
+                  <rect x="90" y="80" width="5" height="5" fill="#1a5632"/>
+                  <rect x="70" y="90" width="5" height="5" fill="#1a5632"/>
+                  <rect x="80" y="90" width="5" height="5" fill="#1a5632"/>
+                  <rect x="90" y="90" width="5" height="5" fill="#1a5632"/>
+                  <rect x="45" y="65" width="5" height="5" fill="#1a5632"/>
+                  <rect x="55" y="65" width="5" height="5" fill="#1a5632"/>
+                  <rect x="45" y="75" width="5" height="5" fill="#1a5632"/>
+                  <rect x="55" y="75" width="5" height="5" fill="#1a5632"/>
+                  <rect x="45" y="85" width="5" height="5" fill="#1a5632"/>
+                  <rect x="55" y="85" width="5" height="5" fill="#1a5632"/>
+                </svg>
+              </div>
+              <p class="cert-qr-label">VERIFY MY IDENTITY</p>
+            </div>
+
+            <!-- Signature Section -->
+            <div class="cert-signature-section">
+              <!-- Signature SVG -->
+              <svg class="cert-signature-svg" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 45 Q20 20 40 35 Q50 42 55 30 Q60 18 65 25 Q70 32 75 20 Q80 10 85 28 Q90 40 95 22 Q100 10 110 30 Q115 38 120 25 Q125 15 135 30 Q140 38 150 28 Q155 22 165 35 Q170 42 180 30 Q185 25 190 35" stroke="#1a5632" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 48 Q100 40 195 42" stroke="#1a5632" stroke-width="0.8" fill="none" opacity="0.5"/>
+              </svg>
+              <div class="cert-registrar-box">
+                <p class="cert-registrar-name">{{ certificateData.registrarName }}</p>
+                <div class="cert-registrar-line"></div>
+                <p class="cert-registrar-title">{{ certificateData.registrarTitle }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Empty State (shown when no licenses) -->
   <div *ngIf="licenses.length === 0" class="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
     <div class="text-center">

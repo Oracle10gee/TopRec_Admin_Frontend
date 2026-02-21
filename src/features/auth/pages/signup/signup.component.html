@@ -249,19 +249,19 @@
             Professional Details
           </h3>
 
-          <!-- Membership Number -->
+          <!-- Registration Number -->
           <div>
             <label
               for="membership_number"
               class="block text-sm font-medium text-gray-700 mb-1.5"
             >
-              Membership Number <span class="text-red-500">*</span>
+              Registration Number <span class="text-red-500">*</span>
             </label>
             <input
               type="text"
               id="membership_number"
               formControlName="membership_number"
-              placeholder="Enter your membership number"
+              placeholder="Enter your Registration Number"
               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 text-sm bg-white"
               [class.border-red-500]="
                 membership_number?.invalid && membership_number?.touched
@@ -275,7 +275,7 @@
                 *ngIf="membership_number?.errors?.['required']"
                 class="text-xs text-red-500"
               >
-                Membership number is required
+                Registration Number is required
               </p>
             </div>
           </div>
@@ -288,7 +288,7 @@
                 for="qualification"
                 class="block text-sm font-medium text-gray-700 mb-1.5"
               >
-                Qualification 
+                Qualification
                 <!-- <span class="text-red-500">*</span> -->
               </label>
               <select
@@ -451,7 +451,11 @@
                 formControlName="confirm_password"
                 placeholder="Re-enter your password"
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition-all duration-200 pr-10 text-sm bg-white"
-                [class.border-red-500]="(confirm_password?.invalid && confirm_password?.touched) || (signUpForm.errors?.['passwordMismatch'] && confirm_password?.touched)"
+                [class.border-red-500]="
+                  (confirm_password?.invalid && confirm_password?.touched) ||
+                  (signUpForm.errors?.['passwordMismatch'] &&
+                    confirm_password?.touched)
+                "
               />
               <button
                 type="button"
@@ -497,7 +501,11 @@
               </button>
             </div>
             <div
-              *ngIf="(confirm_password?.invalid && confirm_password?.touched) || (signUpForm.errors?.['passwordMismatch'] && confirm_password?.touched)"
+              *ngIf="
+                (confirm_password?.invalid && confirm_password?.touched) ||
+                (signUpForm.errors?.['passwordMismatch'] &&
+                  confirm_password?.touched)
+              "
               class="mt-1"
             >
               <p
