@@ -4,6 +4,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { debounceTime } from 'rxjs/operators';
 import { AuthService } from '../../../../../../core/services/auth.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
+import { State } from '../../../../../../core/models/auth.model';
+import { ConfirmDialogComponent } from '../../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 interface Member {
     id: string;
@@ -19,12 +21,12 @@ interface Member {
 @Component({
     standalone: true,
     selector: 'app-members-list',
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, ConfirmDialogComponent],
     templateUrl: './members-list.component.html',
     styleUrls: ['./members-list.component.scss']
 })
 export class MembersListComponent implements OnInit, OnChanges {
-    @Input() role: string = 'Member'; // Role filter passed from parent
+    @Input() role: string = 'Member';
 
     filterForm!: FormGroup;
     editForm!: FormGroup;
@@ -38,6 +40,15 @@ export class MembersListComponent implements OnInit, OnChanges {
     showEditModal = false;
     selectedMember: Member | null = null;
     isSubmitting = false;
+
+    // Filter panel
+    showFilterPanel = false;
+    states: State[] = [];
+
+    // Confirm dialog
+    showConfirmDialog = false;
+    isDeleting = false;
+    memberToDelete: Member | null = null;
 
     // Pagination
     currentPage = 1;
@@ -53,6 +64,7 @@ export class MembersListComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.initializeForm();
         this.loadMembers();
+        this.loadStates();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -65,7 +77,12 @@ export class MembersListComponent implements OnInit, OnChanges {
     private initializeForm(): void {
         this.filterForm = this.fb.group({
             searchTerm: [''],
-            status: ['']
+            status: [''],
+            full_name: [''],
+            phone_number: [''],
+            membership_number: [''],
+            gender: [''],
+            state_of_practice: ['']
         });
 
         this.editForm = this.fb.group({
@@ -89,6 +106,17 @@ export class MembersListComponent implements OnInit, OnChanges {
         });
     }
 
+    private loadStates(): void {
+        this.authService.getStates().subscribe({
+            next: (response) => {
+                this.states = response?.data?.states || [];
+            },
+            error: (error) => {
+                console.error('Failed to load states:', error);
+            }
+        });
+    }
+
     /**
      * Load members from API
      */
@@ -96,19 +124,24 @@ export class MembersListComponent implements OnInit, OnChanges {
         this.isLoading = true;
         this.errorMessage = '';
 
+        const fv = this.filterForm.value;
         const params = {
             page: this.currentPage,
             limit: this.pageSize,
             role: this.role,
-            search: this.filterForm.get('searchTerm')?.value || '',
-            status: this.filterForm.get('status')?.value || ''
+            search: fv.searchTerm || '',
+            status: fv.status || '',
+            full_name: fv.full_name || '',
+            phone_number: fv.phone_number || '',
+            membership_number: fv.membership_number || '',
+            gender: fv.gender || '',
+            state_of_practice: fv.state_of_practice || ''
         };
 
         this.authService.getUsers(params).subscribe({
             next: (response) => {
                 console.log('Users response:', response);
 
-                // Map API response to Member interface
                 if (response.data?.users && Array.isArray(response.data.users)) {
                     this.members = response.data.users.map((user: any) => ({
                         id: user.id || '',
@@ -122,12 +155,13 @@ export class MembersListComponent implements OnInit, OnChanges {
                     }));
                     this.totalCount = response.data?.pagination?.total || this.members.length;
                 } else if (response.data && Array.isArray(response.data)) {
-                    this.members = response.users.map((user: any) => ({
+                    this.members = response.data.map((user: any) => ({
                         id: user.id || user.membership_number || '',
                         name: user.full_name || user.name || '',
                         mobile: user.phone_number || user.mobile || '',
                         email: user.email || '',
-                        license: user.license_status || user.license || 'Active',
+                        membership_number: user.membership_number || '',
+                        qualification: user.qualification || '',
                         status: user.status === 'active' || user.status === 'Active' ? 'Active' : 'Inactive',
                         role: user.role
                     }));
@@ -141,7 +175,6 @@ export class MembersListComponent implements OnInit, OnChanges {
                 console.error('Error loading members:', error);
                 this.errorMessage = error.message || 'Failed to load members. Please try again.';
                 this.isLoading = false;
-                // Fall back to mock data if API fails
                 this.loadMockData();
             }
         });
@@ -199,24 +232,74 @@ export class MembersListComponent implements OnInit, OnChanges {
         this.totalCount = this.members.length;
     }
 
-    /**
-     * Apply filters
-     */
-    private applyFilters(): void {
-        const searchTerm = (this.filterForm.get('searchTerm')?.value || '').toLowerCase();
-        const status = this.filterForm.get('status')?.value || '';
+    // ── Filter Panel ──────────────────────────────────────────────────────────
 
-        this.filteredMembers = this.members.filter(member => {
-            const matchesSearch = !searchTerm ||
-                member.name.toLowerCase().includes(searchTerm) ||
-                member.email.toLowerCase().includes(searchTerm) ||
-                member.id.toLowerCase().includes(searchTerm) ||
-                member.mobile.includes(searchTerm);
+    get activeFilterCount(): number {
+        const fv = this.filterForm.value;
+        return [fv.full_name, fv.phone_number, fv.membership_number, fv.gender, fv.state_of_practice]
+            .filter(v => !!v).length;
+    }
 
-            const matchesStatus = !status || member.status === status;
+    openFilter(): void {
+        this.showFilterPanel = true;
+    }
 
-            return matchesSearch && matchesStatus;
+    closeFilter(): void {
+        this.showFilterPanel = false;
+    }
+
+    applyFilter(): void {
+        this.currentPage = 1;
+        this.loadMembers();
+        this.closeFilter();
+    }
+
+    clearFilters(): void {
+        this.filterForm.patchValue({
+            full_name: '',
+            phone_number: '',
+            membership_number: '',
+            gender: '',
+            state_of_practice: ''
         });
+        this.currentPage = 1;
+        this.loadMembers();
+        this.closeFilter();
+    }
+
+    // ── Confirm Dialog ────────────────────────────────────────────────────────
+
+    deleteMember(member: Member): void {
+        this.memberToDelete = member;
+        this.showConfirmDialog = true;
+    }
+
+    onDeleteConfirmed(): void {
+        if (!this.memberToDelete) return;
+        this.isDeleting = true;
+
+        this.authService.deleteUser(this.memberToDelete.id).subscribe({
+            next: () => {
+                this.isDeleting = false;
+                this.notificationService.success('Member deleted successfully');
+                this.filteredMembers = this.filteredMembers.filter(m => m.id !== this.memberToDelete!.id);
+                this.members = this.members.filter(m => m.id !== this.memberToDelete!.id);
+                this.showConfirmDialog = false;
+                this.memberToDelete = null;
+            },
+            error: (error) => {
+                this.isDeleting = false;
+                const errorMsg = error.error?.message || 'Failed to delete member';
+                this.notificationService.error(errorMsg);
+                this.showConfirmDialog = false;
+                this.memberToDelete = null;
+            }
+        });
+    }
+
+    onDeleteCancelled(): void {
+        this.showConfirmDialog = false;
+        this.memberToDelete = null;
     }
 
     // ── Pagination ────────────────────────────────────────────────────────────
@@ -282,10 +365,6 @@ export class MembersListComponent implements OnInit, OnChanges {
         console.log('Export members to excel');
     }
 
-    openFilter(): void {
-        console.log('Open filter dialog');
-    }
-
     /**
      * View member details
      */
@@ -294,17 +373,11 @@ export class MembersListComponent implements OnInit, OnChanges {
         this.showViewModal = true;
     }
 
-    /**
-     * Close view modal
-     */
     closeViewModal(): void {
         this.showViewModal = false;
         this.selectedMember = null;
     }
 
-    /**
-     * Edit member
-     */
     editMember(member: Member): void {
         this.selectedMember = member;
         this.editForm.patchValue({
@@ -317,18 +390,12 @@ export class MembersListComponent implements OnInit, OnChanges {
         this.showEditModal = true;
     }
 
-    /**
-     * Close edit modal
-     */
     closeEditModal(): void {
         this.showEditModal = false;
         this.selectedMember = null;
         this.editForm.reset();
     }
 
-    /**
-     * Save edited member
-     */
     saveMember(): void {
         if (!this.editForm.valid || !this.selectedMember) {
             return;
@@ -352,31 +419,6 @@ export class MembersListComponent implements OnInit, OnChanges {
             error: (error) => {
                 this.isSubmitting = false;
                 const errorMsg = error.error?.message || 'Failed to update member';
-                this.notificationService.error(errorMsg);
-            }
-        });
-    }
-
-    /**
-     * Delete member
-     */
-    deleteMember(member: Member): void {
-        const confirmed = confirm(`Are you sure you want to delete ${member.name}?`);
-        if (!confirmed) {
-            return;
-        }
-
-        this.isSubmitting = true;
-        this.authService.deleteUser(member.id).subscribe({
-            next: (response) => {
-                this.isSubmitting = false;
-                this.notificationService.success('Member deleted successfully');
-                this.filteredMembers = this.filteredMembers.filter(m => m.id !== member.id);
-                this.members = this.members.filter(m => m.id !== member.id);
-            },
-            error: (error) => {
-                this.isSubmitting = false;
-                const errorMsg = error.error?.message || 'Failed to delete member';
                 this.notificationService.error(errorMsg);
             }
         });

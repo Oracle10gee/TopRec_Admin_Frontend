@@ -1,8 +1,11 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 import { AuthService } from '../../../../../../core/services/auth.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
+import { State } from '../../../../../../core/models/auth.model';
+import { ConfirmDialogComponent } from '../../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 interface ConsultingFirm {
     id: string;
@@ -19,7 +22,7 @@ interface ConsultingFirm {
 @Component({
     standalone: true,
     selector: 'app-consulting-firm',
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, ConfirmDialogComponent],
     templateUrl: './consulting-firm.component.html',
     styleUrls: ['./consulting-firm.component.scss']
 })
@@ -39,6 +42,15 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
     selectedFirm: ConsultingFirm | null = null;
     isSubmitting = false;
 
+    // Filter panel
+    showFilterPanel = false;
+    states: State[] = [];
+
+    // Confirm dialog
+    showConfirmDialog = false;
+    isDeleting = false;
+    firmToDelete: ConsultingFirm | null = null;
+
     // Pagination
     currentPage = 1;
     pageSize = 10;
@@ -53,6 +65,7 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.initializeForm();
         this.loadFirms();
+        this.loadStates();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -65,24 +78,43 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
     private initializeForm(): void {
         this.filterForm = this.fb.group({
             searchTerm: [''],
-            status: ['']
+            status: [''],
+            full_name: [''],
+            phone_number: [''],
+            membership_number: [''],
+            gender: [''],
+            state_of_practice: ['']
         });
 
-        this.filterForm.get('searchTerm')?.valueChanges.subscribe(value => {
-            this.applyFilters();
-        });
-
-        this.filterForm.get('status')?.valueChanges.subscribe(value => {
-            this.applyFilters();
-        });
-
-        // Initialize edit form
         this.editForm = this.fb.group({
             full_name: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             phone_number: ['', Validators.required],
             address: ['', Validators.required],
             status: ['Active', Validators.required]
+        });
+
+        this.filterForm.get('searchTerm')?.valueChanges
+            .pipe(debounceTime(400))
+            .subscribe(() => {
+                this.currentPage = 1;
+                this.loadFirms();
+            });
+
+        this.filterForm.get('status')?.valueChanges.subscribe(() => {
+            this.currentPage = 1;
+            this.loadFirms();
+        });
+    }
+
+    private loadStates(): void {
+        this.authService.getStates().subscribe({
+            next: (response) => {
+                this.states = response?.data?.states || [];
+            },
+            error: (error) => {
+                console.error('Failed to load states:', error);
+            }
         });
     }
 
@@ -93,19 +125,24 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
         this.isLoading = true;
         this.errorMessage = '';
 
+        const fv = this.filterForm.value;
         const params = {
             page: this.currentPage,
             limit: this.pageSize,
             role: this.role,
-            search: this.filterForm.get('searchTerm')?.value || '',
-            status: this.filterForm.get('status')?.value || ''
+            search: fv.searchTerm || '',
+            status: fv.status || '',
+            full_name: fv.full_name || '',
+            phone_number: fv.phone_number || '',
+            membership_number: fv.membership_number || '',
+            gender: fv.gender || '',
+            state_of_practice: fv.state_of_practice || ''
         };
 
         this.authService.getUsers(params).subscribe({
             next: (response) => {
                 console.log('Consulting firms response:', response);
 
-                // Map API response to ConsultingFirm interface
                 if (response.data?.users && Array.isArray(response.data.users)) {
                     this.firms = response.data.users.map((user: any) => ({
                         id: user.id || '',
@@ -152,15 +189,11 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
                 console.error('Error loading firms:', error);
                 this.errorMessage = error.message || 'Failed to load consulting firms. Please try again.';
                 this.isLoading = false;
-                // Fall back to mock data if API fails
                 this.loadMockData();
             }
         });
     }
 
-    /**
-     * Load mock data as fallback
-     */
     private loadMockData(): void {
         const mockFirms: ConsultingFirm[] = [
             {
@@ -200,27 +233,118 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
         this.totalCount = this.firms.length;
     }
 
-    /**
-     * Apply filters
-     */
-    private applyFilters(): void {
-        const searchTerm = (this.filterForm.get('searchTerm')?.value || '').toLowerCase();
-        const status = this.filterForm.get('status')?.value || '';
+    // ── Filter Panel ──────────────────────────────────────────────────────────
 
-        this.filteredFirms = this.firms.filter(firm => {
-            const matchesSearch = !searchTerm ||
-                firm.name.toLowerCase().includes(searchTerm) ||
-                firm.email.toLowerCase().includes(searchTerm) ||
-                firm.id.toLowerCase().includes(searchTerm) ||
-                firm.phone.includes(searchTerm) ||
-                firm.contact.toLowerCase().includes(searchTerm) ||
-                firm.address.toLowerCase().includes(searchTerm);
+    get activeFilterCount(): number {
+        const fv = this.filterForm.value;
+        return [fv.full_name, fv.phone_number, fv.membership_number, fv.gender, fv.state_of_practice]
+            .filter(v => !!v).length;
+    }
 
-            const matchesStatus = !status || firm.status === status;
+    openFilter(): void {
+        this.showFilterPanel = true;
+    }
 
-            return matchesSearch && matchesStatus;
+    closeFilter(): void {
+        this.showFilterPanel = false;
+    }
+
+    applyFilter(): void {
+        this.currentPage = 1;
+        this.loadFirms();
+        this.closeFilter();
+    }
+
+    clearFilters(): void {
+        this.filterForm.patchValue({
+            full_name: '',
+            phone_number: '',
+            membership_number: '',
+            gender: '',
+            state_of_practice: ''
+        });
+        this.currentPage = 1;
+        this.loadFirms();
+        this.closeFilter();
+    }
+
+    // ── Confirm Dialog ────────────────────────────────────────────────────────
+
+    deleteFirm(firm: ConsultingFirm): void {
+        this.firmToDelete = firm;
+        this.showConfirmDialog = true;
+    }
+
+    onDeleteConfirmed(): void {
+        if (!this.firmToDelete) return;
+        this.isDeleting = true;
+
+        this.authService.deleteUser(this.firmToDelete.id).subscribe({
+            next: () => {
+                this.isDeleting = false;
+                this.notificationService.success(`${this.firmToDelete!.name} deleted successfully`);
+                this.filteredFirms = this.filteredFirms.filter(f => f.id !== this.firmToDelete!.id);
+                this.firms = this.firms.filter(f => f.id !== this.firmToDelete!.id);
+                this.showConfirmDialog = false;
+                this.firmToDelete = null;
+            },
+            error: (error) => {
+                this.isDeleting = false;
+                console.error('Error deleting firm:', error);
+                this.notificationService.error('Failed to delete firm. Please try again.');
+                this.showConfirmDialog = false;
+                this.firmToDelete = null;
+            }
         });
     }
+
+    onDeleteCancelled(): void {
+        this.showConfirmDialog = false;
+        this.firmToDelete = null;
+    }
+
+    // ── Pagination ────────────────────────────────────────────────────────────
+
+    get totalPages(): number {
+        return Math.ceil(this.totalCount / this.pageSize);
+    }
+
+    get pageEnd(): number {
+        return Math.min(this.currentPage * this.pageSize, this.totalCount);
+    }
+
+    get visiblePages(): number[] {
+        const total = this.totalPages;
+        const current = this.currentPage;
+        const pages: number[] = [];
+        const start = Math.max(1, current - 2);
+        const end = Math.min(total, current + 2);
+        for (let i = start; i <= end; i++) pages.push(i);
+        return pages;
+    }
+
+    nextPage(): void {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.loadFirms();
+        }
+    }
+
+    previousPage(): void {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.loadFirms();
+        }
+    }
+
+    goToPage(page: number): void {
+        if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+            this.currentPage = page;
+            this.loadFirms();
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
 
     getInitials(name: string): string {
         const parts = name.split(' ');
@@ -242,10 +366,6 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
         console.log('Export firms to excel');
     }
 
-    openFilter(): void {
-        console.log('Open filter dialog');
-    }
-
     editFirm(firm: ConsultingFirm): void {
         this.selectedFirm = firm;
         this.editForm.patchValue({
@@ -263,25 +383,6 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
         this.showViewModal = true;
     }
 
-    deleteFirm(firm: ConsultingFirm): void {
-        if (confirm(`Are you sure you want to delete ${firm.name}?`)) {
-            this.authService.deleteUser(firm.id).subscribe({
-                next: () => {
-                    this.filteredFirms = this.filteredFirms.filter(f => f.id !== firm.id);
-                    this.firms = this.firms.filter(f => f.id !== firm.id);
-                    this.notificationService.success(`${firm.name} deleted successfully`);
-                },
-                error: (error) => {
-                    console.error('Error deleting firm:', error);
-                    this.notificationService.error('Failed to delete firm. Please try again.');
-                }
-            });
-        }
-    }
-
-    /**
-     * Save edited firm
-     */
     saveFirm(): void {
         if (this.editForm.invalid || !this.selectedFirm) return;
 
@@ -295,7 +396,6 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
 
         this.authService.updateUser(this.selectedFirm.id, payload).subscribe({
             next: (response) => {
-                // Update the firm in the lists
                 const index = this.firms.findIndex(f => f.id === this.selectedFirm!.id);
                 if (index !== -1) {
                     this.firms[index] = {
@@ -306,7 +406,7 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
                         address: payload.address
                     };
                 }
-                this.applyFilters();
+                this.filteredFirms = [...this.firms];
                 this.closeEditModal();
                 this.isSubmitting = false;
                 this.notificationService.success('Firm updated successfully');
