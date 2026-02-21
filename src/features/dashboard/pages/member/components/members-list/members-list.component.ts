@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { AuthService } from '../../../../../../core/services/auth.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
@@ -48,6 +48,8 @@ export class MembersListComponent implements OnInit, OnChanges {
     isAddSubmitting = false;
     selectedAddRole = '';
     qualifications: Qualification[] = [];
+    showAddPassword = false;
+    showAddConfirmPassword = false;
 
     // Filter panel
     showFilterPanel = false;
@@ -118,7 +120,7 @@ export class MembersListComponent implements OnInit, OnChanges {
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirm_password: ['', Validators.required]
-        }, { validators: [this.passwordMatchValidator, this.addQualificationValidator.bind(this)] });
+        }, { validators: [this.passwordMatchValidator, this.addQualificationValidator] });
 
         // Watch role changes in addForm to update field visibility and validators
         this.addForm.get('role')?.valueChanges.subscribe(role => {
@@ -352,6 +354,8 @@ export class MembersListComponent implements OnInit, OnChanges {
     openAddModal(): void {
         this.addForm.reset();
         this.selectedAddRole = '';
+        this.showAddPassword = false;
+        this.showAddConfirmPassword = false;
         this.showAddModal = true;
     }
 
@@ -359,6 +363,16 @@ export class MembersListComponent implements OnInit, OnChanges {
         this.showAddModal = false;
         this.addForm.reset();
         this.selectedAddRole = '';
+        this.showAddPassword = false;
+        this.showAddConfirmPassword = false;
+    }
+
+    toggleAddPasswordVisibility(): void {
+        this.showAddPassword = !this.showAddPassword;
+    }
+
+    toggleAddConfirmPasswordVisibility(): void {
+        this.showAddConfirmPassword = !this.showAddConfirmPassword;
     }
 
     saveNewMember(): void {
@@ -393,9 +407,9 @@ export class MembersListComponent implements OnInit, OnChanges {
     }
 
     /** Cross-field validator: qualification required for Member role */
-    private addQualificationValidator(): { [key: string]: any } | null {
-        const role = this.addForm?.get('role')?.value;
-        const qualification = this.addForm?.get('qualification')?.value;
+    private addQualificationValidator(group: AbstractControl): { [key: string]: any } | null {
+        const role = group.get('role')?.value;
+        const qualification = group.get('qualification')?.value;
         if (role === 'Member' && !qualification) {
             return { qualificationRequired: true };
         }
