@@ -466,5 +466,28 @@ export class AuthService {
             })
         );
     }
+
+    /**
+     * Create a new user (Superadmin only).
+     * Calls POST /auth/register but does NOT update session state —
+     * so the currently-logged-in Superadmin stays logged in.
+     */
+    createUser(data: SignUpRequest): Observable<any> {
+        return this.apiService.post<any>('/auth/register', data).pipe(
+            catchError((error) => this.handleAuthError(error))
+        );
+    }
+
+    /**
+     * Get qualifications list
+     */
+    getQualifications(): Observable<any> {
+        return this.apiService.get<any>('/auth/qualifications').pipe(
+            catchError((error) => {
+                console.error('Error fetching qualifications:', error);
+                return throwError(() => error);
+            })
+        );
+    }
 }
 

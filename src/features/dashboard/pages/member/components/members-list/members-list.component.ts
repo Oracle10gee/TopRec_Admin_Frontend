@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { debounceTime } from 'rxjs/operators';
 import { AuthService } from '../../../../../../core/services/auth.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
-import { State } from '../../../../../../core/models/auth.model';
+import { State, Qualification } from '../../../../../../core/models/auth.model';
 import { ConfirmDialogComponent } from '../../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 interface Member {
@@ -30,6 +30,7 @@ export class MembersListComponent implements OnInit, OnChanges {
 
     filterForm!: FormGroup;
     editForm!: FormGroup;
+    addForm!: FormGroup;
     members: Member[] = [];
     filteredMembers: Member[] = [];
     isLoading = false;
@@ -40,6 +41,13 @@ export class MembersListComponent implements OnInit, OnChanges {
     showEditModal = false;
     selectedMember: Member | null = null;
     isSubmitting = false;
+
+    // Add Member modal (Superadmin only)
+    isSuperadmin = false;
+    showAddModal = false;
+    isAddSubmitting = false;
+    selectedAddRole = '';
+    qualifications: Qualification[] = [];
 
     // Filter panel
     showFilterPanel = false;
@@ -62,9 +70,13 @@ export class MembersListComponent implements OnInit, OnChanges {
     ) { }
 
     ngOnInit(): void {
+        this.isSuperadmin = this.authService.getCurrentUserRole() === 'Superadmin';
         this.initializeForm();
         this.loadMembers();
         this.loadStates();
+        if (this.isSuperadmin) {
+            this.loadQualifications();
+        }
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -93,6 +105,33 @@ export class MembersListComponent implements OnInit, OnChanges {
             status: ['']
         });
 
+        this.addForm = this.fb.group({
+            role: ['', Validators.required],
+            full_name: ['', [Validators.required, Validators.minLength(3)]],
+            membership_number: ['', Validators.required],
+            qualification: [''],
+            gender: [''],
+            state_of_practice: ['', Validators.required],
+            registration_date: ['', Validators.required],
+            address: ['', [Validators.required, Validators.minLength(5)]],
+            phone_number: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
+            email: ['', [Validators.required, Validators.email]],
+            password: ['', [Validators.required, Validators.minLength(6)]],
+            confirm_password: ['', Validators.required]
+        }, { validators: [this.passwordMatchValidator, this.addQualificationValidator.bind(this)] });
+
+        // Watch role changes in addForm to update field visibility and validators
+        this.addForm.get('role')?.valueChanges.subscribe(role => {
+            this.selectedAddRole = role;
+            this.updateAddQualificationValidation(role);
+            this.updateAddGenderValidation(role);
+
+            if (role === 'Consulting Firm' || role === 'Practice Firm') {
+                this.addForm.get('qualification')?.setValue('Associate', { emitEvent: false });
+                this.addForm.get('gender')?.setValue('prefer_not_to_say', { emitEvent: false });
+            }
+        });
+
         this.filterForm.get('searchTerm')?.valueChanges
             .pipe(debounceTime(400))
             .subscribe(() => {
@@ -106,6 +145,28 @@ export class MembersListComponent implements OnInit, OnChanges {
         });
     }
 
+    private updateAddQualificationValidation(role: string): void {
+        const ctrl = this.addForm.get('qualification');
+        if (role === 'Member') {
+            ctrl?.setValidators([Validators.required]);
+        } else {
+            ctrl?.setValidators([]);
+            ctrl?.reset();
+        }
+        ctrl?.updateValueAndValidity();
+    }
+
+    private updateAddGenderValidation(role: string): void {
+        const ctrl = this.addForm.get('gender');
+        if (role === 'Member') {
+            ctrl?.setValidators([Validators.required]);
+        } else {
+            ctrl?.setValidators([]);
+            ctrl?.reset();
+        }
+        ctrl?.updateValueAndValidity();
+    }
+
     private loadStates(): void {
         this.authService.getStates().subscribe({
             next: (response) => {
@@ -113,6 +174,17 @@ export class MembersListComponent implements OnInit, OnChanges {
             },
             error: (error) => {
                 console.error('Failed to load states:', error);
+            }
+        });
+    }
+
+    private loadQualifications(): void {
+        this.authService.getQualifications().subscribe({
+            next: (response) => {
+                this.qualifications = response?.data?.qualifications || [];
+            },
+            error: (error) => {
+                console.error('Failed to load qualifications:', error);
             }
         });
     }
@@ -265,6 +337,69 @@ export class MembersListComponent implements OnInit, OnChanges {
         this.currentPage = 1;
         this.loadMembers();
         this.closeFilter();
+    }
+
+    // ── Add Member (Superadmin only) ──────────────────────────────────────────
+
+    isAddQualificationVisible(): boolean {
+        return this.selectedAddRole === 'Member';
+    }
+
+    isAddGenderVisible(): boolean {
+        return this.selectedAddRole === 'Member';
+    }
+
+    openAddModal(): void {
+        this.addForm.reset();
+        this.selectedAddRole = '';
+        this.showAddModal = true;
+    }
+
+    closeAddModal(): void {
+        this.showAddModal = false;
+        this.addForm.reset();
+        this.selectedAddRole = '';
+    }
+
+    saveNewMember(): void {
+        if (!this.addForm.valid) {
+            this.addForm.markAllAsTouched();
+            return;
+        }
+
+        this.isAddSubmitting = true;
+        this.authService.createUser(this.addForm.value).subscribe({
+            next: () => {
+                this.isAddSubmitting = false;
+                this.notificationService.success('Member created successfully');
+                this.closeAddModal();
+                this.loadMembers();
+            },
+            error: (error) => {
+                this.isAddSubmitting = false;
+                this.notificationService.error(error.message || 'Failed to create member');
+            }
+        });
+    }
+
+    /** Cross-field validator: passwords must match */
+    private passwordMatchValidator(group: FormGroup): { [key: string]: any } | null {
+        const password = group.get('password')?.value;
+        const confirmPassword = group.get('confirm_password')?.value;
+        if (password && confirmPassword && password !== confirmPassword) {
+            return { passwordMismatch: true };
+        }
+        return null;
+    }
+
+    /** Cross-field validator: qualification required for Member role */
+    private addQualificationValidator(): { [key: string]: any } | null {
+        const role = this.addForm?.get('role')?.value;
+        const qualification = this.addForm?.get('qualification')?.value;
+        if (role === 'Member' && !qualification) {
+            return { qualificationRequired: true };
+        }
+        return null;
     }
 
     // ── Confirm Dialog ────────────────────────────────────────────────────────
