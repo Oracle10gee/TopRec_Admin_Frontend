@@ -13,8 +13,48 @@ export interface SignUpRequest {
     qualification: string;
     role: string;
     registration_date: string;
+    gender?: string;
+    state_of_practice: string;
     password: string;
     confirm_password: string;
+}
+
+export interface State {
+    id: string;
+    name: string;
+    code: string;
+    zone: string;
+}
+
+export interface StatesResponse {
+    success: boolean;
+    message: string;
+    data: {
+        states: State[];
+    };
+    error: null | string;
+    meta: {
+        requestId: string;
+        timestamp: string;
+    };
+}
+
+export interface Qualification {
+    value: string;
+    label: string;
+}
+
+export interface QualificationsResponse {
+    success: boolean;
+    message: string;
+    data: {
+        qualifications: Qualification[];
+    };
+    error: null | string;
+    meta: {
+        requestId: string;
+        timestamp: string;
+    };
 }
 
 // API Response Models
@@ -43,6 +83,9 @@ export interface User {
     role: string;
     registration_date: string;
     current_financial_status: null | string;
+    gender?: string;
+    state_of_practice?: string | null;
+    is_existing?: boolean;
     status: 'active' | 'inactive';
     created_at: string;
 }

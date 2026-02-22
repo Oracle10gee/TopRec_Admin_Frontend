@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ApiService } from '../../../../core/services/api.service';
 
 @Component({
     standalone: true,
@@ -15,11 +16,11 @@ export class ForgotPasswordComponent implements OnInit {
     isLoading = false;
     errorMessage = '';
     successMessage = '';
-    emailSent = false;
 
     constructor(
         private fb: FormBuilder,
-        private router: Router
+        private router: Router,
+        private apiService: ApiService
     ) { }
 
     ngOnInit(): void {
@@ -28,12 +29,12 @@ export class ForgotPasswordComponent implements OnInit {
 
     initializeForm(): void {
         this.forgotPasswordForm = this.fb.group({
-            email: ['', [Validators.required, Validators.email]]
+            identifier: ['', [Validators.required]]
         });
     }
 
-    get email() {
-        return this.forgotPasswordForm.get('email');
+    get identifier() {
+        return this.forgotPasswordForm.get('identifier');
     }
 
     onSubmit(): void {
@@ -42,25 +43,35 @@ export class ForgotPasswordComponent implements OnInit {
             this.errorMessage = '';
             this.successMessage = '';
 
-            // Simulate API call
-            setTimeout(() => {
-                const { email } = this.forgotPasswordForm.value;
+            const payload = {
+                identifier: this.forgotPasswordForm.get('identifier')?.value
+            };
 
-                // Add your password reset request logic here
-                console.log('Forgot Password Request:', { email });
+            this.apiService.post('/settings/password-reset/request', payload).subscribe({
+                next: (response) => {
+                    this.isLoading = false;
+                    this.successMessage = response?.message || 'If an account exists with this email/membership number, an OTP has been sent.';
 
-                // Show success message
-                this.successMessage = 'Password reset link sent to your email. Check your inbox.';
-                this.emailSent = true;
-                this.isLoading = false;
-
-                // Navigate to login after 3 seconds
-                setTimeout(() => {
-                    this.router.navigate(['/auth/login']);
-                }, 3000);
-            }, 1500);
+                    // Navigate to OTP verification page after a short delay
+                    setTimeout(() => {
+                        this.router.navigate(['/auth/verify-otp'], {
+                            queryParams: { identifier: payload.identifier }
+                        });
+                    }, 1500);
+                },
+                error: (error) => {
+                    this.isLoading = false;
+                    const errorBody = error?.error;
+                    this.errorMessage =
+                        (typeof errorBody?.error?.details === 'string' ? errorBody.error.details : null)
+                        || errorBody?.message
+                        || error?.message
+                        || 'Failed to send reset link. Please try again.';
+                }
+            });
         } else {
-            this.errorMessage = 'Please enter a valid email address';
+            this.forgotPasswordForm.markAllAsTouched();
+            this.errorMessage = 'Please Enter your email or registration number';
         }
     }
 

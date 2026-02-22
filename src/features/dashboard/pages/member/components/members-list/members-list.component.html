@@ -4,32 +4,46 @@
     <h2 class="text-2xl font-semibold text-gray-900">Members</h2>
 
     <div class="flex items-center gap-3">
-      <!-- <button
-        (click)="addNewMember()"
-        class="px-4 py-2 bg-[#1a5632] text-white text-sm font-medium rounded-lg hover:bg-[#2a7642] transition-colors"
-      >
-        Add Member  
-      </button> -->
-
+      <!-- Add Member button (Superadmin only) -->
       <button
-        (click)="openFilter()"
-        class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-        title="Filter"
+        *ngIf="isSuperadmin"
+        (click)="openAddModal()"
+        class="px-4 py-2 bg-[#1a5632] text-white text-sm font-medium rounded-lg hover:bg-[#2a7642] transition-colors flex items-center gap-2"
       >
-        <svg
-          class="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-          />
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
+        Add Member
       </button>
+
+      <!-- Filter Button with active badge -->
+      <div class="relative">
+        <button
+          (click)="openFilter()"
+          class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+          title="Filter"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+            />
+          </svg>
+        </button>
+        <span
+          *ngIf="activeFilterCount > 0"
+          class="absolute -top-1 -right-1 w-4 h-4 bg-[#1a5632] text-white text-[10px] font-bold rounded-full flex items-center justify-center pointer-events-none"
+        >
+          {{ activeFilterCount }}
+        </span>
+      </div>
     </div>
   </div>
 
@@ -214,7 +228,7 @@
     </table>
 
     <!-- Empty State -->
-    <div *ngIf="filteredMembers.length === 0" class="text-center py-16">
+    <div *ngIf="filteredMembers.length === 0 && !isLoading" class="text-center py-16">
       <svg
         class="mx-auto w-12 h-12 text-gray-300 mb-4"
         fill="none"
@@ -231,28 +245,35 @@
       <p class="text-sm text-gray-500">No members found</p>
     </div>
 
-    <!-- Simple Pagination -->
+    <!-- Pagination -->
     <div
-      *ngIf="filteredMembers.length > 0"
+      *ngIf="totalCount > 0"
       class="px-6 py-4 border-t border-gray-100 flex items-center justify-between"
     >
       <p class="text-sm text-gray-600">
-        {{ filteredMembers.length }} of {{ members.length }} members
+        Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ pageEnd }} of {{ totalCount }} members
       </p>
       <div class="flex items-center gap-1">
         <button
-          class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50"
-          disabled
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Previous
         </button>
-        <button class="px-3 py-1 text-sm bg-[#1a5632] text-white rounded">
-          1
+        <button
+          *ngFor="let page of visiblePages"
+          (click)="goToPage(page)"
+          [ngClass]="page === currentPage ? 'bg-[#1a5632] text-white' : 'text-gray-600 hover:text-gray-900'"
+          class="px-3 py-1 text-sm rounded"
+        >
+          {{ page }}
         </button>
-        <button class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900">
-          2
-        </button>
-        <button class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900">
+        <button
+          (click)="nextPage()"
+          [disabled]="currentPage >= totalPages"
+          class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
           Next
         </button>
       </div>
@@ -260,7 +281,119 @@
   </div>
 </div>
 
-<!-- View Member Modal -->
+<!-- ── Filter Drawer ─────────────────────────────────────────────────────── -->
+
+<!-- Backdrop -->
+<div
+  *ngIf="showFilterPanel"
+  class="fixed inset-0 bg-black bg-opacity-30 z-40"
+  (click)="closeFilter()"
+></div>
+
+<!-- Drawer -->
+<div
+  *ngIf="showFilterPanel"
+  class="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-50 flex flex-col animate-fadeIn"
+>
+  <!-- Header -->
+  <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+    <div>
+      <h3 class="text-lg font-semibold text-gray-900">Filter Members</h3>
+      <p class="text-xs text-gray-500 mt-0.5">Narrow down results using the fields below</p>
+    </div>
+    <button
+      (click)="closeFilter()"
+      class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="flex-1 overflow-y-auto px-6 py-5 space-y-5" [formGroup]="filterForm">
+
+    <!-- Full Name -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+      <input
+        type="text"
+        formControlName="full_name"
+        placeholder="Search by full name"
+        class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-[#1a5632] transition-colors"
+      />
+    </div>
+
+    <!-- Phone Number -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
+      <input
+        type="text"
+        formControlName="phone_number"
+        placeholder="Search by phone number"
+        class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-[#1a5632] transition-colors"
+      />
+    </div>
+
+    <!-- Registration Number -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">Registration Number</label>
+      <input
+        type="text"
+        formControlName="membership_number"
+        placeholder="e.g. RTP/6516"
+        class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-[#1a5632] transition-colors"
+      />
+    </div>
+
+    <!-- Gender -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">Gender</label>
+      <select
+        formControlName="gender"
+        class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-[#1a5632] transition-colors bg-white"
+      >
+        <option value="">All Genders</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+        <option value="prefer_not_to_say">Prefer not to say</option>
+      </select>
+    </div>
+
+    <!-- State of Practice -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">State of Practice</label>
+      <select
+        formControlName="state_of_practice"
+        class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-[#1a5632] transition-colors bg-white"
+      >
+        <option value="">All States</option>
+        <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
+      </select>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="px-6 py-4 border-t border-gray-100 flex gap-3">
+    <button
+      (click)="clearFilters()"
+      class="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+    >
+      Clear All
+    </button>
+    <button
+      (click)="applyFilter()"
+      class="flex-1 px-4 py-2.5 bg-[#1a5632] text-white text-sm font-medium rounded-lg hover:bg-[#2a7642] transition-colors"
+    >
+      Apply Filters
+    </button>
+  </div>
+</div>
+
+<!-- ── View Member Modal ──────────────────────────────────────────────────── -->
 <div
   *ngIf="showViewModal"
   class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
@@ -376,7 +509,7 @@
   </div>
 </div>
 
-<!-- Edit Member Modal -->
+<!-- ── Edit Member Modal ──────────────────────────────────────────────────── -->
 <div
   *ngIf="showEditModal"
   class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
@@ -503,3 +636,261 @@
     </div>
   </div>
 </div>
+
+<!-- ── Add Member Modal (Superadmin only) ────────────────────────────────── -->
+<div
+  *ngIf="showAddModal"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+>
+  <div
+    class="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col transform transition-all animate-fadeIn"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header -->
+    <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">Add New Member</h2>
+        <p class="text-sm text-gray-500 mt-0.5">Create a new user account</p>
+      </div>
+      <button
+        (click)="closeAddModal()"
+        class="text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Scrollable Form Body -->
+    <form [formGroup]="addForm" class="flex-1 overflow-y-auto px-8 py-6 space-y-5">
+
+      <!-- ── Account Type ── -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Account Type <span class="text-red-500">*</span></label>
+        <select
+          formControlName="role"
+          class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-[#1a5632] transition-colors bg-white"
+        >
+          <option value="">Select role</option>
+          <option value="Member">Member</option>
+          <option value="Consulting Firm">Consulting Firm</option>
+          <option value="Practice Firm">Practice Firm</option>
+        </select>
+      </div>
+
+      <!-- ── Personal Info ── -->
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Full Name -->
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name <span class="text-red-500">*</span></label>
+          <input
+            type="text"
+            formControlName="full_name"
+            placeholder="Enter full name"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1a5632] transition-colors"
+          />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Email <span class="text-red-500">*</span></label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="Enter email address"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1a5632] transition-colors"
+          />
+        </div>
+
+        <!-- Phone Number -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Phone Number <span class="text-red-500">*</span></label>
+          <input
+            type="tel"
+            formControlName="phone_number"
+            placeholder="e.g. 08012345678"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1a5632] transition-colors"
+          />
+        </div>
+
+        <!-- Address -->
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Address <span class="text-red-500">*</span></label>
+          <input
+            type="text"
+            formControlName="address"
+            placeholder="Enter address"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1a5632] transition-colors"
+          />
+        </div>
+
+        <!-- Gender (Members only) -->
+        <div *ngIf="isAddGenderVisible()" class="col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Gender <span class="text-red-500">*</span></label>
+          <select
+            formControlName="gender"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-[#1a5632] transition-colors bg-white"
+          >
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+            <option value="prefer_not_to_say">Prefer not to say</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ── Professional Details ── -->
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Membership / Registration Number -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Registration Number <span class="text-red-500">*</span></label>
+          <input
+            type="text"
+            formControlName="membership_number"
+            placeholder="e.g. RTP/6516"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1a5632] transition-colors"
+          />
+        </div>
+
+        <!-- State of Practice -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">State of Practice <span class="text-red-500">*</span></label>
+          <select
+            formControlName="state_of_practice"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-[#1a5632] transition-colors bg-white"
+          >
+            <option value="">Select state</option>
+            <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
+          </select>
+        </div>
+
+        <!-- Qualification (Members only) -->
+        <div *ngIf="isAddQualificationVisible()">
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Qualification <span class="text-red-500">*</span></label>
+          <select
+            formControlName="qualification"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-[#1a5632] transition-colors bg-white"
+          >
+            <option value="">Select qualification</option>
+            <option *ngFor="let q of qualifications" [value]="q.value">{{ q.label }}</option>
+          </select>
+        </div>
+
+        <!-- Registration Date -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Registration Date <span class="text-red-500">*</span></label>
+          <input
+            type="date"
+            formControlName="registration_date"
+            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-[#1a5632] transition-colors"
+          />
+        </div>
+      </div>
+
+      <!-- ── Security ── -->
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Password -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Password <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <input
+              [type]="showAddPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Min. 6 characters"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1a5632] transition-colors pr-10"
+            />
+            <button
+              type="button"
+              (click)="toggleAddPasswordVisibility()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              title="Toggle password visibility"
+            >
+              <!-- Eye-off (password hidden) -->
+              <svg *ngIf="!showAddPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>
+              </svg>
+              <!-- Eye (password visible) -->
+              <svg *ngIf="showAddPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <input
+              [type]="showAddConfirmPassword ? 'text' : 'password'"
+              formControlName="confirm_password"
+              placeholder="Repeat password"
+              class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1a5632] transition-colors pr-10"
+            />
+            <button
+              type="button"
+              (click)="toggleAddConfirmPasswordVisibility()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              title="Toggle password visibility"
+            >
+              <!-- Eye-off (password hidden) -->
+              <svg *ngIf="!showAddConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>
+              </svg>
+              <!-- Eye (password visible) -->
+              <svg *ngIf="showAddConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password mismatch error -->
+      <p
+        *ngIf="addForm.errors?.['passwordMismatch'] && addForm.get('confirm_password')?.touched"
+        class="text-xs text-red-500"
+      >
+        Passwords do not match.
+      </p>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="px-8 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3 rounded-b-2xl flex-shrink-0">
+      <button
+        (click)="closeAddModal()"
+        [disabled]="isAddSubmitting"
+        class="px-5 py-2 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="saveNewMember()"
+        [disabled]="isAddSubmitting || addForm.invalid"
+        class="px-5 py-2 bg-[#1a5632] text-white font-medium hover:bg-[#2a7642] rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+      >
+        <span
+          *ngIf="isAddSubmitting"
+          class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+        ></span>
+        {{ isAddSubmitting ? 'Creating...' : 'Create Member' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Confirm Delete Dialog ─────────────────────────────────────────────── -->
+<app-confirm-dialog
+  *ngIf="showConfirmDialog"
+  [title]="'Delete Member'"
+  [message]="'Are you sure you want to delete'"
+  [itemName]="memberToDelete?.name || ''"
+  [isDeleting]="isDeleting"
+  (confirmed)="onDeleteConfirmed()"
+  (cancelled)="onDeleteCancelled()"
+/>

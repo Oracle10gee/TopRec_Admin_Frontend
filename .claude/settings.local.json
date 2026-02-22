@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:demo.remita.net)",
+      "WebFetch(domain:remitademo.net)",
+      "WebFetch(domain:login.remita.net)",
+      "Bash(npx ng build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git fetch:*)",
+      "Bash(git merge:*)",
+      "Bash(git checkout:*)"
+    ]
+  }
+}

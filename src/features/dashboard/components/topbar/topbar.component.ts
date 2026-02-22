@@ -28,7 +28,7 @@ export class TopbarComponent implements OnInit {
     currentPage = 'Home';
 
     // Notification count
-    notificationCount = 3; // Example count
+    notificationCount = 0; // Example count
 
     constructor(private router: Router, private authService: AuthService) { }
 

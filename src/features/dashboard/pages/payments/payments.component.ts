@@ -35,6 +35,31 @@ interface CalculatedPayment {
     valid_until: string;
 }
 
+interface PaymentHistoryAPI {
+    id: string;
+    date: string;
+    description: string;
+    payment_reference: string;
+    rrr: string;
+    amount: string;
+    status: string;
+    payment_method: string | null;
+}
+
+interface PaymentHistoryResponse {
+    success: boolean;
+    message: string;
+    data: {
+        payments: PaymentHistoryAPI[];
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            total_pages: number;
+        };
+    };
+}
+
 interface PaymentHistory {
     id: string;
     amount: string;
@@ -76,24 +101,7 @@ export class DashboardPaymentsComponent implements OnInit {
     activeTab: PaymentsTab = 'renewal';
     paymentForm!: FormGroup;
 
-    paymentHistory: PaymentHistory[] = [
-        {
-            id: 'PAY-2024-001',
-            amount: '₦26,250',
-            date: '2024-01-15',
-            description: 'License Renewal 2024',
-            status: 'Successful',
-            statusColor: 'green'
-        },
-        {
-            id: 'PAY-2023-001',
-            amount: '₦26,250',
-            date: '2023-01-10',
-            description: 'License Renewal 2023',
-            status: 'Successful',
-            statusColor: 'green'
-        }
-    ];
+    paymentHistory: PaymentHistory[] = [];
 
     paymentTypes: PaymentType[] = [];
     calculatedPayment: CalculatedPayment | null = null;
@@ -108,9 +116,21 @@ export class DashboardPaymentsComponent implements OnInit {
     isSuperadmin = false;
     cachedPaymentTypes: PaymentTypeForNonAdmin[] = [];
 
+    // Existing user properties
+    isExistingUser = false;
+    existingUserAmount: number | null = null;
+
     // Payment details modal properties
     showPaymentDetailsModal = false;
     paymentDetails: PaymentDetails | null = null;
+
+    // Payment history API properties
+    isLoadingHistory = false;
+    historyStatusFilter: 'all' | 'successful' | 'pending' | 'failed' = 'all';
+    currentPage = 1;
+    pageSize = 10;
+    totalPages = 0;
+    totalPayments = 0;
 
     constructor(
         private fb: FormBuilder,
@@ -127,6 +147,7 @@ export class DashboardPaymentsComponent implements OnInit {
         this.determineUserRole();
         this.loadUserPhone();
         this.loadPaymentTypes();
+        this.loadPaymentHistory();
 
         // Debug form state
         setTimeout(() => {
@@ -164,6 +185,166 @@ export class DashboardPaymentsComponent implements OnInit {
         this.isSuperadmin = this.currentUserRole === 'Superadmin';
         console.log(`👤 Current user role: ${this.currentUserRole}`);
         console.log(`🔐 Is Superadmin: ${this.isSuperadmin}`);
+
+        // Check if user is an existing user with a custom financial status amount
+        const currentUser = this.authService.getCurrentUserSync();
+        if (currentUser && (currentUser as any).is_existing === true) {
+            const financialStatus = (currentUser as any).current_financial_status;
+            if (financialStatus !== null && financialStatus !== undefined && Number(financialStatus) !== 0) {
+                this.isExistingUser = true;
+                this.existingUserAmount = parseFloat(financialStatus);
+                console.log(`💰 Existing user detected. Custom amount: ${this.existingUserAmount}`);
+            }
+        }
+    }
+
+    /**
+     * Load payment history from backend with pagination and filtering
+     */
+    loadPaymentHistory(page: number = 1): void {
+        this.isLoadingHistory = true;
+        this.currentPage = page;
+
+        // Build query parameters object
+        const queryParams: any = {
+            page: page,
+            limit: this.pageSize
+        };
+
+        // Add status filter if not 'all'
+        if (this.historyStatusFilter !== 'all') {
+            queryParams.status = this.historyStatusFilter;
+        }
+
+        console.log('📋 Loading payment history with params:', queryParams);
+
+        // Call API endpoint with query parameters
+        const url = `/payments/history?page=${queryParams.page}&limit=${queryParams.limit}${queryParams.status ? '&status=' + queryParams.status : ''}`;
+
+        this.apiService.get<PaymentHistoryResponse>(url).subscribe({
+            next: (response: any) => {
+                console.log('✅ Payment history loaded:', response);
+
+                const apiPayments = response.data?.payments || [];
+                const pagination = response.data?.pagination || {};
+
+                // Transform API response to display format
+                this.paymentHistory = apiPayments.map((payment: PaymentHistoryAPI) => ({
+                    id: payment.id,
+                    amount: `₦${parseFloat(payment.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+                    date: new Date(payment.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }),
+                    description: payment.description,
+                    status: payment.status.charAt(0).toUpperCase() + payment.status.slice(1),
+                    statusColor: payment.status === 'successful' ? 'green' : 'red'
+                }));
+
+                // Update pagination info
+                this.totalPages = pagination.total_pages || 0;
+                this.totalPayments = pagination.total || 0;
+
+                this.isLoadingHistory = false;
+                console.log('✅ Transformed payment history:', this.paymentHistory);
+                console.log('📊 Pagination - Page:', this.currentPage, 'Total Pages:', this.totalPages, 'Total Payments:', this.totalPayments);
+
+                this.cdr.detectChanges();
+            },
+            error: (error: any) => {
+                console.error('❌ Failed to load payment history:', error);
+                this.isLoadingHistory = false;
+                this.notificationService.error('Failed to load payment history');
+            }
+        });
+    }
+
+    /**
+     * Filter payment history by status
+     */
+    filterByStatus(status: 'all' | 'successful' | 'pending' | 'failed'): void {
+        console.log('🔍 Filtering payment history by status:', status);
+        this.historyStatusFilter = status;
+        this.currentPage = 1; // Reset to first page
+        this.loadPaymentHistory();
+    }
+
+    /**
+     * Go to next page of payment history
+     */
+    nextPage(): void {
+        if (this.currentPage < this.totalPages) {
+            this.loadPaymentHistory(this.currentPage + 1);
+        }
+    }
+
+    /**
+     * Go to previous page of payment history
+     */
+    previousPage(): void {
+        if (this.currentPage > 1) {
+            this.loadPaymentHistory(this.currentPage - 1);
+        }
+    }
+
+    /**
+     * Get status badge color and style
+     */
+    getStatusColor(status: string): string {
+        switch (status.toLowerCase()) {
+            case 'successful':
+                return 'bg-green-100 text-green-800 border-green-200';
+            case 'pending':
+                return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+            case 'failed':
+                return 'bg-red-100 text-red-800 border-red-200';
+            default:
+                return 'bg-gray-100 text-gray-800 border-gray-200';
+        }
+    }
+
+    /**
+     * Get status icon SVG path
+     */
+    getStatusIcon(status: string): { path: string; viewBox: string } {
+        switch (status.toLowerCase()) {
+            case 'successful':
+                return {
+                    path: 'M5 13l4 4L19 7',
+                    viewBox: '0 0 24 24'
+                };
+            case 'pending':
+                return {
+                    path: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+                    viewBox: '0 0 24 24'
+                };
+            case 'failed':
+                return {
+                    path: 'M6 18L18 6M6 6l12 12',
+                    viewBox: '0 0 24 24'
+                };
+            default:
+                return {
+                    path: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+                    viewBox: '0 0 24 24'
+                };
+        }
+    }
+
+    /**
+     * Format payment type for display
+     */
+    private formatPaymentType(paymentType: string): string {
+        const typeMap: { [key: string]: string } = {
+            'license_renewal': 'License Renewal',
+            'new_registration': 'New Registration',
+            'license_amount': 'License Amount Fee',
+            'application_fee': 'Application Fee',
+            'late_fee': 'Late Renewal Fee',
+            'verification_fee': 'Verification Fee'
+        };
+        return typeMap[paymentType] || paymentType.replace(/_/g, ' ').toUpperCase();
     }
 
     /**
@@ -318,7 +499,9 @@ export class DashboardPaymentsComponent implements OnInit {
 
     /**
      * Populate amount field from cached payment types data (non-admin users)
-     * Looks up the base_amount directly from the cached response
+     * Looks up the base_amount directly from the cached response.
+     * For existing users with a non-null/non-zero current_financial_status,
+     * the amount is overridden with that value.
      */
     private populateAmountFromCache(paymentTypeCode: string): void {
         this.isCalculating = true;
@@ -331,8 +514,14 @@ export class DashboardPaymentsComponent implements OnInit {
         if (paymentType) {
             console.log('✅ Found payment type:', paymentType);
 
-            // Populate the amount field directly with base_amount
-            const baseAmount = parseFloat(paymentType.base_amount);
+            let baseAmount = parseFloat(paymentType.base_amount);
+
+            // Override amount for existing users with a custom financial status
+            if (this.isExistingUser && this.existingUserAmount !== null) {
+                console.log(`💰 Existing user: overriding base amount ${baseAmount} with ${this.existingUserAmount}`);
+                baseAmount = this.existingUserAmount;
+            }
+
             const formattedAmount = `₦${baseAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
             this.paymentForm.patchValue({
@@ -340,11 +529,12 @@ export class DashboardPaymentsComponent implements OnInit {
             });
 
             // Create a calculated payment object for display purposes
+            const taxRate = parseFloat(paymentType.tax_rate);
             this.calculatedPayment = {
-                subtotal: paymentType.base_amount,
-                tax: baseAmount * parseFloat(paymentType.tax_rate),
+                subtotal: baseAmount.toString(),
+                tax: baseAmount * taxRate,
                 tax_rate: paymentType.tax_rate,
-                total: (baseAmount + (baseAmount * parseFloat(paymentType.tax_rate))).toString(),
+                total: (baseAmount + (baseAmount * taxRate)).toString(),
                 currency: paymentType.currency,
                 valid_until: '' // Not applicable for non-admin flow
             };
@@ -517,12 +707,18 @@ export class DashboardPaymentsComponent implements OnInit {
         });
 
         // Prepare payload for initiate payment API
-        const payload = {
+        const payload: any = {
             payment_type_code: paymentTypeCode,
             payer_name: currentUser.full_name || 'Customer',
             payer_email: currentUser.email || 'no-email@example.com',
             payer_phone: phone
         };
+
+        // For existing users with a custom financial status amount, include the overridden amount
+        if (this.isExistingUser && this.existingUserAmount !== null) {
+            payload.amount = this.existingUserAmount;
+            console.log(`💰 Existing user: sending custom amount in payload: ${this.existingUserAmount}`);
+        }
 
         console.log('🚀 Calling backend initiate payment API with payload:', payload);
 
@@ -622,22 +818,14 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
-     * Add successful payment to history
+     * Reload payment history after successful payment
      */
     private addToHistory(): void {
-        const paymentTypeCode = this.paymentForm.get('paymentTypeCode')?.value;
-        const paymentType = this.paymentTypes.find(p => p.code === paymentTypeCode);
-
-        const newPayment: PaymentHistory = {
-            id: `PAY-${new Date().getFullYear()}-${String(this.paymentHistory.length + 1).padStart(3, '0')}`,
-            amount: this.getTotal(),
-            date: new Date().toISOString(),
-            description: (paymentType?.name || 'Payment') + ' ' + new Date().getFullYear(),
-            status: 'Successful',
-            statusColor: 'green'
-        };
-
-        this.paymentHistory.unshift(newPayment);
+        console.log('🔄 Reloading payment history after successful payment');
+        // Reload payment history from backend to include the new payment
+        this.loadPaymentHistory(1);
+        // Reset form
+        this.paymentForm.reset();
     }
 
     /**
@@ -691,13 +879,287 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
-     * Download payment receipt
+     * Download payment receipt as PDF
      */
     downloadReceipt(paymentId: string): void {
-        console.log('Downloading receipt for:', paymentId);
+        const payment = this.paymentHistory.find(p => p.id === paymentId);
+        if (!payment) {
+            this.notificationService.error('Payment not found');
+            return;
+        }
 
-        // TODO: Implement actual download logic
-        alert(`Downloading receipt for ${paymentId}.\n\nThis will generate a PDF receipt with:\n- Payment details\n- Transaction ID\n- Official TOPREC stamp\n\nFeature coming soon!`);
+        // Generate receipt HTML content
+        const receiptHTML = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Payment Receipt - ${paymentId}</title>
+                <style>
+                    * {
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                    }
+                    body {
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        background: #f5f5f5;
+                        padding: 20px;
+                    }
+                    .receipt-container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background: white;
+                        border-radius: 12px;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                        overflow: hidden;
+                    }
+                    .receipt-header {
+                        background: linear-gradient(135deg, #1a5632 0%, #2a7642 100%);
+                        color: white;
+                        padding: 40px 30px;
+                        text-align: center;
+                        border-bottom: 4px solid #0d3520;
+                    }
+                    .receipt-header h1 {
+                        font-size: 28px;
+                        font-weight: 700;
+                        margin-bottom: 8px;
+                    }
+                    .receipt-header p {
+                        font-size: 12px;
+                        opacity: 0.9;
+                        letter-spacing: 0.5px;
+                    }
+                    .receipt-logo {
+                        width: 60px;
+                        height: 60px;
+                        background: rgba(255,255,255,0.2);
+                        border-radius: 50%;
+                        margin: 0 auto 15px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 28px;
+                    }
+                    .receipt-body {
+                        padding: 40px 30px;
+                    }
+                    .status-badge {
+                        display: inline-block;
+                        padding: 8px 16px;
+                        border-radius: 6px;
+                        font-weight: 600;
+                        font-size: 12px;
+                        margin-bottom: 20px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                    .status-successful {
+                        background: #ecfdf5;
+                        color: #065f46;
+                        border: 1px solid #86efac;
+                    }
+                    .status-pending {
+                        background: #fffbeb;
+                        color: #92400e;
+                        border: 1px solid #fde047;
+                    }
+                    .status-failed {
+                        background: #fef2f2;
+                        color: #991b1b;
+                        border: 1px solid #fca5a5;
+                    }
+                    .section {
+                        margin-bottom: 30px;
+                    }
+                    .section-title {
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #666;
+                        text-transform: uppercase;
+                        letter-spacing: 0.8px;
+                        margin-bottom: 12px;
+                        padding-bottom: 8px;
+                        border-bottom: 2px solid #eee;
+                    }
+                    .info-row {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 10px 0;
+                        border-bottom: 1px solid #f0f0f0;
+                    }
+                    .info-row:last-child {
+                        border-bottom: none;
+                    }
+                    .info-label {
+                        color: #666;
+                        font-size: 13px;
+                        font-weight: 500;
+                    }
+                    .info-value {
+                        color: #1a1a1a;
+                        font-size: 13px;
+                        font-weight: 600;
+                        text-align: right;
+                        word-break: break-word;
+                    }
+                    .amount-section {
+                        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+                        border: 2px solid #86efac;
+                        border-radius: 10px;
+                        padding: 20px;
+                        margin: 20px 0;
+                        text-align: center;
+                    }
+                    .amount-label {
+                        color: #666;
+                        font-size: 12px;
+                        font-weight: 500;
+                        margin-bottom: 8px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                    .amount-value {
+                        color: #1a5632;
+                        font-size: 36px;
+                        font-weight: 700;
+                    }
+                    .receipt-footer {
+                        background: #f9fafb;
+                        padding: 30px;
+                        text-align: center;
+                        border-top: 1px solid #eee;
+                    }
+                    .footer-text {
+                        color: #666;
+                        font-size: 12px;
+                        line-height: 1.6;
+                    }
+                    .footer-text strong {
+                        color: #1a1a1a;
+                        display: block;
+                        margin-top: 10px;
+                    }
+                    .divider {
+                        height: 1px;
+                        background: linear-gradient(90deg, transparent, #ddd, transparent);
+                        margin: 20px 0;
+                    }
+                    .note {
+                        background: #fef3c7;
+                        border-left: 4px solid #f59e0b;
+                        padding: 12px;
+                        border-radius: 4px;
+                        color: #92400e;
+                        font-size: 12px;
+                        margin: 20px 0;
+                    }
+                    @media print {
+                        body {
+                            background: white;
+                            padding: 0;
+                        }
+                        .receipt-container {
+                            box-shadow: none;
+                            border-radius: 0;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="receipt-container">
+                    <!-- Header -->
+                    <div class="receipt-header">
+                        <div class="receipt-logo">✓</div>
+                        <h1>Payment Receipt</h1>
+                        <p>TOPREC - Professional Licensing Platform</p>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="receipt-body">
+                        <!-- Status -->
+                        <div class="status-badge status-${payment.status === 'Successful' ? 'successful' : payment.status === 'Pending' ? 'pending' : 'failed'}">
+                            ${payment.status.toUpperCase()}
+                        </div>
+
+                        <!-- Payment Details Section -->
+                        <div class="section">
+                            <div class="section-title">Payment Details</div>
+                            <div class="info-row">
+                                <span class="info-label">Payment ID</span>
+                                <span class="info-value">${paymentId}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Description</span>
+                                <span class="info-value">${payment.description}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Date</span>
+                                <span class="info-value">${payment.date}</span>
+                            </div>
+                        </div>
+
+                        <!-- Amount Section -->
+                        <div class="amount-section">
+                            <div class="amount-label">Amount Paid</div>
+                            <div class="amount-value">${payment.amount}</div>
+                        </div>
+
+                        <!-- Status Info -->
+                        <div class="note">
+                            <strong>Payment Status:</strong>
+                            ${payment.status === 'Successful'
+                ? 'Your payment has been successfully processed and confirmed. Your license has been renewed.'
+                : payment.status === 'Pending'
+                    ? 'Your payment is pending verification. Please allow 24-48 hours for processing.'
+                    : 'Your payment was unsuccessful. Please contact support for assistance.'}
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <!-- Verification Section -->
+                        <div class="section">
+                            <div class="section-title">Verification</div>
+                            <div class="info-row">
+                                <span class="info-label">License Status</span>
+                                <span class="info-value">${payment.status === 'Successful' ? 'Active' : 'Pending'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Receipt Date</span>
+                                <span class="info-value">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="receipt-footer">
+                        <div class="footer-text">
+                            <p>This is an official receipt from TOPREC Professional Licensing Platform.</p>
+                            <p>For any questions regarding this payment, please contact our support team.</p>
+                            <strong>Keep this receipt for your records</strong>
+                            <p style="margin-top: 15px; color: #999; font-size: 11px;">Receipt generated on ${new Date().toISOString().split('T')[0]}</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+
+        // Create a new window and print the receipt
+        const printWindow = window.open('', '', 'width=800,height=600');
+        if (printWindow) {
+            printWindow.document.write(receiptHTML);
+            printWindow.document.close();
+
+            // Wait for content to load before printing
+            printWindow.onload = () => {
+                printWindow.print();
+            };
+        }
+
+        this.notificationService.success('Receipt opened. Use print dialog to save as PDF.');
     }
 
     /**

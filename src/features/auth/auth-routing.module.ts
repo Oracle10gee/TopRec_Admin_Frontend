@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { SignUpComponent } from './pages/signup/signup.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { VerifyOtpComponent } from './pages/verify-otp/verify-otp.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 
 const routes: Routes = [
@@ -17,6 +18,10 @@ const routes: Routes = [
     {
         path: 'forgot-password',
         loadComponent: () => Promise.resolve(ForgotPasswordComponent),
+    },
+    {
+        path: 'verify-otp',
+        loadComponent: () => Promise.resolve(VerifyOtpComponent),
     },
     {
         path: 'reset-password',

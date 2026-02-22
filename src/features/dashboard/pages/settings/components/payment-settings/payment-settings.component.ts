@@ -81,6 +81,8 @@ export class PaymentSettingsComponent implements OnInit {
         this.isEditingPaymentType = false;
         this.selectedPaymentType = null;
         this.paymentTypeForm.reset({ currency: 'NGN', tax_rate: 0.05 });
+        this.paymentTypeForm.get('code')?.setValidators([Validators.required, Validators.minLength(3)]);
+        this.paymentTypeForm.get('code')?.updateValueAndValidity();
         this.showModal = true;
     }
 
@@ -88,6 +90,8 @@ export class PaymentSettingsComponent implements OnInit {
         this.isEditingPaymentType = true;
         this.selectedPaymentType = paymentType;
         this.paymentTypeForm.patchValue(paymentType);
+        this.paymentTypeForm.get('code')?.clearValidators();
+        this.paymentTypeForm.get('code')?.updateValueAndValidity();
         this.showModal = true;
     }
 
@@ -106,8 +110,9 @@ export class PaymentSettingsComponent implements OnInit {
         const formData = this.paymentTypeForm.value;
 
         if (this.isEditingPaymentType && this.selectedPaymentType?.id) {
-            // Update existing payment type
-            this.authService.updatePaymentType(this.selectedPaymentType.id, formData).subscribe({
+            // Update existing payment type - exclude code from payload
+            const { code, ...updateData } = formData;
+            this.authService.updatePaymentType(this.selectedPaymentType.id, updateData).subscribe({
                 next: (response) => {
                     this.isSaving = false;
                     this.notificationService.success('Payment type updated successfully!');

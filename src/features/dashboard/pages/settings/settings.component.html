@@ -162,7 +162,8 @@
         </span>
       </button>
 
-      <!-- Users Tab -->
+      <!-- Users Tab — commented out for Superadmin; user management is in Members Directory -->
+      <!--
       <button
         *ngIf="isTabVisible('users')"
         (click)="setActiveTab('users')"
@@ -200,6 +201,7 @@
         </div>
         <span>Users</span>
       </button>
+      -->
 
       <!-- Payment Settings Tab (Superadmin Only) -->
       <button
@@ -240,7 +242,8 @@
         <span>Payments</span>
       </button>
 
-      <!-- Account Settings Tab (Future) -->
+      <!-- Account Settings Tab — commented out for Superadmin (redundant) -->
+      <!--
       <button
         *ngIf="isTabVisible('account')"
         (click)="setActiveTab('account')"
@@ -283,6 +286,7 @@
           Soon
         </span>
       </button>
+      -->
     </div>
   </div>
 
@@ -296,13 +300,17 @@
       *ngIf="activeTab === 'notifications'"
     ></app-notification-settings>
 
+    <!-- Users tab content — commented out for Superadmin -->
+    <!--
     <app-users-settings *ngIf="activeTab === 'users'"></app-users-settings>
+    -->
 
     <app-payment-settings
       *ngIf="activeTab === 'payments'"
     ></app-payment-settings>
 
-    <!-- Account Settings Placeholder -->
+    <!-- Account Settings Placeholder — commented out for Superadmin -->
+    <!--
     <div
       *ngIf="activeTab === 'account'"
       class="bg-white rounded-xl shadow-sm border border-gray-200 p-12"
@@ -337,6 +345,7 @@
         </button>
       </div>
     </div>
+    -->
   </div>
 
   <!-- Settings Overview (Only on Security Tab) -->

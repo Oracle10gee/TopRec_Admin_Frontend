@@ -190,25 +190,45 @@ export class AuthService {
         search?: string;
         status?: string;
         role?: string;
+        full_name?: string;
+        phone_number?: string;
+        membership_number?: string;
+        gender?: string;
+        state_of_practice?: string;
     }): Observable<any> {
-        const { page = 1, limit = 10, search = '', status = '', role = '' } = params || {};
+        const {
+            page = 1, limit = 10, search = '', status = '', role = '',
+            full_name = '', phone_number = '', membership_number = '',
+            gender = '', state_of_practice = ''
+        } = params || {};
 
         let httpParams = new HttpParams()
             .set('page', page.toString())
             .set('limit', limit.toString());
 
-        if (search) {
-            httpParams = httpParams.set('search', search);
-        }
-        if (status) {
-            httpParams = httpParams.set('status', status);
-        }
-        if (role) {
-            httpParams = httpParams.set('role', role);
-        }
+        if (search) httpParams = httpParams.set('search', search);
+        if (status) httpParams = httpParams.set('status', status);
+        if (role) httpParams = httpParams.set('role', role);
+        if (full_name) httpParams = httpParams.set('full_name', full_name);
+        if (phone_number) httpParams = httpParams.set('phone_number', phone_number);
+        if (membership_number) httpParams = httpParams.set('membership_number', membership_number);
+        if (gender) httpParams = httpParams.set('gender', gender);
+        if (state_of_practice) httpParams = httpParams.set('state_of_practice', state_of_practice);
 
         return this.apiService.get<any>('/auth/users', { params: httpParams }).pipe(
             catchError((error) => this.handleAuthError(error))
+        );
+    }
+
+    /**
+     * Get list of states (for state_of_practice dropdown)
+     */
+    getStates(): Observable<any> {
+        return this.apiService.get<any>('/states').pipe(
+            catchError((error) => {
+                console.error('Error fetching states:', error);
+                return throwError(() => error);
+            })
         );
     }
 
@@ -270,7 +290,18 @@ export class AuthService {
      * Handle authentication errors
      */
     private handleAuthError(error: any): Observable<never> {
-        const errorMessage = error?.error?.message || 'An authentication error occurred';
+        // Extract the most specific error message from the API response
+        // API error shape: { success, message, data, error: { code, details }, meta }
+        const errorBody = error?.error; // The parsed JSON response body
+        const errorMessage =
+            // 1. error.details string (e.g. "Invalid email/membership number or password")
+            (typeof errorBody?.error?.details === 'string' ? errorBody.error.details : null)
+            // 2. Top-level message from the response body
+            || errorBody?.message
+            // 3. HttpErrorResponse message
+            || error?.message
+            // 4. Fallback
+            || 'An authentication error occurred';
         return throwError(() => new Error(errorMessage));
     }
 
@@ -342,10 +373,18 @@ export class AuthService {
     }
 
     /**
-     * Update user by ID
+     * Update user by ID (PATCH)
      */
     updateUser(userId: string, data: any): Observable<any> {
         return this.apiService.patch(`/auth/users/${userId}`, data).pipe(
+            tap((response) => {
+                // Update stored user data after successful PATCH
+                if (response?.data?.user) {
+                    const updatedUser = response.data.user;
+                    localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(updatedUser));
+                    this.currentUserSubject.next(updatedUser);
+                }
+            }),
             catchError((error) => this.handleAuthError(error))
         );
     }
@@ -408,7 +447,7 @@ export class AuthService {
      * Update a payment type
      */
     updatePaymentType(paymentTypeId: string, data: any): Observable<any> {
-        return this.apiService.patch(`/payments/payment-types/${paymentTypeId}`, data).pipe(
+        return this.apiService.put(`/payments/payment-types/${paymentTypeId}`, data).pipe(
             catchError((error) => {
                 console.error('Error updating payment type:', error);
                 return throwError(() => error);
@@ -423,6 +462,29 @@ export class AuthService {
         return this.apiService.delete(`/payments/payment-types/${paymentTypeId}`).pipe(
             catchError((error) => {
                 console.error('Error deleting payment type:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    /**
+     * Create a new user (Superadmin only).
+     * Calls POST /auth/register but does NOT update session state —
+     * so the currently-logged-in Superadmin stays logged in.
+     */
+    createUser(data: SignUpRequest): Observable<any> {
+        return this.apiService.post<any>('/auth/register', data).pipe(
+            catchError((error) => this.handleAuthError(error))
+        );
+    }
+
+    /**
+     * Get qualifications list
+     */
+    getQualifications(): Observable<any> {
+        return this.apiService.get<any>('/auth/qualifications').pipe(
+            catchError((error) => {
+                console.error('Error fetching qualifications:', error);
                 return throwError(() => error);
             })
         );

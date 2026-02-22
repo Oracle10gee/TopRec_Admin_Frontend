@@ -39,12 +39,13 @@ export class DashboardSettingsComponent implements OnInit {
     private initializeAvailableTabs(): void {
         const userRole = this.authService.getCurrentUserRole();
 
-        if (userRole === 'Member') {
-            // Members only see Security Settings and Notifications tabs
+        if (userRole === 'Member' || userRole === 'Consulting Firm' || userRole === 'Practice Firm') {
+            // Members, Consulting Firms, and Practice Firms only see Security Settings and Notifications tabs
             this.availableTabs = ['security', 'notifications'];
         } else if (userRole === 'Superadmin') {
-            // Superadmin sees all tabs including payments
-            this.availableTabs = ['security', 'notifications', 'users', 'payments', 'account'];
+            // Superadmin sees Security, Notifications and Payments only.
+            // 'users' and 'account' are redundant — managed via Members Directory.
+            this.availableTabs = ['security', 'notifications', 'payments'];
         } else {
             // Other roles see: Security, Notifications, Users
             this.availableTabs = ['security', 'notifications', 'users', 'account'];

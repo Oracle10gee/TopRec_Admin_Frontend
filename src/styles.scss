@@ -217,3 +217,37 @@ a {
 .gap-3 {
   gap: 1.5rem;
 }
+
+// Print styles - hide dashboard shell when printing license
+@media print {
+  app-sidebar,
+  app-topbar,
+  .no-print {
+    display: none !important;
+  }
+
+  body,
+  html {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .flex.h-screen {
+    display: block !important;
+    height: auto !important;
+  }
+
+  .flex-1.flex.flex-col.overflow-hidden {
+    overflow: visible !important;
+  }
+
+  main.flex-1.overflow-y-auto {
+    overflow: visible !important;
+  }
+
+  .container.mx-auto {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}

@@ -296,8 +296,8 @@
           (ngSubmit)="savePaymentType()"
           class="space-y-4"
         >
-          <!-- Code -->
-          <div class="space-y-2">
+          <!-- Code (only shown when creating) -->
+          <div *ngIf="!isEditingPaymentType" class="space-y-2">
             <label
               class="block text-sm font-semibold text-gray-700 flex items-center gap-2"
             >
