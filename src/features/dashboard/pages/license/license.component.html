@@ -278,142 +278,129 @@
 
   <!-- ==================== CERTIFICATE ==================== -->
   <div class="certificate-wrapper">
-    <div class="certificate-outer" id="license-certificate">
-      <div class="certificate-inner">
-        <!-- Concentric Circle Watermark -->
-        <div class="certificate-watermark">
-          <div class="watermark-circle watermark-circle-1"></div>
-          <div class="watermark-circle watermark-circle-2"></div>
-          <div class="watermark-circle watermark-circle-3"></div>
-          <div class="watermark-circle watermark-circle-4"></div>
-          <div class="watermark-circle watermark-circle-5"></div>
-        </div>
-
-        <!-- Diagonal X-Pattern Lines -->
-        <svg class="certificate-x-lines" viewBox="0 0 800 580" preserveAspectRatio="none">
-          <line x1="0" y1="580" x2="800" y2="0" stroke="#5c3a1e" stroke-width="0.5" opacity="0.15"/>
-          <line x1="0" y1="0" x2="800" y2="580" stroke="#5c3a1e" stroke-width="0.5" opacity="0.15"/>
-        </svg>
-
-        <!-- Certified Seal (top-right) - shown for Consulting Firm & Practice Firm -->
-        <div
-          class="certified-seal"
-          *ngIf="user.role === 'Consulting Firm' || user.role === 'Practice Firm'"
-        >
-          <img src="assets/Asset 2.png" alt="Certified Seal" class="certified-seal-img" />
-        </div>
-
-        <!-- Certificate Content -->
-        <div class="certificate-content">
-          <!-- Logo Section -->
-          <div class="cert-logo-section">
-            <img src="assets/toprec_logo.png" alt="TOPREC Logo" class="cert-logo" />
-            <p class="cert-org-sub">Established by Decree No. 3 of 1988</p>
+    <div class="certificate" id="license-certificate">
+      <!-- Green border frame -->
+      <div class="certificate-border">
+        <div class="certificate-inner">
+          <!-- Concentric circles background -->
+          <div class="circles-bg">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+            <div class="circle circle-4"></div>
+            <div class="circle circle-5"></div>
+            <div class="circle circle-6"></div>
+            <div class="circle circle-7"></div>
           </div>
 
-          <!-- Title -->
-          <div class="cert-title-section">
-            <div class="cert-title-box">
+          <!-- Certified Seal (top-right) - shown for Consulting Firm & Practice Firm -->
+          <div
+            class="certified-seal"
+            *ngIf="user.role === 'Consulting Firm' || user.role === 'Practice Firm'"
+          >
+            <img src="assets/Asset 2.png" alt="Certified Seal" class="certified-seal-img" />
+          </div>
+
+          <!-- Certificate Content -->
+          <div class="certificate-content">
+            <!-- Logo & Organization Header -->
+            <div class="cert-header">
+              <img src="assets/toprec_logo.png" alt="TOPREC Logo" class="cert-logo" />
+              <p class="cert-toprec-text">TOPREC</p>
+              <h2 class="cert-org-name">TOWN PLANNERS REGISTRATION COUNCIL OF NIGERIA</h2>
+              <p class="cert-org-sub">Established by Decree No. 3 of 1988</p>
+            </div>
+
+            <!-- Certificate Title -->
+            <div class="cert-title-section">
               <h1 class="cert-title">Certificate</h1>
-            </div>
-            <div class="cert-subtitle-box">
-              <span class="cert-subtitle">OF LICENSE TO PRACTICE</span>
-            </div>
-          </div>
-
-          <!-- Authentication Text -->
-          <p class="cert-auth-text">THIS CERTIFICATE AUTHENTICATES THAT</p>
-
-          <!-- Dynamic Name -->
-          <h2 class="cert-name">{{ user.full_name }}</h2>
-
-          <!-- Body Text -->
-          <div class="cert-body-text">
-            <p>
-              Having complied with the provisions of SECTION (5) (1) Town Planners
-              (Registration, etc.) Act, CAP T7 LFN 2004, and Section (5) (b) Rules
-              and Regulation for the Control Town Planning Practice, is hereby
-              authorized to practice as a REGISTERED TOWN PLANNER within the Federal
-              Republic of Nigeria.
-            </p>
-          </div>
-
-          <!-- Bottom Section -->
-          <div class="cert-bottom-section">
-            <!-- Valid Till -->
-            <div class="cert-valid-till">
-              <span>VALID TILL DEC, {{ validYear }}</span>
+              <h2 class="cert-subtitle">OF LICENSE TO PRACTICE</h2>
             </div>
 
-            <!-- QR Code -->
-            <div class="cert-qr-section">
-              <div class="cert-qr-placeholder">
-                <svg viewBox="0 0 100 100" class="cert-qr-svg">
-                  <rect x="0" y="0" width="100" height="100" fill="white"/>
-                  <rect x="5" y="5" width="25" height="25" fill="#1a5632"/>
-                  <rect x="70" y="5" width="25" height="25" fill="#1a5632"/>
-                  <rect x="5" y="70" width="25" height="25" fill="#1a5632"/>
-                  <rect x="10" y="10" width="15" height="15" fill="white"/>
-                  <rect x="75" y="10" width="15" height="15" fill="white"/>
-                  <rect x="10" y="75" width="15" height="15" fill="white"/>
-                  <rect x="13" y="13" width="9" height="9" fill="#1a5632"/>
-                  <rect x="78" y="13" width="9" height="9" fill="#1a5632"/>
-                  <rect x="13" y="78" width="9" height="9" fill="#1a5632"/>
-                  <rect x="35" y="5" width="5" height="5" fill="#1a5632"/>
-                  <rect x="45" y="5" width="5" height="5" fill="#1a5632"/>
-                  <rect x="55" y="5" width="5" height="5" fill="#1a5632"/>
-                  <rect x="35" y="15" width="5" height="5" fill="#1a5632"/>
-                  <rect x="50" y="15" width="5" height="5" fill="#1a5632"/>
-                  <rect x="35" y="25" width="5" height="5" fill="#1a5632"/>
-                  <rect x="45" y="25" width="5" height="5" fill="#1a5632"/>
-                  <rect x="55" y="25" width="5" height="5" fill="#1a5632"/>
-                  <rect x="35" y="35" width="5" height="5" fill="#1a5632"/>
-                  <rect x="45" y="35" width="5" height="5" fill="#1a5632"/>
-                  <rect x="55" y="35" width="5" height="5" fill="#1a5632"/>
-                  <rect x="5" y="35" width="5" height="5" fill="#1a5632"/>
-                  <rect x="15" y="35" width="5" height="5" fill="#1a5632"/>
-                  <rect x="25" y="35" width="5" height="5" fill="#1a5632"/>
-                  <rect x="5" y="45" width="5" height="5" fill="#1a5632"/>
-                  <rect x="15" y="45" width="5" height="5" fill="#1a5632"/>
-                  <rect x="5" y="55" width="5" height="5" fill="#1a5632"/>
-                  <rect x="15" y="55" width="5" height="5" fill="#1a5632"/>
-                  <rect x="25" y="55" width="5" height="5" fill="#1a5632"/>
-                  <rect x="35" y="45" width="5" height="5" fill="#1a5632"/>
-                  <rect x="35" y="55" width="5" height="5" fill="#1a5632"/>
-                  <rect x="45" y="45" width="5" height="5" fill="#1a5632"/>
-                  <rect x="55" y="45" width="5" height="5" fill="#1a5632"/>
-                  <rect x="55" y="55" width="5" height="5" fill="#1a5632"/>
-                  <rect x="65" y="35" width="5" height="5" fill="#1a5632"/>
-                  <rect x="75" y="35" width="5" height="5" fill="#1a5632"/>
-                  <rect x="85" y="35" width="5" height="5" fill="#1a5632"/>
-                  <rect x="65" y="45" width="5" height="5" fill="#1a5632"/>
-                  <rect x="75" y="45" width="5" height="5" fill="#1a5632"/>
-                  <rect x="85" y="45" width="5" height="5" fill="#1a5632"/>
-                  <rect x="65" y="55" width="5" height="5" fill="#1a5632"/>
-                  <rect x="85" y="55" width="5" height="5" fill="#1a5632"/>
-                  <rect x="70" y="70" width="5" height="5" fill="#1a5632"/>
-                  <rect x="80" y="70" width="5" height="5" fill="#1a5632"/>
-                  <rect x="90" y="70" width="5" height="5" fill="#1a5632"/>
-                  <rect x="70" y="80" width="5" height="5" fill="#1a5632"/>
-                  <rect x="90" y="80" width="5" height="5" fill="#1a5632"/>
-                  <rect x="70" y="90" width="5" height="5" fill="#1a5632"/>
-                  <rect x="80" y="90" width="5" height="5" fill="#1a5632"/>
-                  <rect x="90" y="90" width="5" height="5" fill="#1a5632"/>
-                </svg>
+            <!-- Authentication Text -->
+            <p class="cert-auth-text">THIS CERTIFICATE AUTHENTICATES THAT</p>
+
+            <!-- Dynamic User Name -->
+            <div class="cert-name-section">
+              <p class="cert-name">{{ user.full_name }}</p>
+            </div>
+
+            <!-- Description Text (dynamic per role) -->
+            <div class="cert-description">
+              <p>{{ certificateBodyText }}</p>
+            </div>
+
+            <!-- Footer Section: Valid Till, QR, Signature -->
+            <div class="cert-footer">
+              <!-- Valid Till -->
+              <div class="cert-valid">
+                <p class="valid-label">VALID TILL DEC, {{ validYear }}</p>
               </div>
-              <p class="cert-qr-label">VERIFY MY IDENTITY</p>
-            </div>
 
-            <!-- Signature Section -->
-            <div class="cert-signature-section">
-              <svg class="cert-signature-svg" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 45 Q20 20 40 35 Q50 42 55 30 Q60 18 65 25 Q70 32 75 20 Q80 10 85 28 Q90 40 95 22 Q100 10 110 30 Q115 38 120 25 Q125 15 135 30 Q140 38 150 28 Q155 22 165 35 Q170 42 180 30 Q185 25 190 35" stroke="#1a5632" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M5 48 Q100 40 195 42" stroke="#1a5632" stroke-width="0.8" fill="none" opacity="0.5"/>
-              </svg>
-              <div class="cert-registrar-box">
-                <p class="cert-registrar-name">Tpl. Uhiere Samuel</p>
-                <div class="cert-registrar-line"></div>
-                <p class="cert-registrar-title">Ag. Registrar</p>
+              <!-- QR Code -->
+              <div class="cert-qr">
+                <div class="qr-placeholder">
+                  <svg viewBox="0 0 100 100" class="qr-svg">
+                    <rect x="0" y="0" width="100" height="100" fill="white"/>
+                    <rect x="5" y="5" width="25" height="25" fill="#1a5632" rx="2"/>
+                    <rect x="70" y="5" width="25" height="25" fill="#1a5632" rx="2"/>
+                    <rect x="5" y="70" width="25" height="25" fill="#1a5632" rx="2"/>
+                    <rect x="10" y="10" width="15" height="15" fill="white" rx="1"/>
+                    <rect x="75" y="10" width="15" height="15" fill="white" rx="1"/>
+                    <rect x="10" y="75" width="15" height="15" fill="white" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" fill="#1a5632" rx="1"/>
+                    <rect x="79" y="14" width="7" height="7" fill="#1a5632" rx="1"/>
+                    <rect x="14" y="79" width="7" height="7" fill="#1a5632" rx="1"/>
+                    <rect x="35" y="5" width="5" height="5" fill="#1a5632"/>
+                    <rect x="45" y="5" width="5" height="5" fill="#1a5632"/>
+                    <rect x="55" y="5" width="5" height="5" fill="#1a5632"/>
+                    <rect x="35" y="15" width="5" height="5" fill="#1a5632"/>
+                    <rect x="50" y="15" width="5" height="5" fill="#1a5632"/>
+                    <rect x="35" y="25" width="5" height="5" fill="#1a5632"/>
+                    <rect x="45" y="25" width="5" height="5" fill="#1a5632"/>
+                    <rect x="60" y="25" width="5" height="5" fill="#1a5632"/>
+                    <rect x="35" y="35" width="5" height="5" fill="#1a5632"/>
+                    <rect x="45" y="35" width="5" height="5" fill="#1a5632"/>
+                    <rect x="55" y="35" width="5" height="5" fill="#1a5632"/>
+                    <rect x="70" y="35" width="5" height="5" fill="#1a5632"/>
+                    <rect x="85" y="35" width="5" height="5" fill="#1a5632"/>
+                    <rect x="5" y="35" width="5" height="5" fill="#1a5632"/>
+                    <rect x="15" y="35" width="5" height="5" fill="#1a5632"/>
+                    <rect x="25" y="35" width="5" height="5" fill="#1a5632"/>
+                    <rect x="5" y="45" width="5" height="5" fill="#1a5632"/>
+                    <rect x="20" y="45" width="5" height="5" fill="#1a5632"/>
+                    <rect x="35" y="45" width="5" height="5" fill="#1a5632"/>
+                    <rect x="50" y="45" width="5" height="5" fill="#1a5632"/>
+                    <rect x="65" y="45" width="5" height="5" fill="#1a5632"/>
+                    <rect x="80" y="45" width="5" height="5" fill="#1a5632"/>
+                    <rect x="5" y="55" width="5" height="5" fill="#1a5632"/>
+                    <rect x="15" y="55" width="5" height="5" fill="#1a5632"/>
+                    <rect x="25" y="55" width="5" height="5" fill="#1a5632"/>
+                    <rect x="40" y="55" width="5" height="5" fill="#1a5632"/>
+                    <rect x="55" y="55" width="5" height="5" fill="#1a5632"/>
+                    <rect x="70" y="55" width="5" height="5" fill="#1a5632"/>
+                    <rect x="90" y="55" width="5" height="5" fill="#1a5632"/>
+                    <rect x="75" y="70" width="5" height="5" fill="#1a5632"/>
+                    <rect x="90" y="70" width="5" height="5" fill="#1a5632"/>
+                    <rect x="70" y="80" width="5" height="5" fill="#1a5632"/>
+                    <rect x="85" y="80" width="5" height="5" fill="#1a5632"/>
+                    <rect x="75" y="90" width="5" height="5" fill="#1a5632"/>
+                    <rect x="85" y="90" width="5" height="5" fill="#1a5632"/>
+                    <rect x="90" y="75" width="5" height="5" fill="#1a5632"/>
+                  </svg>
+                </div>
+                <p class="qr-label">VERIFY MY IDENTITY</p>
+              </div>
+
+              <!-- Signature & Registrar -->
+              <div class="cert-registrar">
+                <svg class="cert-signature-svg" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 45 Q20 20 40 35 Q50 42 55 30 Q60 18 65 25 Q70 32 75 20 Q80 10 85 28 Q90 40 95 22 Q100 10 110 30 Q115 38 120 25 Q125 15 135 30 Q140 38 150 28 Q155 22 165 35 Q170 42 180 30 Q185 25 190 35" stroke="#1a5632" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M5 48 Q100 40 195 42" stroke="#1a5632" stroke-width="0.8" fill="none" opacity="0.5"/>
+                </svg>
+                <p class="registrar-name">Tpl. Uhiere Samuel</p>
+                <div class="registrar-line"></div>
+                <p class="registrar-title">Ag. Registrar</p>
               </div>
             </div>
           </div>

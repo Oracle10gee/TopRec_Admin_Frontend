@@ -25,6 +25,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
     financialBlockMessage: string = '';
     isLoading: boolean = true;
     certificateDescription: string = '';
+    certificateBodyText: string = '';
 
     private destroy$ = new Subject<void>();
 
@@ -52,6 +53,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
                     this.checkFinancialStatus(user);
                     this.calculateLicenseDates();
                     this.setCertificateDescription(user);
+                    this.setCertificateBodyText(user);
                 }
                 this.isLoading = false;
             });
@@ -89,6 +91,29 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
                 break;
             default:
                 this.certificateDescription = 'has been duly registered and licensed as a Town Planner';
+                break;
+        }
+    }
+
+    /**
+     * Set the certificate body text based on user role.
+     * Member: SECTION 5(1) provisions, practice as REGISTERED TOWN PLANNER
+     * Consulting Firm: Schedule 1 provisions, practice as REGISTERED CONSULTING FIRM
+     * Practice Firm: SECTION 5(1) provisions, practice as REGISTERED PRACTICE FIRM
+     */
+    private setCertificateBodyText(user: User): void {
+        switch (user.role) {
+            case 'Consulting Firm':
+                this.certificateBodyText =
+                    'Having complied with the provisions of schedule 1 Rules and Regulation for the Control Town Planning Practice are expected to carry out, Environmental Impact Statement, Master Plan, Structure Plans, Special Area Plans, Campus Plans, Subset Plans including Layouts/Subdivision of more than 10 Hectares.';
+                break;
+            case 'Practice Firm':
+                this.certificateBodyText =
+                    'Having complied with the provisions of SECTION (5) (1) Town Planners (Registration, etc.) Act, CAP T7 LFN 2004, and Section (5) (b) Rules and Regulation for the Control Town Planning Practice, is hereby authorized to practice as a REGISTERED PRACTICE FIRM within the Federal Republic of Nigeria.';
+                break;
+            default:
+                this.certificateBodyText =
+                    'Having complied with the provisions of SECTION (5) (1) Town Planners (Registration, etc.) Act, CAP T7 LFN 2004, and Section (5) (b) Rules and Regulation for the Control Town Planning Practice, is hereby authorized to practice as a REGISTERED TOWN PLANNER within the Federal Republic of Nigeria.';
                 break;
         }
     }
