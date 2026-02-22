@@ -36,6 +36,33 @@
   background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f2 30%, #ffffff 60%, #f1f8f2 100%);
   position: relative;
   overflow: hidden;
+
+  /* Green gradient corner patches matching PDF */
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Top-left / bottom-left green fade */
+  &::before {
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(26, 86, 50, 0.15) 0%, rgba(42, 118, 66, 0.08) 25%, transparent 55%);
+  }
+
+  /* Bottom-right / top-right green fade */
+  &::after {
+    bottom: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(315deg, rgba(26, 86, 50, 0.15) 0%, rgba(42, 118, 66, 0.08) 25%, transparent 55%);
+  }
 }
 
 /* Certified Seal (top-right corner) */
@@ -142,7 +169,7 @@
 
 .cert-logo {
   height: auto;
-  width: clamp(60px, 10%, 100px);
+  width: clamp(80px, 12%, 130px);
   object-fit: contain;
   display: block;
   margin: 0 auto 4px;
@@ -306,11 +333,12 @@
   text-align: center;
 }
 
-.cert-signature-svg {
-  width: clamp(100px, 15vw, 180px);
+.cert-signature-img {
+  width: clamp(120px, 18vw, 220px);
   height: auto;
+  object-fit: contain;
   display: block;
-  margin: 0 auto 2px;
+  margin: 0 auto -4px;
 }
 
 .registrar-name {
@@ -385,6 +413,12 @@
   .certificate-inner {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+
+    &::before,
+    &::after {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
   }
 
   .circles-bg .circle {
