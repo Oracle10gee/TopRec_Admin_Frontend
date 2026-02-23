@@ -68,8 +68,8 @@
 /* Certified Seal (top-right corner) */
 .certified-seal {
   position: absolute;
-  top: 5%;
-  right: 5%;
+  top: 28%;
+  right: 9%;
   z-index: 2;
   pointer-events: none;
 }
@@ -291,7 +291,7 @@
     font-size: clamp(12px, 1.8vw, 22px);
     font-weight: 800;
     font-style: italic;
-    color: #cc0000;
+    color: #1A5632;
     letter-spacing: 0.5px;
     margin: 0;
   }
@@ -339,7 +339,7 @@
   height: auto;
   object-fit: contain;
   display: block;
-  margin: 0 auto -4px;
+  margin: 0 auto -30px;
 }
 
 .registrar-name {
@@ -362,7 +362,7 @@
   font-size: clamp(10px, 1.2vw, 14px);
   font-weight: 700;
   color: #1a5632;
-  margin-top: 4px;
+  // margin-top: 2px;
 }
 
 /* ==================== PRINT STYLES ==================== */

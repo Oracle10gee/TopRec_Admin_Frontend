@@ -296,25 +296,53 @@
           <!-- Certified Seal (top-right) - shown for Consulting Firm & Practice Firm -->
           <div
             class="certified-seal"
-            *ngIf="user.role === 'Consulting Firm' || user.role === 'Practice Firm'"
+            *ngIf="
+              user.role === 'Consulting Firm' || user.role === 'Practice Firm'
+            "
           >
-            <img src="assets/Asset 2.png" alt="Certified Seal" class="certified-seal-img" />
+            <img
+              src="assets/Asset 2.png"
+              alt="Certified Seal"
+              class="certified-seal-img"
+            />
           </div>
 
           <!-- Certificate Content -->
           <div class="certificate-content">
             <!-- Logo & Organization Header -->
             <div class="cert-header">
-              <img src="assets/toprec_logo.png" alt="TOPREC Logo" class="cert-logo" />
+              <img
+                src="assets/toprec_badge.png"
+                alt="TOPREC Logo"
+                class="cert-logo"
+              />
               <p class="cert-toprec-text">TOPREC</p>
-              <h2 class="cert-org-name">TOWN PLANNERS REGISTRATION COUNCIL OF NIGERIA</h2>
+              <h2 class="cert-org-name">
+                TOWN PLANNERS REGISTRATION COUNCIL OF NIGERIA
+              </h2>
               <p class="cert-org-sub">Established by Decree No. 3 of 1988</p>
             </div>
 
             <!-- Certificate Title -->
             <div class="cert-title-section">
-              <h1 class="cert-title">Certificate</h1>
-              <h2 class="cert-subtitle">OF LICENSE TO PRACTICE</h2>
+              <div>
+                <h1 class="cert-title">Certificate</h1>
+                <h2 class="cert-subtitle">OF LICENSE TO PRACTICE</h2>
+              </div>
+              <!-- Certified Seal (top-right) - shown for Consulting Firm & Practice Firm -->
+              <div
+                class="certified-seal"
+                *ngIf="
+                  user.role === 'Consulting Firm' ||
+                  user.role === 'Practice Firm'
+                "
+              >
+                <img
+                  src="assets/Asset 2.png"
+                  alt="Certified Seal"
+                  class="certified-seal-img"
+                />
+              </div>
             </div>
 
             <!-- Authentication Text -->
@@ -341,52 +369,115 @@
               <div class="cert-qr">
                 <div class="qr-placeholder">
                   <svg viewBox="0 0 100 100" class="qr-svg">
-                    <rect x="0" y="0" width="100" height="100" fill="white"/>
-                    <rect x="5" y="5" width="25" height="25" fill="#1a5632" rx="2"/>
-                    <rect x="70" y="5" width="25" height="25" fill="#1a5632" rx="2"/>
-                    <rect x="5" y="70" width="25" height="25" fill="#1a5632" rx="2"/>
-                    <rect x="10" y="10" width="15" height="15" fill="white" rx="1"/>
-                    <rect x="75" y="10" width="15" height="15" fill="white" rx="1"/>
-                    <rect x="10" y="75" width="15" height="15" fill="white" rx="1"/>
-                    <rect x="14" y="14" width="7" height="7" fill="#1a5632" rx="1"/>
-                    <rect x="79" y="14" width="7" height="7" fill="#1a5632" rx="1"/>
-                    <rect x="14" y="79" width="7" height="7" fill="#1a5632" rx="1"/>
-                    <rect x="35" y="5" width="5" height="5" fill="#1a5632"/>
-                    <rect x="45" y="5" width="5" height="5" fill="#1a5632"/>
-                    <rect x="55" y="5" width="5" height="5" fill="#1a5632"/>
-                    <rect x="35" y="15" width="5" height="5" fill="#1a5632"/>
-                    <rect x="50" y="15" width="5" height="5" fill="#1a5632"/>
-                    <rect x="35" y="25" width="5" height="5" fill="#1a5632"/>
-                    <rect x="45" y="25" width="5" height="5" fill="#1a5632"/>
-                    <rect x="60" y="25" width="5" height="5" fill="#1a5632"/>
-                    <rect x="35" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="45" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="55" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="70" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="85" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="5" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="15" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="25" y="35" width="5" height="5" fill="#1a5632"/>
-                    <rect x="5" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="20" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="35" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="50" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="65" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="80" y="45" width="5" height="5" fill="#1a5632"/>
-                    <rect x="5" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="15" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="25" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="40" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="55" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="70" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="90" y="55" width="5" height="5" fill="#1a5632"/>
-                    <rect x="75" y="70" width="5" height="5" fill="#1a5632"/>
-                    <rect x="90" y="70" width="5" height="5" fill="#1a5632"/>
-                    <rect x="70" y="80" width="5" height="5" fill="#1a5632"/>
-                    <rect x="85" y="80" width="5" height="5" fill="#1a5632"/>
-                    <rect x="75" y="90" width="5" height="5" fill="#1a5632"/>
-                    <rect x="85" y="90" width="5" height="5" fill="#1a5632"/>
-                    <rect x="90" y="75" width="5" height="5" fill="#1a5632"/>
+                    <rect x="0" y="0" width="100" height="100" fill="white" />
+                    <rect
+                      x="5"
+                      y="5"
+                      width="25"
+                      height="25"
+                      fill="#1a5632"
+                      rx="2"
+                    />
+                    <rect
+                      x="70"
+                      y="5"
+                      width="25"
+                      height="25"
+                      fill="#1a5632"
+                      rx="2"
+                    />
+                    <rect
+                      x="5"
+                      y="70"
+                      width="25"
+                      height="25"
+                      fill="#1a5632"
+                      rx="2"
+                    />
+                    <rect
+                      x="10"
+                      y="10"
+                      width="15"
+                      height="15"
+                      fill="white"
+                      rx="1"
+                    />
+                    <rect
+                      x="75"
+                      y="10"
+                      width="15"
+                      height="15"
+                      fill="white"
+                      rx="1"
+                    />
+                    <rect
+                      x="10"
+                      y="75"
+                      width="15"
+                      height="15"
+                      fill="white"
+                      rx="1"
+                    />
+                    <rect
+                      x="14"
+                      y="14"
+                      width="7"
+                      height="7"
+                      fill="#1a5632"
+                      rx="1"
+                    />
+                    <rect
+                      x="79"
+                      y="14"
+                      width="7"
+                      height="7"
+                      fill="#1a5632"
+                      rx="1"
+                    />
+                    <rect
+                      x="14"
+                      y="79"
+                      width="7"
+                      height="7"
+                      fill="#1a5632"
+                      rx="1"
+                    />
+                    <rect x="35" y="5" width="5" height="5" fill="#1a5632" />
+                    <rect x="45" y="5" width="5" height="5" fill="#1a5632" />
+                    <rect x="55" y="5" width="5" height="5" fill="#1a5632" />
+                    <rect x="35" y="15" width="5" height="5" fill="#1a5632" />
+                    <rect x="50" y="15" width="5" height="5" fill="#1a5632" />
+                    <rect x="35" y="25" width="5" height="5" fill="#1a5632" />
+                    <rect x="45" y="25" width="5" height="5" fill="#1a5632" />
+                    <rect x="60" y="25" width="5" height="5" fill="#1a5632" />
+                    <rect x="35" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="45" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="55" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="70" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="85" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="5" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="15" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="25" y="35" width="5" height="5" fill="#1a5632" />
+                    <rect x="5" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="20" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="35" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="50" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="65" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="80" y="45" width="5" height="5" fill="#1a5632" />
+                    <rect x="5" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="15" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="25" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="40" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="55" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="70" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="90" y="55" width="5" height="5" fill="#1a5632" />
+                    <rect x="75" y="70" width="5" height="5" fill="#1a5632" />
+                    <rect x="90" y="70" width="5" height="5" fill="#1a5632" />
+                    <rect x="70" y="80" width="5" height="5" fill="#1a5632" />
+                    <rect x="85" y="80" width="5" height="5" fill="#1a5632" />
+                    <rect x="75" y="90" width="5" height="5" fill="#1a5632" />
+                    <rect x="85" y="90" width="5" height="5" fill="#1a5632" />
+                    <rect x="90" y="75" width="5" height="5" fill="#1a5632" />
                   </svg>
                 </div>
                 <p class="qr-label">VERIFY MY IDENTITY</p>
@@ -399,8 +490,8 @@
                   alt="Registrar Signature"
                   class="cert-signature-img"
                 />
-                <p class="registrar-name">Tpl. Uhiere Samuel</p>
                 <div class="registrar-line"></div>
+                <p class="registrar-name">Tpl. Uhiere Samuel</p>
                 <p class="registrar-title">Ag. Registrar</p>
               </div>
             </div>
