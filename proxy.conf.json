@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://toprec.sendswifts.com",
+    "target": "https://api.toprec.gov.ng",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
