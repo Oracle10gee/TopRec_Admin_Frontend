@@ -88,6 +88,7 @@ export interface User {
     is_existing?: boolean;
     status: 'active' | 'inactive';
     created_at: string;
+    profile_image_url?: string | null;
 }
 
 export type UserRole = 'Member' | 'Admin';

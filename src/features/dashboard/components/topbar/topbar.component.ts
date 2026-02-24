@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ProfileImageService } from '../../../../core/services/profile-image.service';
 
 @Component({
     standalone: true,
@@ -22,6 +23,7 @@ export class TopbarComponent implements OnInit {
     userName = '';
     userEmail = '';
     userRole = '';
+    profileImageUrl: string | null = null;
 
     // Page info
     pageTitle = 'Dashboard';
@@ -30,11 +32,16 @@ export class TopbarComponent implements OnInit {
     // Notification count
     notificationCount = 0; // Example count
 
-    constructor(private router: Router, private authService: AuthService) { }
+    constructor(
+        private router: Router,
+        private authService: AuthService,
+        private profileImageService: ProfileImageService
+    ) { }
 
     ngOnInit(): void {
         this.loadUserData();
         this.updatePageTitle();
+        this.loadProfileImage();
 
         // Listen to route changes
         this.router.events
@@ -90,6 +97,19 @@ export class TopbarComponent implements OnInit {
         const routeInfo = routeTitles[currentRoute] || { title: 'Dashboard', page: 'Home' };
         this.pageTitle = routeInfo.title;
         this.currentPage = routeInfo.page;
+    }
+
+    private loadProfileImage(): void {
+        this.profileImageService.getProfileImage().subscribe({
+            next: (response) => {
+                if (response?.data?.profile_image_url) {
+                    this.profileImageUrl = this.profileImageService.getFullImageUrl(response.data.profile_image_url);
+                }
+            },
+            error: () => {
+                this.profileImageUrl = null;
+            }
+        });
     }
 
     /**

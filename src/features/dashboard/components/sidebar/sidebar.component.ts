@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ProfileImageService } from '../../../../core/services/profile-image.service';
 
 interface MenuItem {
     id: string;
@@ -27,6 +28,7 @@ export class SidebarComponent implements OnInit {
 
     activeMenuItem: string = 'home';
     menuItems: MenuItem[] = [];
+    profileImageUrl: string | null = null;
 
     // Heroicons SVG strings (outline style)
     private icons = {
@@ -53,12 +55,14 @@ export class SidebarComponent implements OnInit {
     constructor(
         private router: Router,
         private sanitizer: DomSanitizer,
-        private authService: AuthService
+        private authService: AuthService,
+        private profileImageService: ProfileImageService
     ) { }
 
     ngOnInit(): void {
         this.initializeMenuItems();
         this.updateActiveMenuItem();
+        this.loadProfileImage();
 
         // Subscribe to router events to update active menu item
         this.router.events.subscribe(() => {
@@ -162,6 +166,19 @@ export class SidebarComponent implements OnInit {
             return (parts[0][0] + parts[1][0]).toUpperCase();
         }
         return name.substring(0, 2).toUpperCase();
+    }
+
+    private loadProfileImage(): void {
+        this.profileImageService.getProfileImage().subscribe({
+            next: (response) => {
+                if (response?.data?.profile_image_url) {
+                    this.profileImageUrl = this.profileImageService.getFullImageUrl(response.data.profile_image_url);
+                }
+            },
+            error: () => {
+                this.profileImageUrl = null;
+            }
+        });
     }
 
     onLogout(): void {
