@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { ProfileImageService } from '../../../../core/services/profile-image.service';
 import { State, Qualification } from '../../../../core/models/auth.model';
 
 @Component({
@@ -14,6 +15,8 @@ import { State, Qualification } from '../../../../core/models/auth.model';
     styleUrls: ['./profile.component.scss']
 })
 export class DashboardProfileComponent implements OnInit {
+    @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
     profileForm!: FormGroup;
     isEditing = false;
     isSaving = false;
@@ -22,6 +25,16 @@ export class DashboardProfileComponent implements OnInit {
     errorMessage = '';
     userRole = '';
 
+    // Profile image
+    profileImageUrl: string | null = null;
+    imagePreview: string | null = null;
+    isUploadingImage = false;
+    isDeletingImage = false;
+    selectedFile: File | null = null;
+
+    private readonly MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    private readonly ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
     states: State[] = [];
     qualifications: Qualification[] = [];
 
@@ -29,7 +42,8 @@ export class DashboardProfileComponent implements OnInit {
         private fb: FormBuilder,
         private authService: AuthService,
         private apiService: ApiService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private profileImageService: ProfileImageService
     ) { }
 
     ngOnInit(): void {
@@ -37,6 +51,7 @@ export class DashboardProfileComponent implements OnInit {
         this.fetchStates();
         this.fetchQualifications();
         this.loadProfile();
+        this.loadProfileImage();
     }
 
     initializeForm(): void {
@@ -278,6 +293,117 @@ export class DashboardProfileComponent implements OnInit {
                 console.error('Profile update error:', error);
             }
         });
+    }
+
+    // ==================== Profile Image Methods ====================
+
+    loadProfileImage(): void {
+        this.profileImageService.getProfileImage().subscribe({
+            next: (response) => {
+                if (response?.data?.profile_image_url) {
+                    this.profileImageUrl = this.profileImageService.getFullImageUrl(response.data.profile_image_url);
+                }
+            },
+            error: () => {
+                // Silently fail - user may not have a profile image yet
+                this.profileImageUrl = null;
+            }
+        });
+    }
+
+    onFileSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        if (!input.files || input.files.length === 0) return;
+
+        const file = input.files[0];
+
+        // Validate file type
+        if (!this.ALLOWED_TYPES.includes(file.type)) {
+            this.notificationService.error('Please select a JPEG, PNG, or WebP image.');
+            this.resetFileInput();
+            return;
+        }
+
+        // Validate file size
+        if (file.size > this.MAX_FILE_SIZE) {
+            this.notificationService.error('Image must be less than 5MB.');
+            this.resetFileInput();
+            return;
+        }
+
+        this.selectedFile = file;
+
+        // Create preview
+        const reader = new FileReader();
+        reader.onload = () => {
+            this.imagePreview = reader.result as string;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    uploadProfileImage(): void {
+        if (!this.selectedFile) return;
+
+        this.isUploadingImage = true;
+        this.profileImageService.uploadProfileImage(this.selectedFile).subscribe({
+            next: (response) => {
+                this.isUploadingImage = false;
+                this.profileImageUrl = this.profileImageService.getFullImageUrl(response.data.profile_image_url);
+                this.imagePreview = null;
+                this.selectedFile = null;
+                this.resetFileInput();
+                this.notificationService.success('Profile image uploaded successfully!');
+            },
+            error: (error) => {
+                this.isUploadingImage = false;
+                this.notificationService.error(error.message || 'Failed to upload profile image.');
+            }
+        });
+    }
+
+    cancelImageUpload(): void {
+        this.imagePreview = null;
+        this.selectedFile = null;
+        this.resetFileInput();
+    }
+
+    deleteProfileImage(): void {
+        if (!this.profileImageUrl) return;
+
+        this.isDeletingImage = true;
+        this.profileImageService.deleteProfileImage().subscribe({
+            next: () => {
+                this.isDeletingImage = false;
+                this.profileImageUrl = null;
+                this.imagePreview = null;
+                this.selectedFile = null;
+                this.resetFileInput();
+                this.notificationService.success('Profile image removed successfully!');
+            },
+            error: (error) => {
+                this.isDeletingImage = false;
+                this.notificationService.error(error.message || 'Failed to remove profile image.');
+            }
+        });
+    }
+
+    triggerFileInput(): void {
+        this.fileInput?.nativeElement?.click();
+    }
+
+    getUserInitials(): string {
+        const name = this.profileForm.get('full_name')?.value || '';
+        const parts = name.trim().split(' ');
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        return name.substring(0, 2).toUpperCase();
+    }
+
+    private resetFileInput(): void {
+        if (this.fileInput?.nativeElement) {
+            this.fileInput.nativeElement.value = '';
+        }
     }
 
     /**
