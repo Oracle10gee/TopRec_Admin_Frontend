@@ -26,6 +26,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
     isLoading: boolean = true;
     certificateDescription: string = '';
     certificateBodyText: string = '';
+    displayName: string = '';
 
     private destroy$ = new Subject<void>();
 
@@ -54,6 +55,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
                     this.calculateLicenseDates();
                     this.setCertificateDescription(user);
                     this.setCertificateBodyText(user);
+                    this.displayName = this.toTitleCase(user.full_name || '');
                 }
                 this.isLoading = false;
             });
@@ -142,6 +144,14 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
         } else {
             this.licenseStatus = 'Active';
         }
+    }
+
+    /**
+     * Convert a string to title case (first letter uppercase, rest lowercase per word).
+     * e.g. "KABIRU PETERS" → "Kabiru Peters"
+     */
+    private toTitleCase(str: string): string {
+        return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
     }
 
     /**
