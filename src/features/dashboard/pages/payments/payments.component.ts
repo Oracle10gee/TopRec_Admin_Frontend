@@ -520,13 +520,15 @@ export class DashboardPaymentsComponent implements OnInit {
             if (this.isExistingUser && this.existingUserAmount !== null) {
                 console.log(`💰 Existing user: overriding base amount ${baseAmount} with ${this.existingUserAmount}`);
                 baseAmount = this.existingUserAmount;
+
+                // Enable the amount field so existing users can edit it (partial payments)
+                this.paymentForm.get('amount')?.enable();
+                this.paymentForm.patchValue({ amount: baseAmount });
+            } else {
+                // Non-existing users: formatted display, field stays disabled
+                const formattedAmount = `₦${baseAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                this.paymentForm.patchValue({ amount: formattedAmount });
             }
-
-            const formattedAmount = `₦${baseAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-
-            this.paymentForm.patchValue({
-                amount: formattedAmount
-            });
 
             // Create a calculated payment object for display purposes
             const taxRate = parseFloat(paymentType.tax_rate);
@@ -714,10 +716,16 @@ export class DashboardPaymentsComponent implements OnInit {
             payer_phone: phone
         };
 
-        // For existing users with a custom financial status amount, include the overridden amount
+        // For existing users, read the (possibly edited) amount from the form field
         if (this.isExistingUser && this.existingUserAmount !== null) {
-            payload.amount = this.existingUserAmount;
-            console.log(`💰 Existing user: sending custom amount in payload: ${this.existingUserAmount}`);
+            const formAmount = parseFloat(this.paymentForm.get('amount')?.value);
+            if (!isNaN(formAmount) && formAmount > 0) {
+                payload.amount = formAmount;
+                console.log(`💰 Existing user: sending amount in payload: ${formAmount}`);
+            } else {
+                payload.amount = this.existingUserAmount;
+                console.log(`💰 Existing user: using original amount in payload: ${this.existingUserAmount}`);
+            }
         }
 
         console.log('🚀 Calling backend initiate payment API with payload:', payload);
