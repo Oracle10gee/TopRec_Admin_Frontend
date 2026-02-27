@@ -116,9 +116,10 @@ export class DashboardPaymentsComponent implements OnInit {
     isSuperadmin = false;
     cachedPaymentTypes: PaymentTypeForNonAdmin[] = [];
 
-    // Existing user properties
-    isExistingUser = false;
-    existingUserAmount: number | null = null;
+    // License renewal with outstanding balance properties
+    isLicenseRenewalWithBalance = false;
+    outstandingBalance: number | null = null;
+    userFinancialStatus: number | null = null;
 
     // Payment details modal properties
     showPaymentDetailsModal = false;
@@ -178,7 +179,7 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
-     * Determine current user's role and set superadmin flag
+     * Determine current user's role and store financial status for license renewal checks
      */
     private determineUserRole(): void {
         this.currentUserRole = this.authService.getCurrentUserRole();
@@ -186,14 +187,13 @@ export class DashboardPaymentsComponent implements OnInit {
         console.log(`👤 Current user role: ${this.currentUserRole}`);
         console.log(`🔐 Is Superadmin: ${this.isSuperadmin}`);
 
-        // Check if user is an existing user with a custom financial status amount
+        // Store the user's current_financial_status for use when license_renewal is selected
         const currentUser = this.authService.getCurrentUserSync();
-        if (currentUser && (currentUser as any).is_existing === true) {
+        if (currentUser) {
             const financialStatus = (currentUser as any).current_financial_status;
             if (financialStatus !== null && financialStatus !== undefined && Number(financialStatus) !== 0) {
-                this.isExistingUser = true;
-                this.existingUserAmount = parseFloat(financialStatus);
-                console.log(`💰 Existing user detected. Custom amount: ${this.existingUserAmount}`);
+                this.userFinancialStatus = parseFloat(financialStatus);
+                console.log(`💰 User financial status stored: ${this.userFinancialStatus}`);
             }
         }
     }
@@ -500,13 +500,19 @@ export class DashboardPaymentsComponent implements OnInit {
     /**
      * Populate amount field from cached payment types data (non-admin users)
      * Looks up the base_amount directly from the cached response.
-     * For existing users with a non-null/non-zero current_financial_status,
-     * the amount is overridden with that value.
+     * When the selected payment type is 'license_renewal' and the user has
+     * a non-null/non-zero current_financial_status, the amount is overridden
+     * with that value and made editable for partial payment.
      */
     private populateAmountFromCache(paymentTypeCode: string): void {
         this.isCalculating = true;
         console.log('🔍 Looking up payment type code:', paymentTypeCode);
         console.log('📦 Cached payment types:', this.cachedPaymentTypes);
+
+        // Reset license renewal state when payment type changes
+        this.isLicenseRenewalWithBalance = false;
+        this.outstandingBalance = null;
+        this.paymentForm.get('amount')?.disable();
 
         // Find the payment type in cached data
         const paymentType = this.cachedPaymentTypes.find(type => type.code === paymentTypeCode);
@@ -516,16 +522,18 @@ export class DashboardPaymentsComponent implements OnInit {
 
             let baseAmount = parseFloat(paymentType.base_amount);
 
-            // Override amount for existing users with a custom financial status
-            if (this.isExistingUser && this.existingUserAmount !== null) {
-                console.log(`💰 Existing user: overriding base amount ${baseAmount} with ${this.existingUserAmount}`);
-                baseAmount = this.existingUserAmount;
+            // Check if this is a license_renewal and user has an outstanding financial status
+            if (paymentTypeCode === 'license_renewal' && this.userFinancialStatus !== null) {
+                console.log(`💰 License renewal selected with outstanding balance: ${this.userFinancialStatus}`);
+                baseAmount = this.userFinancialStatus;
+                this.isLicenseRenewalWithBalance = true;
+                this.outstandingBalance = this.userFinancialStatus;
 
-                // Enable the amount field so existing users can edit it (partial payments)
+                // Enable the amount field so user can edit it (partial payments)
                 this.paymentForm.get('amount')?.enable();
                 this.paymentForm.patchValue({ amount: baseAmount });
             } else {
-                // Non-existing users: formatted display, field stays disabled
+                // Regular flow: formatted display, field stays disabled
                 const formattedAmount = `₦${baseAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
                 this.paymentForm.patchValue({ amount: formattedAmount });
             }
@@ -716,15 +724,15 @@ export class DashboardPaymentsComponent implements OnInit {
             payer_phone: phone
         };
 
-        // For existing users, read the (possibly edited) amount from the form field
-        if (this.isExistingUser && this.existingUserAmount !== null) {
+        // For license renewal with outstanding balance, read the (possibly edited) amount from the form field
+        if (this.isLicenseRenewalWithBalance && this.outstandingBalance !== null) {
             const formAmount = parseFloat(this.paymentForm.get('amount')?.value);
             if (!isNaN(formAmount) && formAmount > 0) {
                 payload.amount = formAmount;
-                console.log(`💰 Existing user: sending amount in payload: ${formAmount}`);
+                console.log(`💰 License renewal: sending amount in payload: ${formAmount}`);
             } else {
-                payload.amount = this.existingUserAmount;
-                console.log(`💰 Existing user: using original amount in payload: ${this.existingUserAmount}`);
+                payload.amount = this.outstandingBalance;
+                console.log(`💰 License renewal: using outstanding balance in payload: ${this.outstandingBalance}`);
             }
         }
 
