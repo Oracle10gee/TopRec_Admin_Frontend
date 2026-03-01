@@ -456,6 +456,18 @@ export class AuthService {
     }
 
     /**
+     * Get all service types
+     */
+    getServiceTypes(): Observable<any> {
+        return this.apiService.get('/service-types').pipe(
+            catchError((error) => {
+                console.error('Error fetching service types:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    /**
      * Delete a payment type
      */
     deletePaymentType(paymentTypeId: string): Observable<any> {
