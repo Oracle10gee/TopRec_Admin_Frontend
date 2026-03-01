@@ -13,6 +13,15 @@ interface PaymentType {
     description: string;
     tax_rate: number;
     currency: string;
+    service_id?: string;
+}
+
+interface ServiceType {
+    id: string;
+    service_id: string;
+    service_type: string;
+    description: string;
+    is_active: boolean;
 }
 
 @Component({
@@ -24,7 +33,9 @@ interface PaymentType {
 })
 export class PaymentSettingsComponent implements OnInit {
     paymentTypes: PaymentType[] = [];
+    serviceTypes: ServiceType[] = [];
     isLoading = false;
+    isLoadingServiceTypes = false;
     isSaving = false;
     searchQuery = '';
 
@@ -47,6 +58,7 @@ export class PaymentSettingsComponent implements OnInit {
     ngOnInit(): void {
         this.initializeForm();
         this.loadPaymentTypes();
+        this.loadServiceTypes();
     }
 
     initializeForm(): void {
@@ -56,7 +68,22 @@ export class PaymentSettingsComponent implements OnInit {
             base_amount: ['', [Validators.required, Validators.min(0)]],
             description: ['', [Validators.required, Validators.minLength(5)]],
             tax_rate: ['', [Validators.required, Validators.min(0), Validators.max(1)]],
-            currency: ['NGN', Validators.required]
+            currency: ['NGN', Validators.required],
+            service_id: ['', Validators.required]
+        });
+    }
+
+    loadServiceTypes(): void {
+        this.isLoadingServiceTypes = true;
+        this.authService.getServiceTypes().subscribe({
+            next: (response: any) => {
+                this.serviceTypes = response.data?.service_types || [];
+                this.isLoadingServiceTypes = false;
+            },
+            error: (error) => {
+                this.isLoadingServiceTypes = false;
+                console.error('Error loading service types:', error);
+            }
         });
     }
 
@@ -83,6 +110,9 @@ export class PaymentSettingsComponent implements OnInit {
         this.paymentTypeForm.reset({ currency: 'NGN' });
         this.paymentTypeForm.get('code')?.setValidators([Validators.required, Validators.minLength(3)]);
         this.paymentTypeForm.get('code')?.updateValueAndValidity();
+        // Enable tax_rate for create mode
+        this.paymentTypeForm.get('tax_rate')?.setValidators([Validators.required, Validators.min(0), Validators.max(1)]);
+        this.paymentTypeForm.get('tax_rate')?.updateValueAndValidity();
         this.showModal = true;
     }
 
@@ -93,6 +123,9 @@ export class PaymentSettingsComponent implements OnInit {
         // Keep code field validators so it can be edited and validated
         this.paymentTypeForm.get('code')?.setValidators([Validators.required, Validators.minLength(3)]);
         this.paymentTypeForm.get('code')?.updateValueAndValidity();
+        // Remove tax_rate validators for edit mode (field is hidden)
+        this.paymentTypeForm.get('tax_rate')?.clearValidators();
+        this.paymentTypeForm.get('tax_rate')?.updateValueAndValidity();
         this.showModal = true;
     }
 
@@ -111,8 +144,9 @@ export class PaymentSettingsComponent implements OnInit {
         const formData = this.paymentTypeForm.value;
 
         if (this.isEditingPaymentType && this.selectedPaymentType?.id) {
-            // Update existing payment type - include all fields
-            this.authService.updatePaymentType(this.selectedPaymentType.id, formData).subscribe({
+            // Update existing payment type - exclude tax_rate (not editable on update)
+            const { tax_rate, ...updateData } = formData;
+            this.authService.updatePaymentType(this.selectedPaymentType.id, updateData).subscribe({
                 next: (response) => {
                     this.isSaving = false;
                     this.notificationService.success('Payment type updated successfully!');
@@ -207,5 +241,9 @@ export class PaymentSettingsComponent implements OnInit {
 
     get currency() {
         return this.paymentTypeForm.get('currency');
+    }
+
+    get service_id() {
+        return this.paymentTypeForm.get('service_id');
     }
 }
