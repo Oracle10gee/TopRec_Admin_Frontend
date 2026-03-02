@@ -47,12 +47,12 @@
         <!-- Label -->
         <span class="font-medium text-sm pl-5">{{ item.label }}</span>
 
-        <!-- Badge (optional) -->
-        <span 
-          *ngIf="item.badge" 
+        <!-- Badge (payments pending count) -->
+        <span
+          *ngIf="item.id === 'payments' && pendingPaymentCount > 0"
           class="ml-auto px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white"
         >
-          {{ item.badge }}
+          {{ pendingPaymentCount }}
         </span>
       </button>
     </div>

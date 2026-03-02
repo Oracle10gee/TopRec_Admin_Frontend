@@ -4,5 +4,11 @@
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
+  },
+  "/uploads": {
+    "target": "https://api.toprec.gov.ng",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
 }
