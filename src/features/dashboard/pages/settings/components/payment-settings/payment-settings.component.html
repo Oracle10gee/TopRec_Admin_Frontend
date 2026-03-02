@@ -194,6 +194,12 @@
                     [ngClass]="isPaymentTypeActive(paymentType) ? 'translate-x-8' : 'translate-x-1'"
                   ></span>
                 </button>
+                <span
+                  class="text-xs font-semibold"
+                  [ngClass]="isPaymentTypeActive(paymentType) ? 'text-green-700' : 'text-gray-600'"
+                >
+                  {{ isPaymentTypeActive(paymentType) ? "ON" : "OFF" }}
+                </span>
               </div>
             </td>
           </tr>

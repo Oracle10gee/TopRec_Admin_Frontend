@@ -182,8 +182,22 @@ export class PaymentSettingsComponent implements OnInit {
         if (!paymentType.id) return;
 
         const nextActiveState = this.isPaymentTypeActive(paymentType) ? 0 : 1;
+<<<<<<< codex/evaluate-code-change-capabilities-h69ud4
         this.isSaving = true;
         this.authService.togglePaymentTypeStatus(paymentType.id, nextActiveState).subscribe({
+=======
+        const payload = {
+            code: paymentType.code,
+            name: paymentType.name,
+            base_amount: paymentType.base_amount,
+            description: paymentType.description,
+            currency: paymentType.currency,
+            service_id: paymentType.service_id,
+            is_active: nextActiveState
+        };
+        this.isSaving = true;
+        this.authService.updatePaymentType(paymentType.id, payload).subscribe({
+>>>>>>> master
             next: () => {
                 this.isSaving = false;
                 const statusText = nextActiveState === 1 ? 'activated' : 'deactivated';
