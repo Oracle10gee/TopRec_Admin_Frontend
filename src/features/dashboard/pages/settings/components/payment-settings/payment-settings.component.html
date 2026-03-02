@@ -168,24 +168,38 @@
                   </svg>
                 </button>
                 <button
-                  (click)="openDeleteConfirm(paymentType)"
-                  class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  title="Delete"
+                  type="button"
+                  role="switch"
+                  [attr.aria-checked]="isPaymentTypeActive(paymentType)"
+                  (click)="togglePaymentTypeStatus(paymentType)"
+                  [disabled]="isSaving"
+                  class="relative inline-flex h-7 w-14 items-center rounded-full border border-gray-400 shadow-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  [ngClass]="
+                    isPaymentTypeActive(paymentType)
+                      ? 'bg-[#1a5632]'
+                      : 'bg-gray-300'
+                  "
+                  [title]="
+                    isPaymentTypeActive(paymentType)
+                      ? 'Toggle off to deactivate payment type'
+                      : 'Toggle on to activate payment type'
+                  "
                 >
-                  <svg
-                    class="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
+                  <span class="sr-only">
+                    {{ isPaymentTypeActive(paymentType) ? "Deactivate" : "Activate" }}
+                    {{ paymentType.name }}
+                  </span>
+                  <span
+                    class="inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200"
+                    [ngClass]="isPaymentTypeActive(paymentType) ? 'translate-x-8' : 'translate-x-1'"
+                  ></span>
                 </button>
+                <span
+                  class="text-xs font-semibold"
+                  [ngClass]="isPaymentTypeActive(paymentType) ? 'text-green-700' : 'text-gray-600'"
+                >
+                  {{ isPaymentTypeActive(paymentType) ? "ON" : "OFF" }}
+                </span>
               </div>
             </td>
           </tr>
@@ -568,63 +582,6 @@
             </button>
           </div>
         </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Delete Confirmation Modal -->
-  <div
-    *ngIf="showDeleteConfirm"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-  >
-    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full">
-      <div class="p-6 text-center">
-        <div
-          class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4"
-        >
-          <svg
-            class="w-8 h-8 text-red-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
-        </div>
-        <h3 class="text-lg font-bold text-gray-900 mb-2">
-          Delete Payment Type?
-        </h3>
-        <p class="text-gray-600 mb-6">
-          Are you sure you want to delete
-          <strong>{{ paymentTypeToDelete?.name }}</strong
-          >? This action cannot be undone.
-        </p>
-        <div class="flex gap-3 justify-center">
-          <button
-            (click)="closeDeleteConfirm()"
-            class="px-6 py-2 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-gray-400 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            (click)="confirmDelete()"
-            [disabled]="isSaving"
-            class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
-          >
-            <span *ngIf="!isSaving">Delete</span>
-            <span *ngIf="isSaving" class="flex items-center gap-2">
-              <div
-                class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
-              ></div>
-              Deleting...
-            </span>
-          </button>
-        </div>
       </div>
     </div>
   </div>
