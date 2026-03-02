@@ -98,7 +98,7 @@ export class PaymentReportComponent implements OnInit, OnDestroy {
         this.isLoading = true;
         this.currentPage = page;
 
-        let url = `/payments/history?page=${page}&limit=${this.pageSize}`;
+        let url = `/payments/all?page=${page}&limit=${this.pageSize}`;
         if (this.statusFilter !== 'all') {
             url += `&status=${this.statusFilter}`;
         }
