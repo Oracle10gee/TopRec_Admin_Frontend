@@ -13,7 +13,7 @@ interface PaymentType {
     description: string | null;
     tax_rate: number;
     currency: string;
-    service_id?: string;
+    service_id?: string | null;
     is_active?: number | boolean;
 }
 
@@ -90,7 +90,12 @@ export class PaymentSettingsComponent implements OnInit {
             next: (response: any) => {
                 // Extract payment types from nested data structure
                 // API returns: { success, message, data: { paymentTypes: [...] }, error, meta }
-                this.paymentTypes = response.data?.paymentTypes || response.paymentTypes || response.data || [];
+                const rawPaymentTypes = response.data?.paymentTypes || response.paymentTypes || response.data || [];
+                this.paymentTypes = rawPaymentTypes.map((paymentType: PaymentType) => ({
+                    ...paymentType,
+                    description: paymentType.description ?? '',
+                    service_id: paymentType.service_id ?? null
+                }));
                 this.isLoading = false;
             },
             error: (error) => {
