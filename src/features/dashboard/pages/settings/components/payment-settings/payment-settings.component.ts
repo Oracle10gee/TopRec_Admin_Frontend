@@ -10,10 +10,10 @@ interface PaymentType {
     code: string;
     name: string;
     base_amount: number;
-    description: string;
+    description: string | null;
     tax_rate: number;
     currency: string;
-    service_id?: string;
+    service_id?: string | null;
     is_active?: number | boolean;
 }
 
@@ -90,7 +90,12 @@ export class PaymentSettingsComponent implements OnInit {
             next: (response: any) => {
                 // Extract payment types from nested data structure
                 // API returns: { success, message, data: { paymentTypes: [...] }, error, meta }
-                this.paymentTypes = response.data?.paymentTypes || response.paymentTypes || response.data || [];
+                const rawPaymentTypes = response.data?.paymentTypes || response.paymentTypes || response.data || [];
+                this.paymentTypes = rawPaymentTypes.map((paymentType: PaymentType) => ({
+                    ...paymentType,
+                    description: paymentType.description ?? '',
+                    service_id: paymentType.service_id ?? null
+                }));
                 this.isLoading = false;
             },
             error: (error) => {
@@ -182,22 +187,10 @@ export class PaymentSettingsComponent implements OnInit {
         if (!paymentType.id) return;
 
         const nextActiveState = this.isPaymentTypeActive(paymentType) ? 0 : 1;
-<<<<<<< codex/evaluate-code-change-capabilities-h69ud4
         this.isSaving = true;
         this.authService.togglePaymentTypeStatus(paymentType.id, nextActiveState).subscribe({
-=======
-        const payload = {
-            code: paymentType.code,
-            name: paymentType.name,
-            base_amount: paymentType.base_amount,
-            description: paymentType.description,
-            currency: paymentType.currency,
-            service_id: paymentType.service_id,
-            is_active: nextActiveState
-        };
         this.isSaving = true;
-        this.authService.updatePaymentType(paymentType.id, payload).subscribe({
->>>>>>> master
+        this.authService.togglePaymentTypeStatus(paymentType.id, nextActiveState).subscribe({
             next: () => {
                 this.isSaving = false;
                 const statusText = nextActiveState === 1 ? 'activated' : 'deactivated';
@@ -221,7 +214,7 @@ export class PaymentSettingsComponent implements OnInit {
         return this.paymentTypes.filter(pt =>
             pt.code.toLowerCase().includes(query) ||
             pt.name.toLowerCase().includes(query) ||
-            pt.description.toLowerCase().includes(query)
+            (pt.description ?? '').toLowerCase().includes(query)
         );
     }
 
