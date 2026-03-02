@@ -469,12 +469,11 @@ export class AuthService {
 
 
     /**
-     * Toggle payment type active status (uses DELETE method per API contract)
+     * Toggle payment type active status
+     * PATCH /payments/payment-types/:id/toggle
      */
-    togglePaymentTypeStatus(paymentTypeId: string, is_active: number): Observable<any> {
-        return this.apiService.delete(`/payments/payment-types/${paymentTypeId}`, {
-            body: { is_active }
-        }).pipe(
+    togglePaymentTypeStatus(paymentTypeId: string): Observable<any> {
+        return this.apiService.patch(`/payments/payment-types/${paymentTypeId}/toggle`, {}).pipe(
             catchError((error) => {
                 console.error('Error toggling payment type status:', error);
                 return throwError(() => error);

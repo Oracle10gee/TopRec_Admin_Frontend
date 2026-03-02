@@ -11,7 +11,6 @@ interface PaymentType {
     name: string;
     base_amount: number;
     description: string | null;
-    tax_rate: number;
     currency: string;
     service_id?: string | null;
     is_active?: number | boolean;
@@ -64,7 +63,6 @@ export class PaymentSettingsComponent implements OnInit {
             name: ['', [Validators.required, Validators.minLength(3)]],
             base_amount: ['', [Validators.required, Validators.min(0)]],
             description: ['', [Validators.required, Validators.minLength(5)]],
-            tax_rate: ['', [Validators.required, Validators.min(0), Validators.max(1)]],
             currency: ['NGN', Validators.required],
             service_id: ['', Validators.required]
         });
@@ -115,8 +113,6 @@ export class PaymentSettingsComponent implements OnInit {
         this.paymentTypeForm.get('code')?.updateValueAndValidity();
         this.paymentTypeForm.get('service_id')?.setValidators([Validators.required]);
         this.paymentTypeForm.get('service_id')?.updateValueAndValidity();
-        this.paymentTypeForm.get('tax_rate')?.setValidators([Validators.required, Validators.min(0), Validators.max(1)]);
-        this.paymentTypeForm.get('tax_rate')?.updateValueAndValidity();
         this.showModal = true;
     }
 
@@ -124,13 +120,11 @@ export class PaymentSettingsComponent implements OnInit {
         this.isEditingPaymentType = true;
         this.selectedPaymentType = paymentType;
         this.paymentTypeForm.patchValue(paymentType);
-        // code, service_id and tax_rate are not editable — clear their validators
+        // code and service_id are not editable — clear their validators
         this.paymentTypeForm.get('code')?.clearValidators();
         this.paymentTypeForm.get('code')?.updateValueAndValidity();
         this.paymentTypeForm.get('service_id')?.clearValidators();
         this.paymentTypeForm.get('service_id')?.updateValueAndValidity();
-        this.paymentTypeForm.get('tax_rate')?.clearValidators();
-        this.paymentTypeForm.get('tax_rate')?.updateValueAndValidity();
         this.showModal = true;
     }
 
@@ -149,8 +143,8 @@ export class PaymentSettingsComponent implements OnInit {
         const formData = this.paymentTypeForm.value;
 
         if (this.isEditingPaymentType && this.selectedPaymentType?.id) {
-            // Update existing payment type - exclude code, service_id and tax_rate (not editable on update)
-            const { tax_rate, code, service_id, ...updateData } = formData;
+            // Update existing payment type - exclude code and service_id (not editable on update)
+            const { code, service_id, ...updateData } = formData;
             this.authService.updatePaymentType(this.selectedPaymentType.id, updateData).subscribe({
                 next: (response) => {
                     this.isSaving = false;
@@ -189,12 +183,12 @@ export class PaymentSettingsComponent implements OnInit {
     togglePaymentTypeStatus(paymentType: PaymentType): void {
         if (!paymentType.id) return;
 
-        const nextActiveState = this.isPaymentTypeActive(paymentType) ? 0 : 1;
+        const willDeactivate = this.isPaymentTypeActive(paymentType);
         this.isSaving = true;
-        this.authService.togglePaymentTypeStatus(paymentType.id, nextActiveState).subscribe({
+        this.authService.togglePaymentTypeStatus(paymentType.id).subscribe({
             next: () => {
                 this.isSaving = false;
-                const statusText = nextActiveState === 1 ? 'activated' : 'deactivated';
+                const statusText = willDeactivate ? 'deactivated' : 'activated';
                 this.notificationService.success(`Payment type ${statusText} successfully!`);
                 this.loadPaymentTypes();
             },
@@ -233,10 +227,6 @@ export class PaymentSettingsComponent implements OnInit {
 
     get description() {
         return this.paymentTypeForm.get('description');
-    }
-
-    get tax_rate() {
-        return this.paymentTypeForm.get('tax_rate');
     }
 
     get currency() {
