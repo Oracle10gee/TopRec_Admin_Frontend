@@ -189,8 +189,6 @@ export class PaymentSettingsComponent implements OnInit {
         const nextActiveState = this.isPaymentTypeActive(paymentType) ? 0 : 1;
         this.isSaving = true;
         this.authService.togglePaymentTypeStatus(paymentType.id, nextActiveState).subscribe({
-        this.isSaving = true;
-        this.authService.togglePaymentTypeStatus(paymentType.id, nextActiveState).subscribe({
             next: () => {
                 this.isSaving = false;
                 const statusText = nextActiveState === 1 ? 'activated' : 'deactivated';
