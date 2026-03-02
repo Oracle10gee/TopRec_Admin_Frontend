@@ -4,6 +4,7 @@ import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ProfileImageService } from '../../../../core/services/profile-image.service';
+import { ApiService } from '../../../../core/services/api.service';
 
 interface MenuItem {
     id: string;
@@ -29,6 +30,7 @@ export class SidebarComponent implements OnInit {
     activeMenuItem: string = 'home';
     menuItems: MenuItem[] = [];
     profileImageUrl: string | null = null;
+    pendingPaymentCount = 0;
 
     // Heroicons SVG strings (outline style)
     private icons = {
@@ -56,13 +58,15 @@ export class SidebarComponent implements OnInit {
         private router: Router,
         private sanitizer: DomSanitizer,
         private authService: AuthService,
-        private profileImageService: ProfileImageService
+        private profileImageService: ProfileImageService,
+        private apiService: ApiService
     ) { }
 
     ngOnInit(): void {
         this.initializeMenuItems();
         this.updateActiveMenuItem();
         this.loadProfileImage();
+        this.loadPendingPaymentCount();
 
         // Subscribe to router events to update active menu item
         this.router.events.subscribe(() => {
@@ -100,8 +104,7 @@ export class SidebarComponent implements OnInit {
                 id: 'payments',
                 label: 'Payments',
                 icon: this.sanitizer.bypassSecurityTrustHtml(this.icons.payments),
-                route: '/dashboard/payments',
-                badge: 3 // Example badge
+                route: '/dashboard/payments'
             },
             {
                 id: 'payment-report',
@@ -166,6 +169,21 @@ export class SidebarComponent implements OnInit {
             return (parts[0][0] + parts[1][0]).toUpperCase();
         }
         return name.substring(0, 2).toUpperCase();
+    }
+
+    private loadPendingPaymentCount(): void {
+        // Only load for roles that can see the Payments menu
+        const userRole = this.authService.getCurrentUserRole();
+        if (userRole === 'Superadmin') return;
+
+        this.apiService.get<any>('/payments/history?page=1&limit=1&status=pending').subscribe({
+            next: (response: any) => {
+                this.pendingPaymentCount = response?.data?.pagination?.total || 0;
+            },
+            error: () => {
+                this.pendingPaymentCount = 0;
+            }
+        });
     }
 
     private loadProfileImage(): void {

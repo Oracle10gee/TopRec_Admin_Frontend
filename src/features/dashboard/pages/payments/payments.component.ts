@@ -645,11 +645,10 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
-     * Get license expiry date (1 year from now)
+     * Get license expiry date — always Dec 31 of the current year
      */
     getLicenseExpiry(): string {
-        const today = new Date();
-        const expiryDate = new Date(today.setFullYear(today.getFullYear() + 1));
+        const expiryDate = new Date(new Date().getFullYear(), 11, 31); // month 11 = December
         return expiryDate.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
