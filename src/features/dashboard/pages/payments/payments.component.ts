@@ -540,12 +540,11 @@ export class DashboardPaymentsComponent implements OnInit {
             }
 
             // Create a calculated payment object for display purposes
-            const taxRate = parseFloat(paymentType.tax_rate);
             this.calculatedPayment = {
                 subtotal: baseAmount.toString(),
-                tax: baseAmount * taxRate,
-                tax_rate: paymentType.tax_rate,
-                total: (baseAmount + (baseAmount * taxRate)).toString(),
+                tax: 0,
+                tax_rate: '0',
+                total: baseAmount.toString(),
                 currency: paymentType.currency,
                 valid_until: '' // Not applicable for non-admin flow
             };
