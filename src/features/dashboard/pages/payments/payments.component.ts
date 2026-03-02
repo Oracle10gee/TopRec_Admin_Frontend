@@ -18,6 +18,7 @@ interface PaymentType {
     tax_rate: string;
     currency: string;
     is_active: number;
+    service_id?: string;
 }
 
 interface PaymentTypeForNonAdmin extends PaymentType {
@@ -715,6 +716,9 @@ export class DashboardPaymentsComponent implements OnInit {
             payer_email: currentUser.email
         });
 
+        // Look up the service_id from cached payment types
+        const selectedType = this.cachedPaymentTypes.find(type => type.code === paymentTypeCode);
+
         // Prepare payload for initiate payment API
         const payload: any = {
             payment_type_code: paymentTypeCode,
@@ -722,6 +726,12 @@ export class DashboardPaymentsComponent implements OnInit {
             payer_email: currentUser.email || 'no-email@example.com',
             payer_phone: phone
         };
+
+        // Include service_id from the selected payment type
+        if (selectedType?.service_id) {
+            payload.service_id = selectedType.service_id;
+            console.log(`🔗 Including service_id in payload: ${selectedType.service_id}`);
+        }
 
         // For license renewal with outstanding balance, read the (possibly edited) amount from the form field
         if (this.isLicenseRenewalWithBalance && this.outstandingBalance !== null) {
