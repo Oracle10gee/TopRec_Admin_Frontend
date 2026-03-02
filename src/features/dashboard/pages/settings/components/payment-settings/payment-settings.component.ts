@@ -110,9 +110,11 @@ export class PaymentSettingsComponent implements OnInit {
         this.isEditingPaymentType = false;
         this.selectedPaymentType = null;
         this.paymentTypeForm.reset({ currency: 'NGN' });
+        // Restore validators for fields shown only on create
         this.paymentTypeForm.get('code')?.setValidators([Validators.required, Validators.minLength(3)]);
         this.paymentTypeForm.get('code')?.updateValueAndValidity();
-        // Enable tax_rate for create mode
+        this.paymentTypeForm.get('service_id')?.setValidators([Validators.required]);
+        this.paymentTypeForm.get('service_id')?.updateValueAndValidity();
         this.paymentTypeForm.get('tax_rate')?.setValidators([Validators.required, Validators.min(0), Validators.max(1)]);
         this.paymentTypeForm.get('tax_rate')?.updateValueAndValidity();
         this.showModal = true;
@@ -122,10 +124,11 @@ export class PaymentSettingsComponent implements OnInit {
         this.isEditingPaymentType = true;
         this.selectedPaymentType = paymentType;
         this.paymentTypeForm.patchValue(paymentType);
-        // Keep code field validators so it can be edited and validated
-        this.paymentTypeForm.get('code')?.setValidators([Validators.required, Validators.minLength(3)]);
+        // code, service_id and tax_rate are not editable — clear their validators
+        this.paymentTypeForm.get('code')?.clearValidators();
         this.paymentTypeForm.get('code')?.updateValueAndValidity();
-        // Remove tax_rate validators for edit mode (field is hidden)
+        this.paymentTypeForm.get('service_id')?.clearValidators();
+        this.paymentTypeForm.get('service_id')?.updateValueAndValidity();
         this.paymentTypeForm.get('tax_rate')?.clearValidators();
         this.paymentTypeForm.get('tax_rate')?.updateValueAndValidity();
         this.showModal = true;
@@ -146,8 +149,8 @@ export class PaymentSettingsComponent implements OnInit {
         const formData = this.paymentTypeForm.value;
 
         if (this.isEditingPaymentType && this.selectedPaymentType?.id) {
-            // Update existing payment type - exclude tax_rate (not editable on update)
-            const { tax_rate, ...updateData } = formData;
+            // Update existing payment type - exclude code, service_id and tax_rate (not editable on update)
+            const { tax_rate, code, service_id, ...updateData } = formData;
             this.authService.updatePaymentType(this.selectedPaymentType.id, updateData).subscribe({
                 next: (response) => {
                     this.isSaving = false;
