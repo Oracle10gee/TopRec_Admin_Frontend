@@ -168,31 +168,21 @@
                   </svg>
                 </button>
                 <button
-                  type="button"
-                  role="switch"
-                  [attr.aria-checked]="isPaymentTypeActive(paymentType)"
                   (click)="togglePaymentTypeStatus(paymentType)"
                   [disabled]="isSaving"
-                  class="relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="px-3 py-1.5 rounded-full text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   [ngClass]="
                     isPaymentTypeActive(paymentType)
-                      ? 'bg-[#1a5632]'
-                      : 'bg-gray-300'
+                      ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   "
                   [title]="
                     isPaymentTypeActive(paymentType)
-                      ? 'Toggle off to deactivate payment type'
-                      : 'Toggle on to activate payment type'
+                      ? 'Deactivate payment type'
+                      : 'Activate payment type'
                   "
                 >
-                  <span class="sr-only">
-                    {{ isPaymentTypeActive(paymentType) ? "Deactivate" : "Activate" }}
-                    {{ paymentType.name }}
-                  </span>
-                  <span
-                    class="inline-block h-5 w-5 transform rounded-full bg-white transition duration-200"
-                    [ngClass]="isPaymentTypeActive(paymentType) ? 'translate-x-8' : 'translate-x-1'"
-                  ></span>
+                  {{ isPaymentTypeActive(paymentType) ? "Active" : "Inactive" }}
                 </button>
               </div>
             </td>
