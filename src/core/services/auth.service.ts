@@ -467,6 +467,24 @@ export class AuthService {
         );
     }
 
+
+    /**
+     * Toggle payment type active status (uses DELETE method per API contract)
+     */
+    togglePaymentTypeStatus(paymentTypeId: string, is_active: number): Observable<any> {
+        return this.apiService.delete('/payments/payment-types', {
+            body: {
+                id: paymentTypeId,
+                is_active
+            }
+        }).pipe(
+            catchError((error) => {
+                console.error('Error toggling payment type status:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
     /**
      * Delete a payment type
      */

@@ -10,10 +10,11 @@ interface PaymentType {
     code: string;
     name: string;
     base_amount: number;
-    description: string;
+    description: string | null;
     tax_rate: number;
     currency: string;
     service_id?: string;
+    is_active?: number | boolean;
 }
 
 interface ServiceType {
@@ -44,10 +45,6 @@ export class PaymentSettingsComponent implements OnInit {
     isEditingPaymentType = false;
     paymentTypeForm!: FormGroup;
     selectedPaymentType: PaymentType | null = null;
-
-    // Delete confirmation
-    showDeleteConfirm = false;
-    paymentTypeToDelete: PaymentType | null = null;
 
     constructor(
         private authService: AuthService,
@@ -177,30 +174,25 @@ export class PaymentSettingsComponent implements OnInit {
         }
     }
 
-    openDeleteConfirm(paymentType: PaymentType): void {
-        this.paymentTypeToDelete = paymentType;
-        this.showDeleteConfirm = true;
+    isPaymentTypeActive(paymentType: PaymentType): boolean {
+        return paymentType.is_active === 1 || paymentType.is_active === true;
     }
 
-    closeDeleteConfirm(): void {
-        this.showDeleteConfirm = false;
-        this.paymentTypeToDelete = null;
-    }
+    togglePaymentTypeStatus(paymentType: PaymentType): void {
+        if (!paymentType.id) return;
 
-    confirmDelete(): void {
-        if (!this.paymentTypeToDelete?.id) return;
-
+        const nextActiveState = this.isPaymentTypeActive(paymentType) ? 0 : 1;
         this.isSaving = true;
-        this.authService.deletePaymentType(this.paymentTypeToDelete.id).subscribe({
-            next: (response) => {
+        this.authService.togglePaymentTypeStatus(paymentType.id, nextActiveState).subscribe({
+            next: () => {
                 this.isSaving = false;
-                this.notificationService.success('Payment type deleted successfully!');
-                this.closeDeleteConfirm();
+                const statusText = nextActiveState === 1 ? 'activated' : 'deactivated';
+                this.notificationService.success(`Payment type ${statusText} successfully!`);
                 this.loadPaymentTypes();
             },
             error: (error) => {
                 this.isSaving = false;
-                const errorMsg = error.error?.message || 'Failed to delete payment type';
+                const errorMsg = error.error?.message || 'Failed to update payment type status';
                 this.notificationService.error(errorMsg);
             }
         });
@@ -215,7 +207,7 @@ export class PaymentSettingsComponent implements OnInit {
         return this.paymentTypes.filter(pt =>
             pt.code.toLowerCase().includes(query) ||
             pt.name.toLowerCase().includes(query) ||
-            pt.description.toLowerCase().includes(query)
+            (pt.description ?? '').toLowerCase().includes(query)
         );
     }
 
