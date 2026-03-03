@@ -659,6 +659,77 @@ export class DashboardPaymentsComponent implements OnInit {
     }
 
     /**
+     * Returns empty-state copy and whether to show the CTA button,
+     * driven by the currently active history filter.
+     */
+    getEmptyStateConfig(): { title: string; subtitle: string; showCta: boolean } {
+        switch (this.historyStatusFilter) {
+            case 'successful':
+                return {
+                    title: 'No Successful Payments',
+                    subtitle: 'None of your payments have a successful status yet.',
+                    showCta: false
+                };
+            case 'pending':
+                return {
+                    title: 'No Pending Payments',
+                    subtitle: 'You have no payments currently awaiting confirmation.',
+                    showCta: false
+                };
+            case 'failed':
+                return {
+                    title: 'No Failed Payments',
+                    subtitle: 'Great news — none of your payments have failed.',
+                    showCta: false
+                };
+            default:
+                return {
+                    title: 'No Payment History',
+                    subtitle: "You haven't made any payments yet. Start by renewing your license.",
+                    showCta: true
+                };
+        }
+    }
+
+    /**
+     * Returns badge config (label, colour classes, icon path) driven by the
+     * currently active history filter so the top-right stat badge is dynamic.
+     */
+    getBadgeConfig(): { label: string; bg: string; border: string; text: string; amount: string; iconPath: string } {
+        const amount = `₦${this.getTotalPaid()}`;
+        switch (this.historyStatusFilter) {
+            case 'successful':
+                return {
+                    label: 'Total Successful',
+                    bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-600',
+                    amount,
+                    iconPath: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                };
+            case 'pending':
+                return {
+                    label: 'Total Pending',
+                    bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-600',
+                    amount,
+                    iconPath: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
+                };
+            case 'failed':
+                return {
+                    label: 'Total Failed',
+                    bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-600',
+                    amount,
+                    iconPath: 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'
+                };
+            default:
+                return {
+                    label: 'Total Payments Initiated',
+                    bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-600',
+                    amount,
+                    iconPath: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'
+                };
+        }
+    }
+
+    /**
      * Calculate total amount paid from history
      */
     getTotalPaid(): string {
@@ -830,19 +901,24 @@ export class DashboardPaymentsComponent implements OnInit {
                     this.notificationService.error(this.errorMessage);
                     this.clearMessage('error', 5000);
                 }
+                // Refresh history so the pending entry (created at initiation) is visible
+                this.loadPaymentHistory(1);
                 this.cdr.detectChanges();
             }
         });
     }
 
     /**
-     * Close payment details modal and clear data
+     * Close payment details modal and clear data.
+     * Refreshes payment history so any pending entry created by the
+     * initiate call appears without requiring a manual page reload.
      */
     closePaymentDetailsModal(): void {
         console.log('❌ Payment cancelled by user');
         this.showPaymentDetailsModal = false;
         this.paymentDetails = null;
         this.notificationService.info('Payment cancelled');
+        this.loadPaymentHistory(1);
     }
 
     /**
