@@ -88,15 +88,16 @@ export class ProfileImageService {
     }
 
     /**
-     * Build full image URL from relative path
+     * Build full image URL from relative path.
+     * The API returns paths like /uploads/profile-images/...
+     * which must be served from the backend host directly.
      */
     getFullImageUrl(relativePath: string): string {
         if (!relativePath) return '';
         // If already absolute, return as-is
         if (relativePath.startsWith('http')) return relativePath;
-        // Build URL from API base (strip /api/v1 to get server root)
-        const serverRoot = this.apiUrl.replace(/\/api\/v1$/, '');
-        return `${serverRoot}${relativePath}`;
+        // Always use the backend host for relative upload paths
+        return `https://api.toprec.gov.ng${relativePath}`;
     }
 
     /**
