@@ -85,6 +85,7 @@ interface PaymentInitiateResponse {
 }
 
 interface PaymentDetails {
+    id: string;
     rrr: string;
     paymentReference: string;
     amount: string;
@@ -125,6 +126,7 @@ export class DashboardPaymentsComponent implements OnInit {
     // Payment details modal properties
     showPaymentDetailsModal = false;
     paymentDetails: PaymentDetails | null = null;
+    lastPaymentStatus: string | null = null;
 
     // Payment history API properties
     isLoadingHistory = false;
@@ -758,6 +760,7 @@ export class DashboardPaymentsComponent implements OnInit {
 
                     // Store payment details for modal display
                     this.paymentDetails = {
+                        id: response.data.payment.id,
                         rrr: response.data.payment.rrr,
                         paymentReference: response.data.payment.payment_reference,
                         amount: response.data.payment.amount,
@@ -808,13 +811,14 @@ export class DashboardPaymentsComponent implements OnInit {
         this.showPaymentDetailsModal = false;
 
         // Use Remita inline payment widget with RRR
+        const paymentIdForStatus = this.paymentDetails.id;
         this.remitaPaymentService.payWithRrr(this.paymentDetails.rrr).subscribe({
             next: (response: any) => {
-                console.log('✅ Payment completed:', response);
-                this.paymentSuccess = true;
-                this.notificationService.success('Payment completed successfully!');
+                console.log('✅ Remita payment completed:', response);
                 this.addToHistory();
                 this.clearMessage('success', 7000);
+                // Verify actual payment status from the backend
+                this.checkPaymentStatus(paymentIdForStatus);
                 this.cdr.detectChanges();
             },
             error: (error: any) => {
@@ -839,6 +843,30 @@ export class DashboardPaymentsComponent implements OnInit {
         this.showPaymentDetailsModal = false;
         this.paymentDetails = null;
         this.notificationService.info('Payment cancelled');
+    }
+
+    /**
+     * Poll backend for the real payment status after Remita completes
+     * GET /payments/:paymentId/status
+     */
+    private checkPaymentStatus(paymentId: string): void {
+        this.apiService.get(`/payments/${paymentId}/status`).subscribe({
+            next: (response: any) => {
+                const status: string = response?.data?.status || 'completed';
+                this.lastPaymentStatus = status.charAt(0).toUpperCase() + status.slice(1);
+                this.paymentSuccess = true;
+                this.notificationService.success(`Payment status: ${this.lastPaymentStatus}`);
+                console.log('✅ Payment status response:', response);
+                this.cdr.detectChanges();
+            },
+            error: (error: any) => {
+                // Fallback to generic success if the status endpoint fails
+                this.paymentSuccess = true;
+                this.notificationService.success('Payment submitted. Check payment history for the latest status.');
+                console.error('❌ Failed to fetch payment status:', error);
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     /**
