@@ -90,15 +90,21 @@ export class ProfileImageService {
     /**
      * Build full image URL from relative path.
      * The API returns paths like /uploads/profile-images/...
-     * Prepend the API host so the browser fetches the file directly from
-     * the backend server, bypassing the Angular dev proxy entirely.
+     *
+     * In development the Angular dev-server proxy (proxy.conf.js) forwards
+     * /uploads/* to api.toprec.gov.ng and strips the
+     * Cross-Origin-Resource-Policy: same-origin header that would otherwise
+     * block cross-origin image loads in the browser.
+     *
+     * In production, nginx must proxy /uploads/* to the backend and also
+     * strip / override that header (see proxy.conf.js comments).
      */
     getFullImageUrl(relativePath: string): string {
         if (!relativePath) return '';
-        // If already absolute, return as-is
+        // If already an absolute URL, use it as-is
         if (relativePath.startsWith('http')) return relativePath;
-        // Prepend the API host to build a full URL
-        return `https://api.toprec.gov.ng${relativePath}`;
+        // Return the relative path so the same-origin proxy handles it
+        return relativePath;
     }
 
     /**
