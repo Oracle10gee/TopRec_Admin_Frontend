@@ -858,7 +858,15 @@ export class DashboardPaymentsComponent implements OnInit {
             error: (error: any) => {
                 console.error('❌ Payment initiation failed:', error);
                 this.isProcessing = false;
-                this.errorMessage = error.error?.message || error.message || 'Payment initiation failed. Please try again.';
+
+                // Extract validation messages from error.details if present
+                const details = error.error?.error?.details;
+                if (details && typeof details === 'object' && Object.keys(details).length > 0) {
+                    this.errorMessage = Object.values(details).join(' ');
+                } else {
+                    this.errorMessage = error.error?.message || error.message || 'Payment initiation failed. Please try again.';
+                }
+
                 this.notificationService.error(this.errorMessage);
                 this.clearMessage('error', 5000);
             }
