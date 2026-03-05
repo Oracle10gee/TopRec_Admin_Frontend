@@ -7,7 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { User, State, Qualification } from '../../../../core/models/auth.model';
+import { User, State } from '../../../../core/models/auth.model';
 
 @Component({
     standalone: true,
@@ -29,7 +29,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     updateErrorMessage = '';
     existingUser: User | null = null;
     states: State[] = [];
-    qualifications: Qualification[] = [];
     selectedRole = '';
 
     private destroy$ = new Subject<void>();
@@ -65,7 +64,6 @@ export class LoginComponent implements OnInit, OnDestroy {
             role: [{ value: user.role || '', disabled: true }],
             full_name: [user.full_name || '', [Validators.required, Validators.minLength(3)]],
             membership_number: [{ value: user.membership_number || '', disabled: true }],
-            qualification: [user.qualification || ''],
             // Cleared so the user must actively select — required for Members via role block below
             gender: [''],
             state_of_practice: [user.state_of_practice || '', Validators.required],
@@ -76,12 +74,10 @@ export class LoginComponent implements OnInit, OnDestroy {
             email: [user.email || '', [Validators.required, Validators.email]],
         });
 
-        // Qualification and gender are only required for Members
+        // Gender is only required for Members
         if (this.selectedRole === 'Member') {
-            this.existingUserForm.get('qualification')?.setValidators([Validators.required]);
             this.existingUserForm.get('gender')?.setValidators([Validators.required]);
         }
-        this.existingUserForm.get('qualification')?.updateValueAndValidity();
         this.existingUserForm.get('gender')?.updateValueAndValidity();
     }
 
@@ -114,19 +110,6 @@ export class LoginComponent implements OnInit, OnDestroy {
             });
     }
 
-    private fetchQualifications(): void {
-        this.apiService.get<any>('/auth/qualifications')
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-                next: (response) => {
-                    this.qualifications = response.data.qualifications;
-                },
-                error: (error) => {
-                    console.error('Failed to fetch qualifications:', error);
-                }
-            });
-    }
-
     togglePasswordVisibility(): void {
         this.showPassword = !this.showPassword;
     }
@@ -147,16 +130,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     get eu_gender() { return this.existingUserForm?.get('gender'); }
     get eu_membership_number() { return this.existingUserForm?.get('membership_number'); }
     get eu_state_of_practice() { return this.existingUserForm?.get('state_of_practice'); }
-    get eu_qualification() { return this.existingUserForm?.get('qualification'); }
     get eu_registration_date() { return this.existingUserForm?.get('registration_date'); }
     get eu_role() { return this.existingUserForm?.get('role'); }
-
-    /**
-     * Check if qualification field should be visible (only for Members)
-     */
-    isQualificationVisible(): boolean {
-        return this.selectedRole === 'Member';
-    }
 
     /**
      * Gender is only collected for Members.
@@ -182,7 +157,6 @@ export class LoginComponent implements OnInit, OnDestroy {
                         if (user?.is_existing === true) {
                             this.existingUser = user;
                             this.fetchStates();
-                            this.fetchQualifications();
                             this.initializeExistingUserForm(user);
                             this.showExistingUserModal = true;
                         } else {
@@ -228,13 +202,11 @@ export class LoginComponent implements OnInit, OnDestroy {
                 membership_number: formData.membership_number,
             };
 
-            // Gender and qualification are only collected from Members
+            // Gender is only collected from Members
             if (this.selectedRole === 'Member') {
                 payload.gender = formData.gender;
-                payload.qualification = formData.qualification;
             } else {
                 payload.gender = 'prefer_not_to_say';
-                payload.qualification = 'Associate';
             }
 
             this.authService.updateUser(this.existingUser.id, payload)

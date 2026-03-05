@@ -5,7 +5,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { ApiService } from '../../../../core/services/api.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { ProfileImageService } from '../../../../core/services/profile-image.service';
-import { State, Qualification } from '../../../../core/models/auth.model';
+import { State } from '../../../../core/models/auth.model';
 
 @Component({
     standalone: true,
@@ -36,7 +36,6 @@ export class DashboardProfileComponent implements OnInit {
     private readonly ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
     states: State[] = [];
-    qualifications: Qualification[] = [];
 
     constructor(
         private fb: FormBuilder,
@@ -49,7 +48,6 @@ export class DashboardProfileComponent implements OnInit {
     ngOnInit(): void {
         this.initializeForm();
         this.fetchStates();
-        this.fetchQualifications();
         this.loadProfile();
         this.loadProfileImage();
     }
@@ -60,7 +58,6 @@ export class DashboardProfileComponent implements OnInit {
             email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
             phone_number: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^[0-9+\s\-()]+$/)]],
             membership_number: [{ value: '', disabled: true }, Validators.required],
-            qualification: [{ value: '', disabled: true }, Validators.required],
             address: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(5)]],
             registration_date: [{ value: '', disabled: true }, Validators.required],
             gender: [{ value: '', disabled: true }],
@@ -79,17 +76,6 @@ export class DashboardProfileComponent implements OnInit {
         });
     }
 
-    private fetchQualifications(): void {
-        this.apiService.get<any>('/auth/qualifications').subscribe({
-            next: (response) => {
-                this.qualifications = response.data.qualifications;
-            },
-            error: (error) => {
-                console.error('Failed to fetch qualifications:', error);
-            }
-        });
-    }
-
     loadProfile(): void {
         this.isLoading = true;
         this.errorMessage = '';
@@ -102,7 +88,6 @@ export class DashboardProfileComponent implements OnInit {
                     email: user.email,
                     phone_number: user.phone_number,
                     membership_number: user.membership_number,
-                    qualification: user.qualification,
                     address: user.address,
                     registration_date: user.registration_date,
                     gender: user.gender || '',
@@ -130,28 +115,12 @@ export class DashboardProfileComponent implements OnInit {
     }
 
     /**
-     * Check if qualification field should be visible (only for Members)
-     */
-    isQualificationVisible(): boolean {
-        return this.userRole === 'Member';
-    }
-
-    /**
      * Get the display label for a state ID
      */
     getStateName(stateId: string): string {
         if (!stateId) return '';
         const state = this.states.find(s => s.id === stateId);
         return state ? state.name : stateId;
-    }
-
-    /**
-     * Get the display label for a qualification value
-     */
-    getQualificationLabel(qualValue: string): string {
-        if (!qualValue) return '';
-        const qual = this.qualifications.find(q => q.value === qualValue);
-        return qual ? qual.label : qualValue;
     }
 
     /**
@@ -179,7 +148,6 @@ export class DashboardProfileComponent implements OnInit {
 
             // Enable role-specific fields
             if (this.userRole === 'Member') {
-                this.profileForm.get('qualification')?.enable();
                 this.profileForm.get('gender')?.enable();
             }
 
@@ -200,7 +168,6 @@ export class DashboardProfileComponent implements OnInit {
         this.profileForm.get('email')?.disable();
         this.profileForm.get('phone_number')?.disable();
         this.profileForm.get('membership_number')?.disable();
-        this.profileForm.get('qualification')?.disable();
         this.profileForm.get('address')?.disable();
         this.profileForm.get('registration_date')?.disable();
         this.profileForm.get('gender')?.disable();
@@ -224,11 +191,7 @@ export class DashboardProfileComponent implements OnInit {
 
         let allEditableFieldsValid = emailValid && phoneValid && addressValid && stateValid;
 
-        // Check role-specific fields
-        if (this.userRole === 'Member') {
-            const qualificationValid = this.profileForm.get('qualification')?.valid;
-            allEditableFieldsValid = allEditableFieldsValid && qualificationValid;
-        }
+        // No additional role-specific required fields
 
         if (!allEditableFieldsValid) {
             this.errorMessage = 'Please fill in all required fields correctly';
@@ -263,7 +226,6 @@ export class DashboardProfileComponent implements OnInit {
 
         // Include role-specific fields
         if (this.userRole === 'Member') {
-            updateData.qualification = this.profileForm.get('qualification')?.value;
             updateData.gender = this.profileForm.get('gender')?.value;
         }
 
@@ -416,14 +378,7 @@ export class DashboardProfileComponent implements OnInit {
         const addressValid = this.profileForm.get('address')?.valid ?? false;
         const stateValid = this.profileForm.get('state_of_practice')?.valid ?? false;
 
-        let valid = emailValid && phoneValid && addressValid && stateValid;
-
-        if (this.userRole === 'Member') {
-            const qualificationValid = this.profileForm.get('qualification')?.valid ?? false;
-            valid = valid && qualificationValid;
-        }
-
-        return valid;
+        return emailValid && phoneValid && addressValid && stateValid;
     }
 
     get full_name() {
@@ -440,10 +395,6 @@ export class DashboardProfileComponent implements OnInit {
 
     get membership_number() {
         return this.profileForm.get('membership_number');
-    }
-
-    get qualification() {
-        return this.profileForm.get('qualification');
     }
 
     get address() {

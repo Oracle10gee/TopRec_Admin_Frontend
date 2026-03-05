@@ -44,7 +44,7 @@ export class DashboardHomeComponent implements OnInit, OnDestroy {
     // Profile completion
     profileCompletionPercent = 0;
     profileFieldsFilled = 0;
-    profileFieldsTotal = 7;
+    profileFieldsTotal = 6;
 
     // Member since
     memberSinceDate = '';
@@ -176,7 +176,6 @@ export class DashboardHomeComponent implements OnInit, OnDestroy {
             user.email,
             user.phone_number,
             user.address,
-            user.qualification,
             user.membership_number,
             user.registration_date
         ];
