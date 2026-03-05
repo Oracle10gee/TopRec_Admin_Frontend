@@ -66,18 +66,19 @@ export class LoginComponent implements OnInit, OnDestroy {
             full_name: [user.full_name || '', [Validators.required, Validators.minLength(3)]],
             membership_number: [{ value: user.membership_number || '', disabled: true }],
             qualification: [user.qualification || ''],
-            gender: [user.gender || ''],
+            // Gender is required for all roles — shown and enforced regardless of role
+            gender: [user.gender || '', Validators.required],
             state_of_practice: [user.state_of_practice || '', Validators.required],
             registration_date: [user.registration_date ? this.formatDateForInput(user.registration_date) : '', Validators.required],
             address: [user.address || '', [Validators.required, Validators.minLength(5)]],
-            phone_number: [user.phone_number || '', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
+            // Phone number is required and must be exactly 11 digits
+            phone_number: [user.phone_number || '', [Validators.required, Validators.pattern(/^\d{11}$/)]],
             email: [user.email || '', [Validators.required, Validators.email]],
         });
 
-        // Set up role-based validations
+        // Qualification is only required for Members
         if (this.selectedRole === 'Member') {
             this.existingUserForm.get('qualification')?.setValidators([Validators.required]);
-            this.existingUserForm.get('gender')?.setValidators([Validators.required]);
         }
         this.existingUserForm.get('qualification')?.updateValueAndValidity();
         this.existingUserForm.get('gender')?.updateValueAndValidity();
@@ -157,10 +158,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Check if gender field should be visible (only for Members)
+     * Gender is required for all roles, so it is always visible.
      */
     isGenderVisible(): boolean {
-        return this.selectedRole === 'Member';
+        return true;
     }
 
     onSubmit(): void {
@@ -226,12 +227,11 @@ export class LoginComponent implements OnInit, OnDestroy {
                 membership_number: formData.membership_number,
             };
 
-            // Include gender and qualification based on role
+            // Gender is collected from all roles; qualification only from Members
+            payload.gender = formData.gender;
             if (this.selectedRole === 'Member') {
-                payload.gender = formData.gender;
                 payload.qualification = formData.qualification;
             } else {
-                payload.gender = 'prefer_not_to_say';
                 payload.qualification = 'Associate';
             }
 
