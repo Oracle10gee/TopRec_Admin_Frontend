@@ -447,8 +447,8 @@
             </div>
           </div>
 
-          <!-- Gender (required for all roles) -->
-          <div>
+          <!-- Gender (required for Members) -->
+          <div *ngIf="isGenderVisible()">
             <label
               for="eu_gender"
               class="block text-sm font-medium text-gray-700 mb-1.5"
