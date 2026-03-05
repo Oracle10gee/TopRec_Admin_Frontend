@@ -55,7 +55,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
                     this.calculateLicenseDates();
                     this.setCertificateDescription(user);
                     this.setCertificateBodyText(user);
-                    this.displayName = this.toTitleCase(user.full_name || '');
+                    this.displayName = this.normalizeName(user.full_name || '');
                 }
                 this.isLoading = false;
             });
@@ -152,6 +152,18 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
      */
     private toTitleCase(str: string): string {
         return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    /**
+     * Convert name to title case then fix special prefixes.
+     * "TPL" must always remain fully capitalised regardless of the source casing.
+     * e.g. "TPL KABIRU PETERS" → "TPL Kabiru Peters"
+     *      "tpl kabiru peters" → "TPL Kabiru Peters"
+     */
+    private normalizeName(name: string): string {
+        const titleCased = this.toTitleCase(name);
+        // Replace "Tpl" (produced by toTitleCase) back to "TPL" wherever it appears
+        return titleCased.replace(/\bTpl\b/g, 'TPL');
     }
 
     /**

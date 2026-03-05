@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ApiService } from '../../../../core/services/api.service';
-import { State, Qualification } from '../../../../core/models/auth.model';
+import { State } from '../../../../core/models/auth.model';
 
 @Component({
     standalone: true,
@@ -22,7 +22,6 @@ export class SignUpComponent implements OnInit {
     successMessage = '';
     selectedRole: string = '';
     states: State[] = [];
-    qualifications: Qualification[] = [];
 
     constructor(
         private fb: FormBuilder,
@@ -34,7 +33,6 @@ export class SignUpComponent implements OnInit {
     ngOnInit(): void {
         this.initializeForm();
         this.fetchStates();
-        this.fetchQualifications();
     }
 
     initializeForm(): void {
@@ -42,7 +40,6 @@ export class SignUpComponent implements OnInit {
             role: ['', Validators.required],
             full_name: ['', [Validators.required, Validators.minLength(3)]],
             membership_number: ['', Validators.required],
-            qualification: [''],
             gender: [''],
             state_of_practice: ['', Validators.required],
             registration_date: ['', Validators.required],
@@ -52,20 +49,17 @@ export class SignUpComponent implements OnInit {
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirm_password: ['', Validators.required]
         }, {
-            validators: [this.passwordMatchValidator, this.qualificationRequiredValidator.bind(this)]
+            validators: [this.passwordMatchValidator]
         });
 
-        // Subscribe to role changes to update qualification and gender requirement
+        // Subscribe to role changes to update gender requirement
         this.signUpForm.get('role')?.valueChanges.subscribe((role) => {
             this.selectedRole = role;
-            this.updateQualificationValidation(role);
             this.updateGenderValidation(role);
 
-            // Auto-set qualification and gender defaults for non-Member roles
-            const qualificationControl = this.signUpForm.get('qualification');
+            // Auto-set gender default for non-Member roles
             const genderControl = this.signUpForm.get('gender');
             if (role === 'Consulting Firm' || role === 'Practice Firm') {
-                qualificationControl?.setValue('Associate', { emitEvent: false });
                 genderControl?.setValue('prefer_not_to_say', { emitEvent: false });
             }
         });
@@ -82,31 +76,6 @@ export class SignUpComponent implements OnInit {
         });
     }
 
-    private fetchQualifications(): void {
-        this.apiService.get<any>('/auth/qualifications').subscribe({
-            next: (response) => {
-                this.qualifications = response.data.qualifications;
-            },
-            error: (error) => {
-                console.error('Failed to fetch qualifications:', error);
-            }
-        });
-    }
-
-    /**
-     * Update qualification field validation based on role
-     */
-    private updateQualificationValidation(role: string): void {
-        const qualificationControl = this.signUpForm.get('qualification');
-        if (role === 'Member') {
-            qualificationControl?.setValidators([Validators.required]);
-        } else {
-            qualificationControl?.setValidators([]);
-            qualificationControl?.reset();
-        }
-        qualificationControl?.updateValueAndValidity();
-    }
-
     /**
      * Update gender field validation based on role
      */
@@ -119,19 +88,6 @@ export class SignUpComponent implements OnInit {
             genderControl?.reset();
         }
         genderControl?.updateValueAndValidity();
-    }
-
-    /**
-     * Custom validator to require qualification for Members
-     */
-    private qualificationRequiredValidator(): { [key: string]: any } | null {
-        const role = this.signUpForm?.get('role')?.value;
-        const qualification = this.signUpForm?.get('qualification')?.value;
-
-        if (role === 'Member' && !qualification) {
-            return { qualificationRequired: true };
-        }
-        return null;
     }
 
     passwordMatchValidator(group: FormGroup): { [key: string]: any } | null {
@@ -158,10 +114,6 @@ export class SignUpComponent implements OnInit {
 
     get membership_number() {
         return this.signUpForm.get('membership_number');
-    }
-
-    get qualification() {
-        return this.signUpForm.get('qualification');
     }
 
     get registration_date() {
@@ -198,13 +150,6 @@ export class SignUpComponent implements OnInit {
 
     get state_of_practice() {
         return this.signUpForm.get('state_of_practice');
-    }
-
-    /**
-     * Check if qualification field should be visible
-     */
-    isQualificationVisible(): boolean {
-        return this.selectedRole === 'Member';
     }
 
     /**

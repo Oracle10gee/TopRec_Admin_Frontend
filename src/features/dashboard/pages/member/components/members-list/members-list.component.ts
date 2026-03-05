@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { AuthService } from '../../../../../../core/services/auth.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
-import { State, Qualification } from '../../../../../../core/models/auth.model';
+import { State } from '../../../../../../core/models/auth.model';
 import { ConfirmDialogComponent } from '../../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 interface Member {
@@ -13,7 +13,6 @@ interface Member {
     mobile: string;
     email: string;
     membership_number: string;
-    qualification: string;
     status: 'Active' | 'Inactive';
     role?: string;
 }
@@ -47,7 +46,6 @@ export class MembersListComponent implements OnInit, OnChanges {
     showAddModal = false;
     isAddSubmitting = false;
     selectedAddRole = '';
-    qualifications: Qualification[] = [];
     showAddPassword = false;
     showAddConfirmPassword = false;
 
@@ -76,9 +74,6 @@ export class MembersListComponent implements OnInit, OnChanges {
         this.initializeForm();
         this.loadMembers();
         this.loadStates();
-        if (this.isSuperadmin) {
-            this.loadQualifications();
-        }
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -103,7 +98,6 @@ export class MembersListComponent implements OnInit, OnChanges {
             full_name: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             phone_number: ['', Validators.required],
-            qualification: [''],
             status: ['']
         });
 
@@ -111,7 +105,6 @@ export class MembersListComponent implements OnInit, OnChanges {
             role: ['', Validators.required],
             full_name: ['', [Validators.required, Validators.minLength(3)]],
             membership_number: ['', Validators.required],
-            qualification: [''],
             gender: [''],
             state_of_practice: ['', Validators.required],
             registration_date: ['', Validators.required],
@@ -120,16 +113,14 @@ export class MembersListComponent implements OnInit, OnChanges {
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirm_password: ['', Validators.required]
-        }, { validators: [this.passwordMatchValidator, this.addQualificationValidator] });
+        }, { validators: [this.passwordMatchValidator] });
 
         // Watch role changes in addForm to update field visibility and validators
         this.addForm.get('role')?.valueChanges.subscribe(role => {
             this.selectedAddRole = role;
-            this.updateAddQualificationValidation(role);
             this.updateAddGenderValidation(role);
 
             if (role === 'Consulting Firm' || role === 'Practice Firm') {
-                this.addForm.get('qualification')?.setValue('Associate', { emitEvent: false });
                 this.addForm.get('gender')?.setValue('prefer_not_to_say', { emitEvent: false });
             }
         });
@@ -145,17 +136,6 @@ export class MembersListComponent implements OnInit, OnChanges {
             this.currentPage = 1;
             this.loadMembers();
         });
-    }
-
-    private updateAddQualificationValidation(role: string): void {
-        const ctrl = this.addForm.get('qualification');
-        if (role === 'Member') {
-            ctrl?.setValidators([Validators.required]);
-        } else {
-            ctrl?.setValidators([]);
-            ctrl?.reset();
-        }
-        ctrl?.updateValueAndValidity();
     }
 
     private updateAddGenderValidation(role: string): void {
@@ -176,17 +156,6 @@ export class MembersListComponent implements OnInit, OnChanges {
             },
             error: (error) => {
                 console.error('Failed to load states:', error);
-            }
-        });
-    }
-
-    private loadQualifications(): void {
-        this.authService.getQualifications().subscribe({
-            next: (response) => {
-                this.qualifications = response?.data?.qualifications || [];
-            },
-            error: (error) => {
-                console.error('Failed to load qualifications:', error);
             }
         });
     }
@@ -223,7 +192,6 @@ export class MembersListComponent implements OnInit, OnChanges {
                         mobile: user.phone_number || '',
                         email: user.email || '',
                         membership_number: user.membership_number || '',
-                        qualification: user.qualification || '',
                         status: user.status === 'active' ? 'Active' : 'Inactive',
                         role: user.role
                     }));
@@ -235,7 +203,6 @@ export class MembersListComponent implements OnInit, OnChanges {
                         mobile: user.phone_number || user.mobile || '',
                         email: user.email || '',
                         membership_number: user.membership_number || '',
-                        qualification: user.qualification || '',
                         status: user.status === 'active' || user.status === 'Active' ? 'Active' : 'Inactive',
                         role: user.role
                     }));
@@ -265,7 +232,6 @@ export class MembersListComponent implements OnInit, OnChanges {
                 mobile: '070 1234 5678',
                 email: 'ibrahimpeters@gmail.com',
                 membership_number: 'RTP/2528',
-                qualification: 'Associate',
                 status: 'Active',
                 role: 'Member'
             },
@@ -275,7 +241,6 @@ export class MembersListComponent implements OnInit, OnChanges {
                 mobile: '080 2345 6789',
                 email: 'aisha.mohammed@toprecng.org',
                 membership_number: 'RTP/2529',
-                qualification: 'Professional',
                 status: 'Active',
                 role: 'Member'
             },
@@ -285,7 +250,6 @@ export class MembersListComponent implements OnInit, OnChanges {
                 mobile: '090 3456 7890',
                 email: 'chinedu.okeke@gmail.com',
                 membership_number: 'RTP/2530',
-                qualification: 'Associate',
                 status: 'Inactive',
                 role: 'Member'
             },
@@ -295,7 +259,6 @@ export class MembersListComponent implements OnInit, OnChanges {
                 mobile: '070 4567 8901',
                 email: 'fatima.abdullahi@toprecng.org',
                 membership_number: 'RTP/2531',
-                qualification: 'Graduate',
                 status: 'Active',
                 role: 'Member'
             }
@@ -342,10 +305,6 @@ export class MembersListComponent implements OnInit, OnChanges {
     }
 
     // ── Add Member (Superadmin only) ──────────────────────────────────────────
-
-    isAddQualificationVisible(): boolean {
-        return this.selectedAddRole === 'Member';
-    }
 
     isAddGenderVisible(): boolean {
         return this.selectedAddRole === 'Member';
@@ -402,16 +361,6 @@ export class MembersListComponent implements OnInit, OnChanges {
         const confirmPassword = group.get('confirm_password')?.value;
         if (password && confirmPassword && password !== confirmPassword) {
             return { passwordMismatch: true };
-        }
-        return null;
-    }
-
-    /** Cross-field validator: qualification required for Member role */
-    private addQualificationValidator(group: AbstractControl): { [key: string]: any } | null {
-        const role = group.get('role')?.value;
-        const qualification = group.get('qualification')?.value;
-        if (role === 'Member' && !qualification) {
-            return { qualificationRequired: true };
         }
         return null;
     }
@@ -533,7 +482,6 @@ export class MembersListComponent implements OnInit, OnChanges {
             full_name: member.name,
             email: member.email,
             phone_number: member.mobile,
-            qualification: member.qualification,
             status: member.status
         });
         this.showEditModal = true;
@@ -554,8 +502,7 @@ export class MembersListComponent implements OnInit, OnChanges {
         const updates = {
             full_name: this.editForm.get('full_name')?.value,
             email: this.editForm.get('email')?.value,
-            phone_number: this.editForm.get('phone_number')?.value,
-            qualification: this.editForm.get('qualification')?.value
+            phone_number: this.editForm.get('phone_number')?.value
         };
 
         this.authService.updateUser(this.selectedMember.id, updates).subscribe({
