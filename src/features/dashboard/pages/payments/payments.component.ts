@@ -467,7 +467,7 @@ export class DashboardPaymentsComponent implements OnInit {
         this.paymentForm = this.fb.group({
             paymentTypeCode: ['', Validators.required],
             amount: [{ value: '', disabled: true }, Validators.required],
-            phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]]
+            phone: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]]
         });
 
         // Calculate/populate amount when payment type changes based on user role

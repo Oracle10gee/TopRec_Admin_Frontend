@@ -27,3 +27,66 @@
     (click)="closeSidebar()"
   ></div>
 </div>
+
+<!-- ─── Session Timeout Warning Modal ──────────────────────────────────── -->
+<div
+  *ngIf="sessionTimeout.showWarning$ | async"
+  class="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+  role="alertdialog"
+  aria-modal="true"
+  aria-labelledby="session-timeout-title"
+  aria-describedby="session-timeout-desc"
+>
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+
+  <!-- Dialog card -->
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 text-center animate-[fadeIn_0.2s_ease-out]">
+
+    <!-- Clock icon -->
+    <div class="mx-auto mb-5 w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center">
+      <svg class="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+
+    <!-- Title -->
+    <h2 id="session-timeout-title" class="text-xl font-bold text-gray-900 mb-2">
+      Session Expiring Soon
+    </h2>
+
+    <!-- Description -->
+    <p id="session-timeout-desc" class="text-gray-500 text-sm mb-4">
+      You have been idle. You will be automatically logged out in
+    </p>
+
+    <!-- Countdown -->
+    <div class="mb-1">
+      <span class="text-6xl font-extrabold tabular-nums"
+        [class.text-red-600]="(sessionTimeout.countdown$ | async)! <= 10"
+        [class.text-amber-500]="(sessionTimeout.countdown$ | async)! > 10">
+        {{ sessionTimeout.countdown$ | async }}
+      </span>
+    </div>
+    <p class="text-sm text-gray-400 mb-8">seconds</p>
+
+    <!-- Action buttons -->
+    <div class="flex flex-col sm:flex-row gap-3">
+      <button
+        type="button"
+        (click)="sessionTimeout.stayLoggedIn()"
+        class="flex-1 py-3 px-4 bg-[#1a5632] text-white font-semibold rounded-xl hover:bg-[#2a7642] focus:outline-none focus:ring-2 focus:ring-[#1a5632] focus:ring-offset-2 transition-colors"
+      >
+        Stay Logged In
+      </button>
+      <button
+        type="button"
+        (click)="sessionTimeout.forceLogout()"
+        class="flex-1 py-3 px-4 border-2 border-gray-200 text-gray-600 font-semibold rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 transition-colors"
+      >
+        Logout Now
+      </button>
+    </div>
+  </div>
+</div>
