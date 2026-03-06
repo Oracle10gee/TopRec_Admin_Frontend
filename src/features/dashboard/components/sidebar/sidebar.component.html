@@ -39,13 +39,13 @@
           [class.opacity-0]="activeMenuItem !== item.id"
         ></span>
 
-        <!-- Icon -->
-        <span class="text-xl flex-shrink-0 transition-transform duration-200 group-hover:scale-110">
+        <!-- Icon pill -->
+        <span class="nav-icon" [class.nav-icon--active]="activeMenuItem === item.id">
           <svg class="w-5 h-5" [innerHTML]="item.icon"></svg>
         </span>
 
         <!-- Label -->
-        <span class="font-medium text-sm pl-5">{{ item.label }}</span>
+        <span class="font-medium text-sm">{{ item.label }}</span>
 
         <!-- Badge (payments pending count) -->
         <!-- <span
