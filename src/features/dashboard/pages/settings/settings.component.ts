@@ -19,9 +19,6 @@ export class DashboardSettingsComponent implements OnInit {
     activeTab: SettingsTab = 'security';
     availableTabs: SettingsTab[] = [];
 
-    // Mock data - replace with actual API calls
-    private lastPasswordChangeDate = new Date('2024-12-15');
-    private activeSessions = 2;
     private unreadNotifications = true;
 
     constructor(private authService: AuthService) { }
@@ -89,39 +86,6 @@ export class DashboardSettingsComponent implements OnInit {
     }
 
     /**
-     * Get last password change date formatted
-     */
-    getLastPasswordChange(): string {
-        const now = new Date();
-        const diffTime = Math.abs(now.getTime() - this.lastPasswordChangeDate.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 0) {
-            return 'Today';
-        } else if (diffDays === 1) {
-            return 'Yesterday';
-        } else if (diffDays < 7) {
-            return `${diffDays} days ago`;
-        } else if (diffDays < 30) {
-            const weeks = Math.floor(diffDays / 7);
-            return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
-        } else if (diffDays < 365) {
-            const months = Math.floor(diffDays / 30);
-            return `${months} ${months === 1 ? 'month' : 'months'} ago`;
-        } else {
-            const years = Math.floor(diffDays / 365);
-            return `${years} ${years === 1 ? 'year' : 'years'} ago`;
-        }
-    }
-
-    /**
-     * Get number of active sessions
-     */
-    getActiveSessions(): number {
-        return this.activeSessions;
-    }
-
-    /**
      * Check if there are unread notifications
      */
     hasUnreadNotifications(): boolean {
@@ -153,64 +117,4 @@ export class DashboardSettingsComponent implements OnInit {
         }
     }
 
-    /**
-     * Export settings as JSON
-     */
-    exportSettings(): void {
-        const settings = {
-            activeTab: this.activeTab,
-            lastPasswordChange: this.lastPasswordChangeDate.toISOString(),
-            exportDate: new Date().toISOString()
-        };
-
-        const dataStr = JSON.stringify(settings, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
-
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `toprec-settings-${Date.now()}.json`;
-        link.click();
-
-        URL.revokeObjectURL(url);
-    }
-
-    /**
-     * Import settings from JSON file
-     */
-    importSettings(): void {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'application/json';
-
-        input.onchange = (event: any) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e: any) => {
-                    try {
-                        const settings = JSON.parse(e.target.result);
-                        this.applyImportedSettings(settings);
-                        alert('Settings imported successfully!');
-                    } catch (error) {
-                        alert('Error importing settings. Please check the file format.');
-                        console.error('Import error:', error);
-                    }
-                };
-                reader.readAsText(file);
-            }
-        };
-
-        input.click();
-    }
-
-    /**
-     * Apply imported settings
-     */
-    private applyImportedSettings(settings: any): void {
-        if (settings.activeTab && this.isValidTab(settings.activeTab)) {
-            this.setActiveTab(settings.activeTab);
-        }
-        // Apply other settings as needed
-    }
 }
