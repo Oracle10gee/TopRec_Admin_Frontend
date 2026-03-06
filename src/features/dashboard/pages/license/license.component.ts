@@ -115,7 +115,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
                 break;
             default:
                 this.certificateBodyText =
-                    'Having complied with the provisions of SECTION (5) (1) Town Planners (Registration, etc.) Act, CAP T7 LFN 2004, and Section (5) (b) Rules and Regulation for the Control Town Planning Practice, is hereby authorized to practice as a REGISTERED TOWN PLANNER within the Federal Republic of Nigeria.';
+                    'Having complied with the provisions of Section (5) (1) Town Planners (Registration, etc.) Act, CAP T7 LFN 2004, and Section (5) (b) Rules and Regulation for the Control Town Planning Practice, is hereby authorized to practice as a REGISTERED TOWN PLANNER within the Federal Republic of Nigeria.';
                 break;
         }
     }

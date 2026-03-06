@@ -65,6 +65,7 @@ export class DashboardHomeComponent implements OnInit, OnDestroy {
         this.initializeQuickActions();
         this.loadUserData();
         this.loadPaymentSummary();
+        this.refreshUserProfile();
     }
 
     ngOnDestroy(): void {
@@ -88,6 +89,21 @@ export class DashboardHomeComponent implements OnInit, OnDestroy {
                 }
                 this.isLoading = false;
             });
+    }
+
+    /**
+     * Fetch the latest user profile from the API so that real-time data
+     * (levy balance, financial status, etc.) is always up to date when
+     * navigating to the Home page.  getProfile() internally pushes the
+     * refreshed user into currentUserSubject, which loadUserData() already
+     * subscribes to via currentUser$, so the UI updates automatically.
+     */
+    private refreshUserProfile(): void {
+        this.authService.getProfile().subscribe({
+            error: () => {
+                // Silently ignore — cached data is still displayed
+            }
+        });
     }
 
     /**

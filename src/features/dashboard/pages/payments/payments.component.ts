@@ -1024,6 +1024,25 @@ export class DashboardPaymentsComponent implements OnInit {
             return;
         }
 
+        // Only allow receipt download for successful payments
+        if (payment.status !== 'Successful') {
+            this.notificationService.error(
+                `Receipt is only available for successful payments. This payment is ${payment.status.toLowerCase()}.`
+            );
+            return;
+        }
+
+        // Get current user for payer name and financial status
+        const currentUser = this.authService.getCurrentUserSync();
+        const payerName = currentUser?.full_name || 'N/A';
+        const isClear = currentUser
+            ? (currentUser.current_financial_status === null
+                || currentUser.current_financial_status === '0'
+                || currentUser.current_financial_status === ''
+                || Number(currentUser.current_financial_status) === 0)
+            : false;
+        const licenseStatusLabel = isClear ? 'Active' : 'Pending';
+
         // Generate receipt HTML content
         const receiptHTML = `
             <!DOCTYPE html>
@@ -1224,6 +1243,10 @@ export class DashboardPaymentsComponent implements OnInit {
                         <div class="section">
                             <div class="section-title">Payment Details</div>
                             <div class="info-row">
+                                <span class="info-label">Payer Name</span>
+                                <span class="info-value">${payerName}</span>
+                            </div>
+                            <div class="info-row">
                                 <span class="info-label">Payment ID</span>
                                 <span class="info-value">${paymentId}</span>
                             </div>
@@ -1246,11 +1269,7 @@ export class DashboardPaymentsComponent implements OnInit {
                         <!-- Status Info -->
                         <div class="note">
                             <strong>Payment Status:</strong>
-                            ${payment.status === 'Successful'
-                ? 'Your payment has been successfully processed and confirmed. Your license has been renewed.'
-                : payment.status === 'Pending'
-                    ? 'Your payment is pending verification. Please allow 24-48 hours for processing.'
-                    : 'Your payment was unsuccessful. Please contact support for assistance.'}
+                            Your payment has been successfully processed and confirmed.
                         </div>
 
                         <div class="divider"></div>
@@ -1260,7 +1279,7 @@ export class DashboardPaymentsComponent implements OnInit {
                             <div class="section-title">Verification</div>
                             <div class="info-row">
                                 <span class="info-label">License Status</span>
-                                <span class="info-value">${payment.status === 'Successful' ? 'Active' : 'Pending'}</span>
+                                <span class="info-value">${licenseStatusLabel}</span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Receipt Date</span>
