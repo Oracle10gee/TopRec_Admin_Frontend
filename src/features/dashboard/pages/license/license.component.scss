@@ -452,23 +452,161 @@
 
 /* ==================== RESPONSIVE ==================== */
 
-@media (max-width: 768px) {
+/* ---- Mobile (≤ 640 px) ---- */
+@media (max-width: 640px) {
+  /* --- Outer wrapper --- */
+  .certificate-wrapper {
+    border-radius: 8px;
+  }
+
+  /*
+   * The landscape aspect-ratio (1.414:1) collapses the certificate to
+   * ~275 px tall on a 390 px phone – far too small for the content.
+   * Remove it on mobile and let a min-height drive the size instead.
+   * The absolute-positioned border/inner still fill 100% of that height.
+   */
+  .certificate {
+    aspect-ratio: unset;
+    min-height: 700px;
+  }
+
+  /* Tighten outer border padding */
+  .certificate-border {
+    padding: 7px;
+  }
+
+  /* Content area – a little more vertical breathing room */
   .certificate-content {
-    padding: 4% 5%;
+    padding: 5% 5% 4%;
   }
 
+  /* --- Header --- */
+  .cert-header {
+    margin-bottom: 1.5%;
+  }
+
+  .cert-logo {
+    width: 52px; /* clamp floor of 80 px is too large on mobile */
+  }
+
+  .cert-toprec-text {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+  }
+
+  .cert-org-name {
+    font-size: 9px;
+    letter-spacing: 1px;
+    margin: 2px 0 1px;
+  }
+
+  .cert-org-sub {
+    font-size: 7px;
+    letter-spacing: 0.5px;
+  }
+
+  /* --- Title block --- */
+  .cert-title-section {
+    margin-bottom: 1.5%;
+
+    /* Hide the duplicate floating seal inside the title block on mobile –
+       the absolutely-positioned seal above the content is enough. */
+    .certified-seal {
+      display: none;
+    }
+  }
+
+  .cert-title {
+    font-size: 22px; /* clamp floor is 28 px – still large on a narrow cert */
+  }
+
+  .cert-subtitle {
+    font-size: 8px;
+    letter-spacing: 2px;
+  }
+
+  /* --- Authentication line --- */
+  .cert-auth-text {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    margin-top: 1.5%;
+    margin-bottom: 0.5%;
+  }
+
+  /* --- Name --- */
+  .cert-name-section {
+    margin-bottom: 1.5%;
+  }
+
+  .cert-name {
+    font-size: 18px; /* readable but won't overflow on short names */
+  }
+
+  /* --- Description body text --- */
+  .cert-description {
+    max-width: 96%; /* use more of the available width */
+
+    p {
+      font-size: 8px;
+      line-height: 1.55;
+    }
+  }
+
+  /* --- Floating certified seal --- */
+  .certified-seal {
+    top: 20%;
+    right: 4%;
+  }
+
+  .certified-seal-img {
+    width: 42px; /* clamp floor is 60 px – shrink on mobile */
+  }
+
+  /* --- Footer: keep horizontal row but tighter --- */
   .cert-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-top: 4%;
+    gap: 2%;
   }
 
-  .cert-qr {
-    align-self: center;
+  .cert-valid .valid-label {
+    font-size: 10px;
+    letter-spacing: 0;
   }
 
+  /* QR code */
+  .qr-placeholder {
+    width: 44px;
+    height: 44px;
+  }
+
+  .qr-label {
+    font-size: 5px;
+    padding: 2px 4px;
+  }
+
+  /* Registrar / signature */
   .cert-registrar {
-    align-self: flex-end;
+    text-align: center;
+  }
+
+  .cert-signature-img {
+    width: 80px; /* clamp floor is 120 px – way too wide on mobile */
+    margin: 0 auto -14px;
+  }
+
+  .registrar-line {
+    width: 75px;
+  }
+
+  .registrar-name {
+    font-size: 12px;
+  }
+
+  .registrar-title {
+    font-size: 8px;
   }
 }
 
