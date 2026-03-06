@@ -1,706 +1,96 @@
 <div class="space-y-6 animate-fadeIn">
-  <!-- Alert Messages -->
-  <div class="space-y-3">
-    <!-- Success Message -->
-    <div
-      *ngIf="successMessage"
-      class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl flex items-start gap-3 shadow-sm animate-slideIn"
-    >
-      <div
-        class="flex-shrink-0 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
-      >
-        <svg
-          class="w-4 h-4 text-white"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
-      </div>
-      <div class="flex-1">
-        <p class="text-sm font-semibold text-green-900">Success!</p>
-        <p class="text-sm text-green-700">{{ successMessage }}</p>
-      </div>
-      <button
-        (click)="successMessage = ''"
-        class="flex-shrink-0 text-green-600 hover:text-green-800 transition-colors"
-      >
-        <svg
-          class="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-    </div>
 
-    <!-- Error Message -->
-    <div
-      *ngIf="errorMessage"
-      class="p-4 bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-200 rounded-xl flex items-start gap-3 shadow-sm animate-slideIn"
-    >
-      <div
-        class="flex-shrink-0 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center"
-      >
-        <svg
-          class="w-4 h-4 text-white"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </div>
-      <div class="flex-1">
-        <p class="text-sm font-semibold text-red-900">Error</p>
-        <p class="text-sm text-red-700">{{ errorMessage }}</p>
-      </div>
-      <button
-        (click)="errorMessage = ''"
-        class="flex-shrink-0 text-red-600 hover:text-red-800 transition-colors"
-      >
-        <svg
-          class="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-    </div>
-  </div>
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!--  Change Password Card                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
-  <!-- Change Password Form -->
-  <div
-    class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
-  >
-    <!-- Header -->
-    <div
-      class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white"
-    >
+    <!-- Card header -->
+    <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
       <div class="flex items-center gap-3">
-        <div
-          class="w-10 h-10 bg-gradient-to-br from-[#1a5632] to-[#0d3520] rounded-lg flex items-center justify-center"
-        >
-          <svg
-            class="w-6 h-6 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-            />
+        <div class="w-10 h-10 bg-gradient-to-br from-[#1a5632] to-[#0d3520] rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         </div>
         <div>
           <h2 class="text-xl font-bold text-gray-900">Change Password</h2>
-          <p class="text-sm text-gray-600">
-            Update your account security credentials
-          </p>
+          <p class="text-sm text-gray-600">Update your account security credentials</p>
         </div>
       </div>
     </div>
 
-    <!-- Form Content -->
+    <!-- Card body – info + action button -->
     <div class="p-6">
-      <form
-        [formGroup]="securityForm"
-        (ngSubmit)="onPasswordChange()"
-        class="space-y-6"
-      >
-        <!-- Current Password -->
-        <div class="space-y-2">
-          <label
-            class="block text-sm font-semibold text-gray-700 flex items-center gap-2"
-          >
-            <svg
-              class="w-4 h-4 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-              />
-            </svg>
-            Current Password
-            <span class="text-red-500">*</span>
-          </label>
-          <div class="relative group">
-            <input
-              [type]="showCurrentPassword ? 'text' : 'password'"
-              formControlName="currentPassword"
-              placeholder="Enter your current password"
-              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-[#1a5632] outline-none transition-all pr-12 group-hover:border-gray-400"
-              [ngClass]="{
-                'border-red-300 focus:ring-red-500 focus:border-red-500':
-                  securityForm.get('currentPassword')?.invalid &&
-                  securityForm.get('currentPassword')?.touched,
-                'border-green-300 focus:ring-green-500 focus:border-green-500':
-                  securityForm.get('currentPassword')?.valid &&
-                  securityForm.get('currentPassword')?.touched
-              }"
-            />
-            <button
-              type="button"
-              (click)="togglePasswordVisibility('current')"
-              class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
-              title="Toggle password visibility"
-            >
-              <svg
-                *ngIf="!showCurrentPassword"
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                />
-              </svg>
-              <svg
-                *ngIf="showCurrentPassword"
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                />
-              </svg>
-            </button>
-          </div>
-          <p
-            *ngIf="
-              securityForm.get('currentPassword')?.invalid &&
-              securityForm.get('currentPassword')?.touched
-            "
-            class="text-red-500 text-xs mt-1 flex items-center gap-1"
-          >
-            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fill-rule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            Current password is required
-          </p>
-        </div>
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
 
-        <!-- New Password -->
-        <div class="space-y-2">
-          <label
-            class="block text-sm font-semibold text-gray-700 flex items-center gap-2"
-          >
-            <svg
-              class="w-4 h-4 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
+        <!-- Left: description -->
+        <div class="flex items-start gap-4 flex-1">
+          <div class="flex-shrink-0 w-12 h-12 bg-green-50 border-2 border-green-200 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-[#1a5632]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
-            New Password
-            <span class="text-red-500">*</span>
-          </label>
-          <div class="relative group">
-            <input
-              [type]="showNewPassword ? 'text' : 'password'"
-              formControlName="newPassword"
-              placeholder="Enter your new password"
-              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-[#1a5632] outline-none transition-all pr-12 group-hover:border-gray-400"
-              [ngClass]="{
-                'border-red-300 focus:ring-red-500 focus:border-red-500':
-                  securityForm.get('newPassword')?.invalid &&
-                  securityForm.get('newPassword')?.touched,
-                'border-green-300 focus:ring-green-500 focus:border-green-500':
-                  securityForm.get('newPassword')?.valid &&
-                  securityForm.get('newPassword')?.touched
-              }"
-            />
-            <button
-              type="button"
-              (click)="togglePasswordVisibility('new')"
-              class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
-              title="Toggle password visibility"
-            >
-              <svg
-                *ngIf="!showNewPassword"
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                />
-              </svg>
-              <svg
-                *ngIf="showNewPassword"
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                />
-              </svg>
-            </button>
           </div>
-
-          <!-- Password Strength Indicator -->
-          <div class="space-y-2">
-            <div class="flex items-center gap-2">
-              <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  class="h-full transition-all duration-300"
-                  [ngClass]="getPasswordStrengthClass()"
-                  [style.width]="getPasswordStrengthWidth()"
-                ></div>
-              </div>
-              <span
-                class="text-xs font-semibold"
-                [ngClass]="getPasswordStrengthTextClass()"
-              >
-                {{ getPasswordStrengthText() }}
+          <div>
+            <p class="text-base font-semibold text-gray-900">OTP-Verified Password Change</p>
+            <p class="text-sm text-gray-500 mt-1 leading-relaxed">
+              To keep your account safe, changing your password requires identity verification via a
+              one-time passcode (OTP) sent to your registered email address.
+            </p>
+            <!-- 3-step badge row -->
+            <div class="flex flex-wrap items-center gap-2 mt-3">
+              <span class="inline-flex items-center gap-1.5 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-3 py-1">
+                <span class="w-4 h-4 bg-blue-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">1</span>
+                Request OTP
+              </span>
+              <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              <span class="inline-flex items-center gap-1.5 text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200 rounded-full px-3 py-1">
+                <span class="w-4 h-4 bg-purple-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">2</span>
+                Verify OTP
+              </span>
+              <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              <span class="inline-flex items-center gap-1.5 text-xs font-medium bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1">
+                <span class="w-4 h-4 bg-[#1a5632] text-white rounded-full flex items-center justify-center text-[10px] font-bold">3</span>
+                Set New Password
               </span>
             </div>
-
-            <!-- Password Requirements -->
-            <div class="space-y-1">
-              <p class="text-xs font-semibold text-gray-700">
-                Password must contain:
-              </p>
-              <div class="space-y-1">
-                <div
-                  class="flex items-center gap-2 text-xs"
-                  [ngClass]="
-                    hasMinLength() ? 'text-green-600' : 'text-gray-500'
-                  "
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      *ngIf="hasMinLength()"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                    <circle
-                      *ngIf="!hasMinLength()"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke-width="2"
-                    />
-                  </svg>
-                  <span>At least 8 characters</span>
-                </div>
-                <div
-                  class="flex items-center gap-2 text-xs"
-                  [ngClass]="
-                    hasUpperCase() ? 'text-green-600' : 'text-gray-500'
-                  "
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      *ngIf="hasUpperCase()"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                    <circle
-                      *ngIf="!hasUpperCase()"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke-width="2"
-                    />
-                  </svg>
-                  <span>One uppercase letter</span>
-                </div>
-                <div
-                  class="flex items-center gap-2 text-xs"
-                  [ngClass]="
-                    hasLowerCase() ? 'text-green-600' : 'text-gray-500'
-                  "
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      *ngIf="hasLowerCase()"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                    <circle
-                      *ngIf="!hasLowerCase()"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke-width="2"
-                    />
-                  </svg>
-                  <span>One lowercase letter</span>
-                </div>
-                <div
-                  class="flex items-center gap-2 text-xs"
-                  [ngClass]="hasNumber() ? 'text-green-600' : 'text-gray-500'"
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      *ngIf="hasNumber()"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                    <circle
-                      *ngIf="!hasNumber()"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke-width="2"
-                    />
-                  </svg>
-                  <span>One number</span>
-                </div>
-                <div
-                  class="flex items-center gap-2 text-xs"
-                  [ngClass]="
-                    hasSpecialChar() ? 'text-green-600' : 'text-gray-500'
-                  "
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      *ngIf="hasSpecialChar()"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                    <circle
-                      *ngIf="!hasSpecialChar()"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke-width="2"
-                    />
-                  </svg>
-                  <span>One special character (!&#64;#$%^&*)</span>
-                </div>
-              </div>
-            </div>
           </div>
-
-          <p
-            *ngIf="
-              securityForm.get('newPassword')?.invalid &&
-              securityForm.get('newPassword')?.touched
-            "
-            class="text-red-500 text-xs mt-1 flex items-center gap-1"
-          >
-            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fill-rule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            Password must meet all requirements
-          </p>
         </div>
 
-        <!-- Confirm Password -->
-        <div class="space-y-2">
-          <label
-            class="block text-sm font-semibold text-gray-700 flex items-center gap-2"
-          >
-            <svg
-              class="w-4 h-4 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              />
-            </svg>
-            Confirm Password
-            <span class="text-red-500">*</span>
-          </label>
-          <div class="relative group">
-            <input
-              [type]="showConfirmPassword ? 'text' : 'password'"
-              formControlName="confirmPassword"
-              placeholder="Confirm your new password"
-              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-[#1a5632] outline-none transition-all pr-12 group-hover:border-gray-400"
-              [ngClass]="{
-                'border-red-300 focus:ring-red-500 focus:border-red-500':
-                  (securityForm.hasError('passwordMismatch') ||
-                    securityForm.get('confirmPassword')?.invalid) &&
-                  securityForm.get('confirmPassword')?.touched,
-                'border-green-300 focus:ring-green-500 focus:border-green-500':
-                  !securityForm.hasError('passwordMismatch') &&
-                  securityForm.get('confirmPassword')?.valid &&
-                  securityForm.get('confirmPassword')?.touched
-              }"
-            />
-            <button
-              type="button"
-              (click)="togglePasswordVisibility('confirm')"
-              class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
-              title="Toggle password visibility"
-            >
-              <svg
-                *ngIf="!showConfirmPassword"
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                />
-              </svg>
-              <svg
-                *ngIf="showConfirmPassword"
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                />
-              </svg>
-            </button>
-          </div>
-          <p
-            *ngIf="
-              securityForm.hasError('passwordMismatch') &&
-              securityForm.get('confirmPassword')?.touched
-            "
-            class="text-red-500 text-xs mt-1 flex items-center gap-1"
-          >
-            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fill-rule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            Passwords do not match
-          </p>
-          <p
-            *ngIf="
-              !securityForm.hasError('passwordMismatch') &&
-              securityForm.get('confirmPassword')?.valid &&
-              securityForm.get('confirmPassword')?.touched
-            "
-            class="text-green-500 text-xs mt-1 flex items-center gap-1"
-          >
-            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            Passwords match
-          </p>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex gap-3 pt-4">
-          <button
-            type="submit"
-            [disabled]="isSaving || !securityForm.valid"
-            class="px-6 py-3 bg-gradient-to-r from-[#1a5632] to-[#2a7642] text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            <svg
-              *ngIf="isSaving"
-              class="w-5 h-5 animate-spin"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-            <svg
-              *ngIf="!isSaving"
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            {{ isSaving ? "Updating Password..." : "Change Password" }}
-          </button>
-
-          <button
-            type="button"
-            (click)="resetForm()"
-            [disabled]="isSaving"
-            class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-            Cancel
-          </button>
-        </div>
-      </form>
+        <!-- Right: button -->
+        <button
+          type="button"
+          (click)="openChangePasswordModal()"
+          class="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#1a5632] to-[#2a7642] text-white text-sm font-semibold rounded-lg hover:shadow-lg hover:opacity-90 transition-all duration-200"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          </svg>
+          Change Password
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Security Tips -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!--  Security Tips                                                         -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
     <!-- Security Tip -->
-    <div
-      class="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-5"
-    >
+    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-5">
       <div class="flex items-start gap-3">
-        <div
-          class="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center"
-        >
-          <svg
-            class="w-6 h-6 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-            />
+        <div class="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         </div>
         <div>
@@ -714,25 +104,12 @@
     </div>
 
     <!-- Best Practices -->
-    <div
-      class="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-5"
-    >
+    <div class="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-5">
       <div class="flex items-start gap-3">
-        <div
-          class="flex-shrink-0 w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center"
-        >
-          <svg
-            class="w-6 h-6 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-            />
+        <div class="flex-shrink-0 w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
         </div>
         <div>
@@ -743,6 +120,474 @@
           </p>
         </div>
       </div>
+    </div>
+  </div>
+
+</div><!-- /space-y-6 -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!--  MODAL 1 – Request OTP                                                     -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div
+  *ngIf="showOtpRequestModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+  (click)="closeModal()"
+>
+  <!-- Stop propagation so click inside doesn't close the modal -->
+  <div
+    class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Modal header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+      <div class="flex items-center gap-3">
+        <!-- Step badge -->
+        <span class="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+        <div>
+          <h3 class="text-lg font-bold text-gray-900">Change Password</h3>
+          <p class="text-xs text-gray-500">Step 1 of 3 — Request OTP</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        (click)="closeModal()"
+        class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal body -->
+    <div class="px-6 py-5 space-y-5">
+
+      <!-- Info banner -->
+      <div class="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+        <svg class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="text-sm text-blue-800 leading-relaxed">
+          A one-time passcode (OTP) will be sent to your registered email address to verify your identity before changing your password.
+        </p>
+      </div>
+
+      <!-- Email display -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Your Registered Email</label>
+        <div class="flex items-center gap-3 px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-lg">
+          <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <span class="text-sm font-medium text-gray-700 truncate">{{ userIdentifier }}</span>
+        </div>
+        <p class="text-xs text-gray-400 mt-1.5">The OTP will be sent to this email address.</p>
+      </div>
+    </div>
+
+    <!-- Modal footer -->
+    <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50">
+      <button
+        type="button"
+        (click)="closeModal()"
+        [disabled]="isSubmitting"
+        class="px-5 py-2.5 border-2 border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:border-gray-400 hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        (click)="submitOtpRequest()"
+        [disabled]="isSubmitting"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#1a5632] to-[#2a7642] text-white text-sm font-semibold rounded-lg hover:shadow-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg *ngIf="isSubmitting" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <svg *ngIf="!isSubmitting" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+        </svg>
+        {{ isSubmitting ? 'Sending OTP...' : 'Send OTP' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!--  MODAL 2 – Verify OTP                                                      -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div
+  *ngIf="showOtpVerifyModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+  (click)="closeModal()"
+>
+  <div
+    class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Modal header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+      <div class="flex items-center gap-3">
+        <span class="w-7 h-7 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+        <div>
+          <h3 class="text-lg font-bold text-gray-900">Enter OTP</h3>
+          <p class="text-xs text-gray-500">Step 2 of 3 — Verify your identity</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        (click)="closeModal()"
+        class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal body -->
+    <div class="px-6 py-5">
+      <form [formGroup]="otpVerifyForm" (ngSubmit)="submitOtpVerify()" class="space-y-5">
+
+        <!-- Instruction text -->
+        <p class="text-sm text-gray-600 leading-relaxed">
+          We sent a 6-digit OTP to
+          <span class="font-semibold text-gray-800">{{ userIdentifier }}</span>.
+          Enter it below — it expires in 10 minutes.
+        </p>
+
+        <!-- OTP input -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700">One-Time Passcode (OTP)</label>
+          <input
+            type="text"
+            formControlName="otp"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="Enter 6-digit OTP"
+            class="w-full px-4 py-3 text-center text-xl font-bold tracking-[0.5em] border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+            [ngClass]="{
+              'border-red-300 focus:ring-red-500 focus:border-red-500':
+                otpVerifyForm.get('otp')?.invalid && otpVerifyForm.get('otp')?.touched,
+              'border-green-300 focus:ring-green-500 focus:border-green-500':
+                otpVerifyForm.get('otp')?.valid && otpVerifyForm.get('otp')?.touched
+            }"
+          />
+          <p
+            *ngIf="otpVerifyForm.get('otp')?.invalid && otpVerifyForm.get('otp')?.touched"
+            class="text-red-500 text-xs flex items-center gap-1"
+          >
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clip-rule="evenodd" />
+            </svg>
+            Please enter the 6-digit OTP sent to your email.
+          </p>
+        </div>
+
+        <!-- Resend OTP -->
+        <div class="flex items-center gap-2 text-sm">
+          <span class="text-gray-500">Didn't receive it?</span>
+          <button
+            type="button"
+            (click)="resendOtp()"
+            [disabled]="resendCooldown > 0"
+            class="font-semibold transition-colors"
+            [ngClass]="resendCooldown > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-[#1a5632] hover:text-[#0d3520] underline'"
+          >
+            <span *ngIf="resendCooldown > 0">Resend in {{ resendCooldown }}s</span>
+            <span *ngIf="resendCooldown === 0">Resend OTP</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Modal footer -->
+    <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50">
+      <button
+        type="button"
+        (click)="closeModal()"
+        [disabled]="isSubmitting"
+        class="px-5 py-2.5 border-2 border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:border-gray-400 hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        (click)="submitOtpVerify()"
+        [disabled]="isSubmitting || otpVerifyForm.invalid"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white text-sm font-semibold rounded-lg hover:shadow-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg *ngIf="isSubmitting" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <svg *ngIf="!isSubmitting" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {{ isSubmitting ? 'Verifying...' : 'Verify OTP' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!--  MODAL 3 – Set New Password                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div
+  *ngIf="showPasswordResetModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+  (click)="closeModal()"
+>
+  <div
+    class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Modal header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+      <div class="flex items-center gap-3">
+        <span class="w-7 h-7 bg-[#1a5632] text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+        <div>
+          <h3 class="text-lg font-bold text-gray-900">Set New Password</h3>
+          <p class="text-xs text-gray-500">Step 3 of 3 — Enter your new password</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        (click)="closeModal()"
+        class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal body -->
+    <div class="px-6 py-5">
+      <form [formGroup]="resetPasswordForm" (ngSubmit)="submitPasswordReset()" class="space-y-5">
+
+        <!-- New Password -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            New Password <span class="text-red-500">*</span>
+          </label>
+          <div class="relative group">
+            <input
+              [type]="showNewPassword ? 'text' : 'password'"
+              formControlName="new_password"
+              placeholder="Enter your new password"
+              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-[#1a5632] outline-none transition-all pr-12 group-hover:border-gray-400"
+              [ngClass]="{
+                'border-red-300 focus:ring-red-500 focus:border-red-500':
+                  resetPasswordForm.get('new_password')?.invalid &&
+                  resetPasswordForm.get('new_password')?.touched,
+                'border-green-300 focus:ring-green-500 focus:border-green-500':
+                  resetPasswordForm.get('new_password')?.valid &&
+                  resetPasswordForm.get('new_password')?.touched
+              }"
+            />
+            <button
+              type="button"
+              (click)="toggleNewPasswordVisibility()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
+            >
+              <svg *ngIf="!showNewPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <svg *ngIf="showNewPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Password strength bar -->
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  class="h-full transition-all duration-300"
+                  [ngClass]="getPasswordStrengthClass()"
+                  [style.width]="getPasswordStrengthWidth()"
+                ></div>
+              </div>
+              <span class="text-xs font-semibold" [ngClass]="getPasswordStrengthTextClass()">
+                {{ getPasswordStrengthText() }}
+              </span>
+            </div>
+
+            <!-- Requirements checklist -->
+            <div class="space-y-1">
+              <p class="text-xs font-semibold text-gray-700">Password must contain:</p>
+              <div class="grid grid-cols-1 gap-1">
+                <div class="flex items-center gap-2 text-xs" [ngClass]="hasMinLength() ? 'text-green-600' : 'text-gray-500'">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path *ngIf="hasMinLength()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    <circle *ngIf="!hasMinLength()" cx="12" cy="12" r="10" stroke-width="2" />
+                  </svg>
+                  <span>At least 8 characters</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs" [ngClass]="hasUpperCase() ? 'text-green-600' : 'text-gray-500'">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path *ngIf="hasUpperCase()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    <circle *ngIf="!hasUpperCase()" cx="12" cy="12" r="10" stroke-width="2" />
+                  </svg>
+                  <span>One uppercase letter</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs" [ngClass]="hasLowerCase() ? 'text-green-600' : 'text-gray-500'">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path *ngIf="hasLowerCase()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    <circle *ngIf="!hasLowerCase()" cx="12" cy="12" r="10" stroke-width="2" />
+                  </svg>
+                  <span>One lowercase letter</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs" [ngClass]="hasNumber() ? 'text-green-600' : 'text-gray-500'">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path *ngIf="hasNumber()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    <circle *ngIf="!hasNumber()" cx="12" cy="12" r="10" stroke-width="2" />
+                  </svg>
+                  <span>One number</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs" [ngClass]="hasSpecialChar() ? 'text-green-600' : 'text-gray-500'">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path *ngIf="hasSpecialChar()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    <circle *ngIf="!hasSpecialChar()" cx="12" cy="12" r="10" stroke-width="2" />
+                  </svg>
+                  <span>One special character (!&#64;#$%^&amp;*)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p
+            *ngIf="resetPasswordForm.get('new_password')?.invalid && resetPasswordForm.get('new_password')?.touched"
+            class="text-red-500 text-xs flex items-center gap-1"
+          >
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clip-rule="evenodd" />
+            </svg>
+            Password must meet all requirements.
+          </p>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            Confirm Password <span class="text-red-500">*</span>
+          </label>
+          <div class="relative group">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirm_password"
+              placeholder="Confirm your new password"
+              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-[#1a5632] outline-none transition-all pr-12 group-hover:border-gray-400"
+              [ngClass]="{
+                'border-red-300 focus:ring-red-500 focus:border-red-500':
+                  (resetPasswordForm.hasError('passwordMismatch') ||
+                    resetPasswordForm.get('confirm_password')?.invalid) &&
+                  resetPasswordForm.get('confirm_password')?.touched,
+                'border-green-300 focus:ring-green-500 focus:border-green-500':
+                  !resetPasswordForm.hasError('passwordMismatch') &&
+                  resetPasswordForm.get('confirm_password')?.valid &&
+                  resetPasswordForm.get('confirm_password')?.touched
+              }"
+            />
+            <button
+              type="button"
+              (click)="toggleConfirmPasswordVisibility()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100"
+            >
+              <svg *ngIf="!showConfirmPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <svg *ngIf="showConfirmPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Match / mismatch feedback -->
+          <p
+            *ngIf="resetPasswordForm.hasError('passwordMismatch') && resetPasswordForm.get('confirm_password')?.touched"
+            class="text-red-500 text-xs flex items-center gap-1"
+          >
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clip-rule="evenodd" />
+            </svg>
+            Passwords do not match.
+          </p>
+          <p
+            *ngIf="!resetPasswordForm.hasError('passwordMismatch') &&
+                   resetPasswordForm.get('confirm_password')?.valid &&
+                   resetPasswordForm.get('confirm_password')?.touched"
+            class="text-green-500 text-xs flex items-center gap-1"
+          >
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd" />
+            </svg>
+            Passwords match.
+          </p>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Modal footer -->
+    <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50">
+      <button
+        type="button"
+        (click)="closeModal()"
+        [disabled]="isSubmitting"
+        class="px-5 py-2.5 border-2 border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:border-gray-400 hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        (click)="submitPasswordReset()"
+        [disabled]="isSubmitting || resetPasswordForm.invalid"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#1a5632] to-[#2a7642] text-white text-sm font-semibold rounded-lg hover:shadow-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg *ngIf="isSubmitting" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <svg *ngIf="!isSubmitting" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {{ isSubmitting ? 'Saving Password...' : 'Reset Password' }}
+      </button>
     </div>
   </div>
 </div>

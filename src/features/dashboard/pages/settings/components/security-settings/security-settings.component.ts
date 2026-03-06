@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { ApiService } from '../../../../../../core/services/api.service';
+import { AuthService } from '../../../../../../core/services/auth.service';
+import { NotificationService } from '../../../../../../core/services/notification.service';
 
 @Component({
     standalone: true,
@@ -9,231 +12,347 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractContro
     templateUrl: './security-settings.component.html',
     styleUrls: ['./security-settings.component.scss']
 })
-export class SecuritySettingsComponent implements OnInit {
-    securityForm!: FormGroup;
-    showCurrentPassword = false;
+export class SecuritySettingsComponent implements OnInit, OnDestroy {
+
+    // ── Modal visibility ──────────────────────────────────────────────────────
+    showOtpRequestModal = false;
+    showOtpVerifyModal = false;
+    showPasswordResetModal = false;
+
+    // ── Shared state ──────────────────────────────────────────────────────────
+    isSubmitting = false;
+    userIdentifier = '';   // pre-filled from logged-in user's email
+    capturedOtp = '';      // OTP kept after verification, used in step 3
+
+    // ── Resend OTP cooldown ───────────────────────────────────────────────────
+    resendCooldown = 0;
+    private resendTimer: any = null;
+
+    // ── Forms (one per step) ──────────────────────────────────────────────────
+    otpVerifyForm!: FormGroup;
+    resetPasswordForm!: FormGroup;
+
+    // ── New password field visibility ─────────────────────────────────────────
     showNewPassword = false;
     showConfirmPassword = false;
-    isSaving = false;
-    successMessage = '';
-    errorMessage = '';
 
-    constructor(private fb: FormBuilder) {}
+    constructor(
+        private fb: FormBuilder,
+        private apiService: ApiService,
+        private authService: AuthService,
+        private notificationService: NotificationService
+    ) {}
 
     ngOnInit(): void {
-        this.initializeForm();
+        this.initializeForms();
     }
 
-    private initializeForm(): void {
-        this.securityForm = this.fb.group(
+    ngOnDestroy(): void {
+        if (this.resendTimer) {
+            clearInterval(this.resendTimer);
+        }
+    }
+
+    private initializeForms(): void {
+        // Step 2 – OTP input (6-digit code)
+        this.otpVerifyForm = this.fb.group({
+            otp: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern(/^\d{6}$/)]]
+        });
+
+        // Step 3 – New password + confirm
+        this.resetPasswordForm = this.fb.group(
             {
-                currentPassword: ['', [Validators.required]],
-                newPassword: ['', [
+                new_password: ['', [
                     Validators.required,
                     Validators.minLength(8),
                     this.passwordStrengthValidator
                 ]],
-                confirmPassword: ['', [Validators.required]]
+                confirm_password: ['', [Validators.required]]
             },
-            {
-                validators: this.passwordMatchValidator
-            }
+            { validators: this.passwordMatchValidator }
         );
     }
 
-    /**
-     * Custom validator for password strength
-     */
-    private passwordStrengthValidator(control: AbstractControl): { [key: string]: any } | null {
-        const value = control.value;
-        if (!value) {
-            return null;
-        }
-
-        const hasUpperCase = /[A-Z]/.test(value);
-        const hasLowerCase = /[a-z]/.test(value);
-        const hasNumeric = /[0-9]/.test(value);
-        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
-        const isValidLength = value.length >= 8;
-
-        const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecialChar && isValidLength;
-
-        return !passwordValid ? { passwordStrength: true } : null;
-    }
+    // ── Step control ──────────────────────────────────────────────────────────
 
     /**
-     * Validator to check if passwords match
+     * Open the change-password flow at step 1.
+     * Pre-fills the identifier from the currently logged-in user's email.
      */
-    private passwordMatchValidator(group: FormGroup): { [key: string]: any } | null {
-        const password = group.get('newPassword')?.value;
-        const confirmPassword = group.get('confirmPassword')?.value;
+    openChangePasswordModal(): void {
+        const currentUser = this.authService.getCurrentUserSync();
+        this.userIdentifier = currentUser?.email || '';
 
-        if (password && confirmPassword && password !== confirmPassword) {
-            return { passwordMismatch: true };
-        }
-        return null;
-    }
-
-    /**
-     * Submit form to change password
-     */
-    onPasswordChange(): void {
-        if (this.securityForm.invalid) {
-            this.errorMessage = 'Please fill in all required fields correctly';
-            this.clearMessage('error', 5000);
+        if (!this.userIdentifier) {
+            this.notificationService.error(
+                'Unable to retrieve your email address. Please log out and log back in.',
+                6000
+            );
             return;
         }
 
-        this.isSaving = true;
-        this.errorMessage = '';
-        this.successMessage = '';
+        // Reset any previous state
+        this.otpVerifyForm.reset();
+        this.resetPasswordForm.reset();
+        this.capturedOtp = '';
+        this.isSubmitting = false;
 
-        // Simulate API call
-        setTimeout(() => {
-            // Simulate successful password change
-            this.successMessage = 'Password updated successfully! Your account is now more secure.';
-            this.isSaving = false;
-            this.securityForm.reset();
+        this.showOtpRequestModal = true;
+    }
 
-            // Clear success message after 5 seconds
-            this.clearMessage('success', 5000);
-        }, 2000);
+    /** Close whichever modal is open and reset all state. */
+    closeModal(): void {
+        this.showOtpRequestModal = false;
+        this.showOtpVerifyModal = false;
+        this.showPasswordResetModal = false;
+        this._resetState();
+    }
+
+    // ── API calls ─────────────────────────────────────────────────────────────
+
+    /**
+     * Step 1 – Request an OTP to the user's registered email.
+     * Endpoint: POST /settings/password-reset/request  { identifier }
+     */
+    submitOtpRequest(): void {
+        this.isSubmitting = true;
+
+        this.apiService
+            .post('/settings/password-reset/request', { identifier: this.userIdentifier })
+            .subscribe({
+                next: () => {
+                    this.isSubmitting = false;
+                    this.notificationService.success(
+                        `OTP sent to ${this.userIdentifier}. Please check your inbox.`,
+                        6000
+                    );
+                    this.showOtpRequestModal = false;
+                    this.showOtpVerifyModal = true;
+                    this.startResendCooldown();
+                },
+                error: (err: Error) => {
+                    this.isSubmitting = false;
+                    this.notificationService.error(
+                        err.message || 'Failed to send OTP. Please try again.',
+                        6000
+                    );
+                }
+            });
     }
 
     /**
-     * Toggle password visibility
+     * Step 2 – Verify the OTP the user entered.
+     * Endpoint: POST /settings/password-reset/verify  { identifier, otp }
      */
-    togglePasswordVisibility(field: 'current' | 'new' | 'confirm'): void {
-        switch (field) {
-            case 'current':
-                this.showCurrentPassword = !this.showCurrentPassword;
-                break;
-            case 'new':
-                this.showNewPassword = !this.showNewPassword;
-                break;
-            case 'confirm':
-                this.showConfirmPassword = !this.showConfirmPassword;
-                break;
+    submitOtpVerify(): void {
+        if (this.otpVerifyForm.invalid) {
+            this.otpVerifyForm.markAllAsTouched();
+            return;
+        }
+
+        this.isSubmitting = true;
+        const otp: string = this.otpVerifyForm.get('otp')?.value;
+
+        this.apiService
+            .post('/settings/password-reset/verify', {
+                identifier: this.userIdentifier,
+                otp
+            })
+            .subscribe({
+                next: () => {
+                    this.isSubmitting = false;
+                    this.capturedOtp = otp;
+                    this.showOtpVerifyModal = false;
+                    this.showPasswordResetModal = true;
+                },
+                error: (err: Error) => {
+                    this.isSubmitting = false;
+                    this.notificationService.error(
+                        err.message || 'Invalid OTP. Please check the code and try again.',
+                        6000
+                    );
+                }
+            });
+    }
+
+    /**
+     * Step 3 – Reset the password using the verified OTP.
+     * Endpoint: POST /settings/password-reset/reset  { identifier, otp, new_password, confirm_password }
+     */
+    submitPasswordReset(): void {
+        if (this.resetPasswordForm.invalid) {
+            this.resetPasswordForm.markAllAsTouched();
+            return;
+        }
+
+        this.isSubmitting = true;
+        const { new_password, confirm_password } = this.resetPasswordForm.value;
+
+        this.apiService
+            .post('/settings/password-reset/reset', {
+                identifier: this.userIdentifier,
+                otp: this.capturedOtp,
+                new_password,
+                confirm_password
+            })
+            .subscribe({
+                next: () => {
+                    this.isSubmitting = false;
+                    this.showPasswordResetModal = false;
+                    this.notificationService.success(
+                        'Password changed successfully! Your account is now more secure.',
+                        7000
+                    );
+                    this._resetState();
+                },
+                error: (err: Error) => {
+                    this.isSubmitting = false;
+                    this.notificationService.error(
+                        err.message || 'Failed to reset password. Please try again.',
+                        6000
+                    );
+                }
+            });
+    }
+
+    /**
+     * Resend OTP – reuses the request endpoint and restarts the cooldown timer.
+     */
+    resendOtp(): void {
+        if (this.resendCooldown > 0) return;
+
+        this.apiService
+            .post('/settings/password-reset/request', { identifier: this.userIdentifier })
+            .subscribe({
+                next: () => {
+                    this.notificationService.success('OTP resent to your email address.', 5000);
+                    this.otpVerifyForm.reset();
+                    this.startResendCooldown();
+                },
+                error: (err: Error) => {
+                    this.notificationService.error(
+                        err.message || 'Failed to resend OTP. Please try again.',
+                        6000
+                    );
+                }
+            });
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private _resetState(): void {
+        this.otpVerifyForm?.reset();
+        this.resetPasswordForm?.reset();
+        this.capturedOtp = '';
+        this.isSubmitting = false;
+        if (this.resendTimer) {
+            clearInterval(this.resendTimer);
+            this.resendTimer = null;
+            this.resendCooldown = 0;
         }
     }
 
-    /**
-     * Reset form to initial state
-     */
-    resetForm(): void {
-        this.securityForm.reset();
-        this.errorMessage = '';
-        this.successMessage = '';
-    }
+    private startResendCooldown(): void {
+        this.resendCooldown = 60;
+        if (this.resendTimer) clearInterval(this.resendTimer);
 
-    /**
-     * Clear message after timeout
-     */
-    private clearMessage(type: 'success' | 'error', delay: number): void {
-        setTimeout(() => {
-            if (type === 'success') {
-                this.successMessage = '';
-            } else {
-                this.errorMessage = '';
+        this.resendTimer = setInterval(() => {
+            this.resendCooldown--;
+            if (this.resendCooldown <= 0) {
+                clearInterval(this.resendTimer);
+                this.resendTimer = null;
             }
-        }, delay);
+        }, 1000);
     }
 
-    // Password Strength Indicators
+    // ── Password visibility toggles ───────────────────────────────────────────
 
-    /**
-     * Check if password has minimum length
-     */
+    toggleNewPasswordVisibility(): void {
+        this.showNewPassword = !this.showNewPassword;
+    }
+
+    toggleConfirmPasswordVisibility(): void {
+        this.showConfirmPassword = !this.showConfirmPassword;
+    }
+
+    // ── Password strength helpers (bound to resetPasswordForm.new_password) ───
+
+    private passwordStrengthValidator(control: AbstractControl): { [key: string]: any } | null {
+        const value = control.value;
+        if (!value) return null;
+        const ok =
+            /[A-Z]/.test(value) &&
+            /[a-z]/.test(value) &&
+            /[0-9]/.test(value) &&
+            /[!@#$%^&*(),.?":{}|<>]/.test(value) &&
+            value.length >= 8;
+        return ok ? null : { passwordStrength: true };
+    }
+
+    private passwordMatchValidator(group: AbstractControl): { [key: string]: any } | null {
+        const pw = group.get('new_password')?.value;
+        const cpw = group.get('confirm_password')?.value;
+        return pw && cpw && pw !== cpw ? { passwordMismatch: true } : null;
+    }
+
     hasMinLength(): boolean {
-        const password = this.securityForm.get('newPassword')?.value || '';
-        return password.length >= 8;
+        return (this.resetPasswordForm.get('new_password')?.value || '').length >= 8;
     }
 
-    /**
-     * Check if password has uppercase letter
-     */
     hasUpperCase(): boolean {
-        const password = this.securityForm.get('newPassword')?.value || '';
-        return /[A-Z]/.test(password);
+        return /[A-Z]/.test(this.resetPasswordForm.get('new_password')?.value || '');
     }
 
-    /**
-     * Check if password has lowercase letter
-     */
     hasLowerCase(): boolean {
-        const password = this.securityForm.get('newPassword')?.value || '';
-        return /[a-z]/.test(password);
+        return /[a-z]/.test(this.resetPasswordForm.get('new_password')?.value || '');
     }
 
-    /**
-     * Check if password has number
-     */
     hasNumber(): boolean {
-        const password = this.securityForm.get('newPassword')?.value || '';
-        return /[0-9]/.test(password);
+        return /[0-9]/.test(this.resetPasswordForm.get('new_password')?.value || '');
     }
 
-    /**
-     * Check if password has special character
-     */
     hasSpecialChar(): boolean {
-        const password = this.securityForm.get('newPassword')?.value || '';
-        return /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        return /[!@#$%^&*(),.?":{}|<>]/.test(this.resetPasswordForm.get('new_password')?.value || '');
     }
 
-    /**
-     * Calculate password strength percentage
-     */
     private calculatePasswordStrength(): number {
-        let strength = 0;
-        if (this.hasMinLength()) strength += 20;
-        if (this.hasUpperCase()) strength += 20;
-        if (this.hasLowerCase()) strength += 20;
-        if (this.hasNumber()) strength += 20;
-        if (this.hasSpecialChar()) strength += 20;
-        return strength;
+        let s = 0;
+        if (this.hasMinLength()) s += 20;
+        if (this.hasUpperCase()) s += 20;
+        if (this.hasLowerCase()) s += 20;
+        if (this.hasNumber()) s += 20;
+        if (this.hasSpecialChar()) s += 20;
+        return s;
     }
 
-    /**
-     * Get password strength as text
-     */
     getPasswordStrengthText(): string {
-        const strength = this.calculatePasswordStrength();
-        if (strength === 0) return '';
-        if (strength <= 40) return 'Weak';
-        if (strength <= 60) return 'Fair';
-        if (strength <= 80) return 'Good';
+        const s = this.calculatePasswordStrength();
+        if (s === 0) return '';
+        if (s <= 40) return 'Weak';
+        if (s <= 60) return 'Fair';
+        if (s <= 80) return 'Good';
         return 'Strong';
     }
 
-    /**
-     * Get password strength bar width
-     */
     getPasswordStrengthWidth(): string {
         return this.calculatePasswordStrength() + '%';
     }
 
-    /**
-     * Get password strength bar color class
-     */
     getPasswordStrengthClass(): string {
-        const strength = this.calculatePasswordStrength();
-        if (strength === 0) return 'bg-gray-300';
-        if (strength <= 40) return 'bg-red-500';
-        if (strength <= 60) return 'bg-yellow-500';
-        if (strength <= 80) return 'bg-blue-500';
+        const s = this.calculatePasswordStrength();
+        if (s === 0) return 'bg-gray-300';
+        if (s <= 40) return 'bg-red-500';
+        if (s <= 60) return 'bg-yellow-500';
+        if (s <= 80) return 'bg-blue-500';
         return 'bg-green-500';
     }
 
-    /**
-     * Get password strength text color class
-     */
     getPasswordStrengthTextClass(): string {
-        const strength = this.calculatePasswordStrength();
-        if (strength === 0) return 'text-gray-500';
-        if (strength <= 40) return 'text-red-600';
-        if (strength <= 60) return 'text-yellow-600';
-        if (strength <= 80) return 'text-blue-600';
+        const s = this.calculatePasswordStrength();
+        if (s === 0) return 'text-gray-500';
+        if (s <= 40) return 'text-red-600';
+        if (s <= 60) return 'text-yellow-600';
+        if (s <= 80) return 'text-blue-600';
         return 'text-green-600';
     }
 }
