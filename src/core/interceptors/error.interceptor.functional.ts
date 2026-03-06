@@ -13,9 +13,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             } else {
                 // Server-side error - prefer detailed error from backend
                 const errorDetails = error.error?.error?.details;
-                errorMessage = (typeof errorDetails === 'string' ? errorDetails : null)
-                    || error.error?.message
-                    || `Error Code: ${error.status}\nMessage: ${error.message}`;
+                if (errorDetails && typeof errorDetails === 'object' && Object.keys(errorDetails).length > 0) {
+                    errorMessage = Object.values(errorDetails).join(' ');
+                } else {
+                    errorMessage = error.error?.message
+                        || `Error Code: ${error.status}\nMessage: ${error.message}`;
+                }
             }
 
             console.error('HTTP Error:', errorMessage);
