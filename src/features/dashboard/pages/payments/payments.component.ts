@@ -68,6 +68,7 @@ interface PaymentHistory {
     description: string;
     status: string;
     statusColor: string;
+    isRefreshing?: boolean;
 }
 
 interface PaymentInitiateResponse {
@@ -948,6 +949,42 @@ export class DashboardPaymentsComponent implements OnInit {
                 this.paymentSuccess = true;
                 this.notificationService.success('Payment submitted. Check payment history for the latest status.');
                 console.error('❌ Failed to fetch payment status:', error);
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    /**
+     * Re-check the status of a single pending payment.
+     * Called from the refresh button shown on Pending rows only.
+     * If the status is no longer Pending the button disappears automatically.
+     */
+    refreshPaymentStatus(payment: PaymentHistory): void {
+        if (payment.isRefreshing) return;
+
+        payment.isRefreshing = true;
+        this.cdr.detectChanges();
+
+        this.apiService.get<any>(`/payments/${payment.id}/status`).subscribe({
+            next: (response: any) => {
+                const rawStatus: string = response?.data?.status || payment.status;
+                const newStatus = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1).toLowerCase();
+
+                payment.status = newStatus;
+                payment.statusColor = newStatus.toLowerCase() === 'successful' ? 'green'
+                    : newStatus.toLowerCase() === 'pending' ? 'yellow'
+                    : 'red';
+                payment.isRefreshing = false;
+
+                if (newStatus.toLowerCase() !== 'pending') {
+                    this.notificationService.success(`Payment status updated to ${newStatus}.`);
+                }
+
+                this.cdr.detectChanges();
+            },
+            error: (error: any) => {
+                payment.isRefreshing = false;
+                this.notificationService.error(error.message || 'Could not refresh payment status. Please try again.');
                 this.cdr.detectChanges();
             }
         });
