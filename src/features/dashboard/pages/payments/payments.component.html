@@ -993,25 +993,69 @@
                 </span>
               </td>
               <td class="px-8 py-5 text-sm">
-                <button
-                  (click)="downloadReceipt(payment.id)"
-                  class="text-[#1a5632] hover:text-[#2a7642] font-semibold flex items-center gap-1 transition-colors"
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                <div class="flex items-center gap-3">
+                  <!-- Refresh button — only for Pending payments -->
+                  <button
+                    *ngIf="payment.status === 'Pending'"
+                    (click)="refreshPaymentStatus(payment)"
+                    [disabled]="payment.isRefreshing"
+                    title="Check for status update"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 hover:border-yellow-400 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  Receipt
-                </button>
+                    <!-- Spinning icon while refreshing -->
+                    <svg
+                      *ngIf="payment.isRefreshing"
+                      class="w-3.5 h-3.5 animate-spin"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      />
+                    </svg>
+                    <!-- Static refresh icon at rest -->
+                    <svg
+                      *ngIf="!payment.isRefreshing"
+                      class="w-3.5 h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      />
+                    </svg>
+                    {{ payment.isRefreshing ? 'Checking...' : 'Refresh' }}
+                  </button>
+
+                  <!-- Receipt download button -->
+                  <button
+                    (click)="downloadReceipt(payment.id)"
+                    class="text-[#1a5632] hover:text-[#2a7642] font-semibold flex items-center gap-1 transition-colors"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    Receipt
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
