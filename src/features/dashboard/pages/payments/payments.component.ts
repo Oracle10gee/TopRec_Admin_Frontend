@@ -63,6 +63,7 @@ interface PaymentHistoryResponse {
 
 interface PaymentHistory {
     id: string;
+    rrr: string;
     amount: string;
     date: string;
     description: string;
@@ -235,6 +236,7 @@ export class DashboardPaymentsComponent implements OnInit {
                 // Transform API response to display format
                 this.paymentHistory = apiPayments.map((payment: PaymentHistoryAPI) => ({
                     id: payment.id,
+                    rrr: payment.rrr || '—',
                     amount: `₦${parseFloat(payment.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
                     date: new Date(payment.date).toLocaleDateString('en-US', {
                         year: 'numeric',
