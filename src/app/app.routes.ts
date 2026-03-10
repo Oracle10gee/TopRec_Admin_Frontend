@@ -14,6 +14,10 @@ export const routes: Routes = [
         loadChildren: () => import('../features/dashboard/dashboard.module').then(m => m.DashboardModule),
     },
     {
+        path: 'verify/:userId',
+        loadComponent: () => import('../features/verify/verify.component').then(m => m.VerifyComponent),
+    },
+    {
         path: '',
         redirectTo: 'auth/login',
         pathMatch: 'full',
