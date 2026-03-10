@@ -27,6 +27,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
     certificateDescription: string = '';
     certificateBodyText: string = '';
     displayName: string = '';
+    qrCodeUrl: string = '';
 
     private destroy$ = new Subject<void>();
 
@@ -56,6 +57,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
                     this.setCertificateDescription(user);
                     this.setCertificateBodyText(user);
                     this.displayName = this.normalizeName(user.full_name || '');
+                    this.qrCodeUrl = this.buildQrUrl(user.id);
                 }
                 this.isLoading = false;
             });
@@ -115,7 +117,7 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
                 break;
             default:
                 this.certificateBodyText =
-                    'Having complied with the provisions of Section (5) (1) Town Planners (Registration, etc.) Act, CAP T7 LFN 2004, and Section (5) (b) Rules and Regulation for the Control Town Planning Practice, is hereby authorized to practice as a REGISTERED TOWN PLANNER within the Federal Republic of Nigeria.';
+                    'Having complied with the provisions of Section (5) (1) Town Planners (Registration, etc.) Act, CAP T7 LFN 2004, and Section (5) (b) Rules and Regulations for the control of the Town Planning Practice, is hereby authorized to practice as a REGISTERED TOWN PLANNER within the Federal Republic of Nigeria.';
                 break;
         }
     }
@@ -144,6 +146,20 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
         } else {
             this.licenseStatus = 'Active';
         }
+    }
+
+    /**
+     * Build the QR code image URL using api.qrserver.com.
+     * The QR encodes the frontend /verify/:userId page so third-party scanners
+     * land on a human-readable verification page rather than raw JSON.
+     */
+    private buildQrUrl(userId: string): string {
+        const verifyPageUrl = `${window.location.origin}/verify/${userId}`;
+        return (
+            `https://api.qrserver.com/v1/create-qr-code/` +
+            `?data=${encodeURIComponent(verifyPageUrl)}` +
+            `&size=150x150&color=1a5632&bgcolor=ffffff&margin=4`
+        );
     }
 
     /**

@@ -1,0 +1,175 @@
+<div class="verify-page">
+
+  <!-- ── HEADER ── -->
+  <header class="verify-header">
+    <div class="header-inner">
+      <img src="assets/toprec_badge.png" alt="TOPREC Logo" class="header-logo" />
+      <div class="header-text">
+        <p class="header-sup">TOPREC</p>
+        <h1 class="header-title">TOWN PLANNERS REGISTRATION COUNCIL OF NIGERIA</h1>
+        <p class="header-sub">Established by Decree No. 3 of 1988</p>
+      </div>
+    </div>
+    <div class="header-divider"></div>
+    <p class="header-portal-label">License Verification Portal</p>
+  </header>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="verify-main">
+
+    <!-- LOADING -->
+    <div *ngIf="isLoading" class="state-box">
+      <div class="spinner"></div>
+      <p class="state-title">Verifying Certificate…</p>
+      <p class="state-sub">Contacting TOPREC verification server, please wait.</p>
+    </div>
+
+    <!-- ERROR -->
+    <div *ngIf="!isLoading && error" class="state-box">
+      <div class="state-icon state-icon--error">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <p class="state-title">Verification Failed</p>
+      <p class="state-sub">{{ error }}</p>
+    </div>
+
+    <!-- RESULT -->
+    <div *ngIf="!isLoading && !error && verifyData" class="result-wrapper">
+
+      <!-- ── STATUS BANNER ── -->
+      <div class="status-banner" [class.status-banner--valid]="isValid" [class.status-banner--invalid]="!isValid">
+        <div class="status-icon">
+          <!-- Valid checkmark -->
+          <svg *ngIf="isValid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <!-- Invalid X -->
+          <svg *ngIf="!isValid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="status-text">
+          <span class="status-label">{{ isValid ? 'VERIFIED' : verificationStatus }}</span>
+          <span class="status-msg">{{ verifyData.verification.message }}</span>
+        </div>
+      </div>
+
+      <!-- ── CARDS GRID ── -->
+      <div class="cards-grid">
+
+        <!-- Member Information -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon card-icon--green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+            <h2 class="card-title">Member Information</h2>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <span class="info-label">Full Name</span>
+              <span class="info-value info-value--name">{{ verifyData.member.name }}</span>
+            </div>
+            <div class="info-divider"></div>
+            <div class="info-row">
+              <span class="info-label">Registration No.</span>
+              <span class="info-value info-value--mono">{{ verifyData.member.registration_number }}</span>
+            </div>
+            <div class="info-divider"></div>
+            <div class="info-row">
+              <span class="info-label">Membership Type</span>
+              <span class="info-badge info-badge--blue">{{ verifyData.member.membership_type }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Status -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon" [class.card-icon--red]="hasOutstandingBalance" [class.card-icon--green]="!hasOutstandingBalance">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+              </svg>
+            </div>
+            <h2 class="card-title">Payment Status</h2>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <span class="info-label">License Current</span>
+              <span class="info-badge" [class.info-badge--green]="verifyData.payment_status.is_current" [class.info-badge--red]="!verifyData.payment_status.is_current">
+                {{ verifyData.payment_status.is_current ? 'Yes — Up to Date' : 'No — Not Current' }}
+              </span>
+            </div>
+            <div class="info-divider"></div>
+            <div class="info-row">
+              <span class="info-label">Outstanding Balance</span>
+              <span class="info-value" [class.info-value--danger]="hasOutstandingBalance" [class.info-value--safe]="!hasOutstandingBalance">
+                {{ outstandingBalance }}
+              </span>
+            </div>
+            <div class="info-divider"></div>
+            <div class="info-row">
+              <span class="info-label">Has Payments on Record</span>
+              <span class="info-badge" [class.info-badge--green]="verifyData.payment_status.has_successful_payments" [class.info-badge--gray]="!verifyData.payment_status.has_successful_payments">
+                {{ verifyData.payment_status.has_successful_payments ? 'Yes' : 'No' }}
+              </span>
+            </div>
+            <div class="info-divider"></div>
+            <div class="info-row">
+              <span class="info-label">Last Payment Date</span>
+              <span class="info-value info-value--mono">{{ formatDate(verifyData.payment_status.last_payment_date) }}</span>
+            </div>
+          </div>
+
+          <!-- Outstanding balance warning -->
+          <div *ngIf="hasOutstandingBalance" class="card-warning">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <span>This member has an outstanding levy balance of <strong>{{ outstandingBalance }}</strong>. Their license may not be valid for practice.</span>
+          </div>
+        </div>
+
+        <!-- Verification Details -->
+        <div class="card card--full">
+          <div class="card-header">
+            <div class="card-icon card-icon--purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+            </div>
+            <h2 class="card-title">Verification Details</h2>
+          </div>
+          <div class="card-body card-body--row">
+            <div class="detail-item">
+              <span class="detail-label">Verification Status</span>
+              <span class="info-badge" [class.info-badge--green]="isValid" [class.info-badge--red]="!isValid">
+                {{ verificationStatus }}
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Verified At</span>
+              <span class="detail-value">{{ formatDateTime(verifyData.verification.verified_at) }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── FOOTER NOTE ── -->
+      <p class="footer-note">
+        This verification was generated automatically by the TOPREC system.
+        For enquiries, contact <strong>info&#64;toprec.gov.ng</strong>.
+      </p>
+
+    </div>
+    <!-- /result -->
+
+  </main>
+</div>

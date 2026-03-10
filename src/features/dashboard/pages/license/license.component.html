@@ -368,117 +368,12 @@
               <!-- QR Code -->
               <div class="cert-qr">
                 <div class="qr-placeholder">
-                  <svg viewBox="0 0 100 100" class="qr-svg">
-                    <rect x="0" y="0" width="100" height="100" fill="white" />
-                    <rect
-                      x="5"
-                      y="5"
-                      width="25"
-                      height="25"
-                      fill="#1a5632"
-                      rx="2"
-                    />
-                    <rect
-                      x="70"
-                      y="5"
-                      width="25"
-                      height="25"
-                      fill="#1a5632"
-                      rx="2"
-                    />
-                    <rect
-                      x="5"
-                      y="70"
-                      width="25"
-                      height="25"
-                      fill="#1a5632"
-                      rx="2"
-                    />
-                    <rect
-                      x="10"
-                      y="10"
-                      width="15"
-                      height="15"
-                      fill="white"
-                      rx="1"
-                    />
-                    <rect
-                      x="75"
-                      y="10"
-                      width="15"
-                      height="15"
-                      fill="white"
-                      rx="1"
-                    />
-                    <rect
-                      x="10"
-                      y="75"
-                      width="15"
-                      height="15"
-                      fill="white"
-                      rx="1"
-                    />
-                    <rect
-                      x="14"
-                      y="14"
-                      width="7"
-                      height="7"
-                      fill="#1a5632"
-                      rx="1"
-                    />
-                    <rect
-                      x="79"
-                      y="14"
-                      width="7"
-                      height="7"
-                      fill="#1a5632"
-                      rx="1"
-                    />
-                    <rect
-                      x="14"
-                      y="79"
-                      width="7"
-                      height="7"
-                      fill="#1a5632"
-                      rx="1"
-                    />
-                    <rect x="35" y="5" width="5" height="5" fill="#1a5632" />
-                    <rect x="45" y="5" width="5" height="5" fill="#1a5632" />
-                    <rect x="55" y="5" width="5" height="5" fill="#1a5632" />
-                    <rect x="35" y="15" width="5" height="5" fill="#1a5632" />
-                    <rect x="50" y="15" width="5" height="5" fill="#1a5632" />
-                    <rect x="35" y="25" width="5" height="5" fill="#1a5632" />
-                    <rect x="45" y="25" width="5" height="5" fill="#1a5632" />
-                    <rect x="60" y="25" width="5" height="5" fill="#1a5632" />
-                    <rect x="35" y="35" width="5" height="5" fill="#1a5632" />
-                    <rect x="45" y="35" width="5" height="5" fill="#1a5632" />
-                    <rect x="55" y="35" width="5" height="5" fill="#1a5632" />
-                    <rect x="70" y="35" width="5" height="5" fill="#1a5632" />
-                    <rect x="85" y="35" width="5" height="5" fill="#1a5632" />
-                    <rect x="5" y="35" width="5" height="5" fill="#1a5632" />
-                    <rect x="15" y="35" width="5" height="5" fill="#1a5632" />
-                    <rect x="25" y="35" width="5" height="5" fill="#1a5632" />
-                    <rect x="5" y="45" width="5" height="5" fill="#1a5632" />
-                    <rect x="20" y="45" width="5" height="5" fill="#1a5632" />
-                    <rect x="35" y="45" width="5" height="5" fill="#1a5632" />
-                    <rect x="50" y="45" width="5" height="5" fill="#1a5632" />
-                    <rect x="65" y="45" width="5" height="5" fill="#1a5632" />
-                    <rect x="80" y="45" width="5" height="5" fill="#1a5632" />
-                    <rect x="5" y="55" width="5" height="5" fill="#1a5632" />
-                    <rect x="15" y="55" width="5" height="5" fill="#1a5632" />
-                    <rect x="25" y="55" width="5" height="5" fill="#1a5632" />
-                    <rect x="40" y="55" width="5" height="5" fill="#1a5632" />
-                    <rect x="55" y="55" width="5" height="5" fill="#1a5632" />
-                    <rect x="70" y="55" width="5" height="5" fill="#1a5632" />
-                    <rect x="90" y="55" width="5" height="5" fill="#1a5632" />
-                    <rect x="75" y="70" width="5" height="5" fill="#1a5632" />
-                    <rect x="90" y="70" width="5" height="5" fill="#1a5632" />
-                    <rect x="70" y="80" width="5" height="5" fill="#1a5632" />
-                    <rect x="85" y="80" width="5" height="5" fill="#1a5632" />
-                    <rect x="75" y="90" width="5" height="5" fill="#1a5632" />
-                    <rect x="85" y="90" width="5" height="5" fill="#1a5632" />
-                    <rect x="90" y="75" width="5" height="5" fill="#1a5632" />
-                  </svg>
+                  <img
+                    *ngIf="qrCodeUrl"
+                    [src]="qrCodeUrl"
+                    alt="Scan to verify certificate"
+                    class="qr-img"
+                  />
                 </div>
                 <p class="qr-label">VERIFY MY IDENTITY</p>
               </div>
