@@ -150,14 +150,16 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
 
     /**
      * Build the QR code image URL using api.qrserver.com.
-     * The QR always encodes the live production API verification URL so it
-     * works correctly when scanned by any device, anywhere.
+     * The QR encodes the frontend /verify/:userId page so scanning it opens
+     * the full verification page rather than raw API JSON.
+     * window.location.origin resolves to the correct domain automatically
+     * in every environment (dev → localhost:4200, prod → real domain).
      */
     private buildQrUrl(userId: string): string {
-        const verifyUrl = `https://api.toprec.gov.ng/api/v1/verify/${userId}`;
+        const verifyPageUrl = `${window.location.origin}/verify/${userId}`;
         return (
             `https://api.qrserver.com/v1/create-qr-code/` +
-            `?data=${encodeURIComponent(verifyUrl)}` +
+            `?data=${encodeURIComponent(verifyPageUrl)}` +
             `&size=150x150&color=1a5632&bgcolor=ffffff&margin=4`
         );
     }
