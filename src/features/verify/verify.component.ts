@@ -75,7 +75,10 @@ export class VerifyComponent implements OnInit {
     }
 
     get isValid(): boolean {
-        return this.verifyData?.isValid === true;
+        // Valid only when current_financial_status is 0, null, or empty —
+        // meaning the member has no outstanding levy obligations.
+        const val = this.verifyData?.payment_status?.current_financial_status;
+        return !val || val === '0' || Number(val) === 0;
     }
 
     get verificationStatus(): string {
