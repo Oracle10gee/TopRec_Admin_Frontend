@@ -18,12 +18,12 @@
       <div class="flex items-center gap-3 self-start">
 
         <!-- Dynamic Total Amount Card -->
-        <div class="bg-[#1a5632] text-white rounded-xl px-5 py-3 flex flex-col items-end shadow-md min-w-[180px]">
-          <p class="text-xs font-medium opacity-75 uppercase tracking-wide">Total Amount</p>
-          <p class="text-xl font-bold mt-0.5">
+        <div class="bg-[#1a5632] rounded-xl px-5 py-3 flex flex-col items-end shadow-md min-w-[180px]">
+          <p class="text-xs font-medium opacity-75 uppercase tracking-wide total-amount-text">Total Amount</p>
+          <p class="text-xl font-bold mt-0.5 total-amount-text">
             ₦{{ totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
           </p>
-          <p class="text-[10px] opacity-60 mt-0.5 capitalize">{{ statusFilter }} · {{ totalPayments }} records</p>
+          <p class="text-[10px] opacity-60 mt-0.5 capitalize total-amount-text">{{ statusFilter }} · {{ totalPayments }} records</p>
         </div>
 
         <!-- Filter Button with active badge -->
