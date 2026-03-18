@@ -303,14 +303,17 @@
     <app-members-list
       *ngIf="activeTab === 'members'"
       [role]="'Member'"
+      (countChange)="onMembersCountChange($event)"
     ></app-members-list>
     <app-consulting-firm
       *ngIf="activeTab === 'consulting'"
       [role]="'Consulting Firm'"
+      (countChange)="onConsultingCountChange($event)"
     ></app-consulting-firm>
     <app-practice-firm
       *ngIf="activeTab === 'practice'"
       [role]="'Practice Firm'"
+      (countChange)="onPracticeCountChange($event)"
     ></app-practice-firm>
   </div>
 </div>

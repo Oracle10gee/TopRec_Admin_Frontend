@@ -54,6 +54,9 @@ export class PaymentReportComponent implements OnInit, OnDestroy {
     // Filtering
     statusFilter: 'all' | 'successful' | 'pending' | 'failed' = 'all';
 
+    // Total amount for the current filter (sum across displayed page)
+    totalAmount = 0;
+
     // Advanced filter panel
     filterForm!: FormGroup;
     showFilterPanel = false;
@@ -137,6 +140,10 @@ export class PaymentReportComponent implements OnInit, OnDestroy {
 
                     this.totalPages = pagination.total_pages || 0;
                     this.totalPayments = pagination.total || 0;
+                    this.totalAmount = this.payments.reduce((sum, p) => {
+                        const val = parseFloat(p.amount.replace(/[₦,]/g, '')) || 0;
+                        return sum + val;
+                    }, 0);
                     this.isLoading = false;
                     this.cdr.detectChanges();
                 },

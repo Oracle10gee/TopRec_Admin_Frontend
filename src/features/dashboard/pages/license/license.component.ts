@@ -109,11 +109,11 @@ export class DashboardLicenseComponent implements OnInit, OnDestroy {
         switch (user.role) {
             case 'Consulting Firm':
                 this.certificateBodyText =
-                    'Having complied with the provisions of schedule 1 Rules and Regulation for the Control Town Planning Practice are expected to carry out, Environmental Impact Statement, Master Plan, Structure Plans, Special Area Plans, Campus Plans, Subset Plans including Layouts/Subdivision of more than 10 Hectares.';
+                    'Having complied with the provisions of schedule 1 Rules and Regulations for the control of the Town Planning Practice are expected to carry out, Environmental Impact Statement, Master Plan, Structure Plans, Special Area Plans, Campus Plans, Subset Plans including Layouts/Subdivision of more than 10 Hectares.';
                 break;
             case 'Practice Firm':
                 this.certificateBodyText =
-                    'Having complied with the provisions of schedule 1 Rules and Regulation for the Control Town Planning Practice are expected to carry out, Site Analysis Report and Plan, Layouts/subdivision of less than 10 Hectares, Processing of Physical Planning development permit, Planning report on Advisory and advocacy.';
+                    'Having complied with the provisions of schedule 1 Rules and Regulations for the control of the Town Planning Practice are expected to carry out, Site Analysis Report and Plan, Layouts/subdivision of less than 10 Hectares, Processing of Physical Planning development permit, Planning report on Advisory and advocacy.';
                 break;
             default:
                 this.certificateBodyText =

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
@@ -28,6 +28,7 @@ interface ConsultingFirm {
 })
 export class ConsultingFirmComponent implements OnInit, OnChanges {
     @Input() role: string = 'Consulting Firm';
+    @Output() countChange = new EventEmitter<number>();
 
     filterForm!: FormGroup;
     editForm!: FormGroup;
@@ -184,6 +185,7 @@ export class ConsultingFirmComponent implements OnInit, OnChanges {
 
                 this.filteredFirms = [...this.firms];
                 this.isLoading = false;
+                this.countChange.emit(this.totalCount);
             },
             error: (error) => {
                 console.error('Error loading firms:', error);
