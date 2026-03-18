@@ -93,6 +93,18 @@ export class DashboardMemberComponent implements OnInit {
         });
     }
 
+    onMembersCountChange(count: number): void {
+        this.counts.members = count;
+    }
+
+    onConsultingCountChange(count: number): void {
+        this.counts.consulting = count;
+    }
+
+    onPracticeCountChange(count: number): void {
+        this.counts.practice = count;
+    }
+
     setActiveTab(tab: 'members' | 'consulting' | 'practice'): void {
         this.activeTab = tab;
         // Optional: Update URL query params

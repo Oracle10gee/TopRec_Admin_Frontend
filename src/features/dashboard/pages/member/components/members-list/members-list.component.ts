@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
@@ -15,6 +15,10 @@ interface Member {
     membership_number: string;
     status: 'Active' | 'Inactive';
     role?: string;
+    gender?: string;
+    state_of_practice?: string;
+    registration_date?: string;
+    address?: string;
 }
 
 @Component({
@@ -26,6 +30,7 @@ interface Member {
 })
 export class MembersListComponent implements OnInit, OnChanges {
     @Input() role: string = 'Member';
+    @Output() countChange = new EventEmitter<number>();
 
     filterForm!: FormGroup;
     editForm!: FormGroup;
@@ -40,6 +45,9 @@ export class MembersListComponent implements OnInit, OnChanges {
     showEditModal = false;
     selectedMember: Member | null = null;
     isSubmitting = false;
+
+    // Edit modal role tracking (for conditional gender field)
+    selectedEditRole = '';
 
     // Add Member modal (Superadmin only)
     isSuperadmin = false;
@@ -95,9 +103,15 @@ export class MembersListComponent implements OnInit, OnChanges {
         });
 
         this.editForm = this.fb.group({
-            full_name: ['', Validators.required],
+            role: ['', Validators.required],
+            full_name: ['', [Validators.required, Validators.minLength(3)]],
             email: ['', [Validators.required, Validators.email]],
             phone_number: ['', Validators.required],
+            membership_number: ['', Validators.required],
+            gender: [''],
+            state_of_practice: [''],
+            registration_date: [''],
+            address: [''],
             status: ['']
         });
 
@@ -193,7 +207,11 @@ export class MembersListComponent implements OnInit, OnChanges {
                         email: user.email || '',
                         membership_number: user.membership_number || '',
                         status: user.status === 'active' ? 'Active' : 'Inactive',
-                        role: user.role
+                        role: user.role,
+                        gender: user.gender || '',
+                        state_of_practice: user.state_of_practice || '',
+                        registration_date: user.registration_date ? user.registration_date.split('T')[0] : '',
+                        address: user.address || ''
                     }));
                     this.totalCount = response.data?.pagination?.total || this.members.length;
                 } else if (response.data && Array.isArray(response.data)) {
@@ -204,13 +222,18 @@ export class MembersListComponent implements OnInit, OnChanges {
                         email: user.email || '',
                         membership_number: user.membership_number || '',
                         status: user.status === 'active' || user.status === 'Active' ? 'Active' : 'Inactive',
-                        role: user.role
+                        role: user.role,
+                        gender: user.gender || '',
+                        state_of_practice: user.state_of_practice || '',
+                        registration_date: user.registration_date ? user.registration_date.split('T')[0] : '',
+                        address: user.address || ''
                     }));
                     this.totalCount = response.meta?.total || this.members.length;
                 }
 
                 this.filteredMembers = [...this.members];
                 this.isLoading = false;
+                this.countChange.emit(this.totalCount);
             },
             error: (error) => {
                 console.error('Error loading members:', error);
@@ -460,7 +483,28 @@ export class MembersListComponent implements OnInit, OnChanges {
     }
 
     exportMembers(): void {
-        console.log('Export members to excel');
+        if (this.filteredMembers.length === 0) {
+            this.notificationService.error('No members to export');
+            return;
+        }
+        const headers = ['Name', 'Email', 'Phone', 'Membership Number', 'Role', 'Status'];
+        const rows = this.filteredMembers.map(m => [
+            `"${m.name}"`,
+            m.email,
+            m.mobile,
+            m.membership_number,
+            m.role || '',
+            m.status
+        ]);
+        const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `members-${this.role.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.notificationService.success('Members exported successfully');
     }
 
     /**
@@ -476,13 +520,28 @@ export class MembersListComponent implements OnInit, OnChanges {
         this.selectedMember = null;
     }
 
+    isEditGenderVisible(): boolean {
+        return this.selectedEditRole === 'Member';
+    }
+
     editMember(member: Member): void {
         this.selectedMember = member;
+        this.selectedEditRole = member.role || '';
         this.editForm.patchValue({
+            role: member.role || '',
             full_name: member.name,
             email: member.email,
             phone_number: member.mobile,
+            membership_number: member.membership_number,
+            gender: member.gender || '',
+            state_of_practice: member.state_of_practice || '',
+            registration_date: member.registration_date || '',
+            address: member.address || '',
             status: member.status
+        });
+        // Update gender visibility based on role
+        this.editForm.get('role')?.valueChanges.subscribe(role => {
+            this.selectedEditRole = role;
         });
         this.showEditModal = true;
     }
@@ -490,23 +549,33 @@ export class MembersListComponent implements OnInit, OnChanges {
     closeEditModal(): void {
         this.showEditModal = false;
         this.selectedMember = null;
+        this.selectedEditRole = '';
         this.editForm.reset();
     }
 
     saveMember(): void {
         if (!this.editForm.valid || !this.selectedMember) {
+            this.editForm.markAllAsTouched();
             return;
         }
 
         this.isSubmitting = true;
-        const updates = {
-            full_name: this.editForm.get('full_name')?.value,
-            email: this.editForm.get('email')?.value,
-            phone_number: this.editForm.get('phone_number')?.value
+        const fv = this.editForm.value;
+        const updates: any = {
+            role: fv.role,
+            full_name: fv.full_name,
+            email: fv.email,
+            phone_number: fv.phone_number,
+            membership_number: fv.membership_number,
+            state_of_practice: fv.state_of_practice,
+            address: fv.address,
+            status: fv.status
         };
+        if (fv.registration_date) updates.registration_date = fv.registration_date;
+        if (fv.gender)            updates.gender = fv.gender;
 
         this.authService.updateUser(this.selectedMember.id, updates).subscribe({
-            next: (response) => {
+            next: () => {
                 this.isSubmitting = false;
                 this.notificationService.success('Member updated successfully');
                 this.closeEditModal();
