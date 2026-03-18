@@ -277,7 +277,7 @@
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Full Name -->
+            <!-- Full Name (read-only with tooltip) -->
             <div class="space-y-2">
               <label class="block text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -285,24 +285,32 @@
                 </svg>
                 Full Name
                 <span class="text-red-500">*</span>
+                <!-- Read-only badge -->
+                <span class="ml-1 px-1.5 py-0.5 text-[10px] font-semibold bg-gray-100 text-gray-500 rounded uppercase tracking-wide">read-only</span>
               </label>
-              <input
-                type="text"
-                formControlName="full_name"
-                placeholder="Enter your full name"
-                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-[#1a5632] outline-none transition-all"
-                [ngClass]="{
-                  'border-red-300 focus:ring-red-500 focus:border-red-500': full_name?.invalid && full_name?.touched && isEditing,
-                  'border-green-300 focus:ring-green-500 focus:border-green-500': full_name?.valid && full_name?.touched && isEditing,
-                  'bg-gray-50 cursor-not-allowed': full_name?.disabled
-                }"
-              />
-              <div *ngIf="full_name?.invalid && full_name?.touched && isEditing" class="flex items-center gap-1 text-xs text-red-500">
-                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                </svg>
-                <span *ngIf="full_name?.errors?.['required']">Name is required</span>
-                <span *ngIf="full_name?.errors?.['minlength']">Name must be at least 3 characters</span>
+              <!-- Tooltip wrapper -->
+              <div class="relative group">
+                <input
+                  type="text"
+                  formControlName="full_name"
+                  placeholder="Enter your full name"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg bg-gray-50 cursor-not-allowed text-gray-600 outline-none"
+                />
+                <!-- Tooltip -->
+                <div class="pointer-events-none absolute bottom-full left-0 mb-2 z-20
+                            opacity-0 group-hover:opacity-100
+                            transition-opacity duration-200">
+                  <div class="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 max-w-xs shadow-lg leading-relaxed">
+                    <div class="flex items-start gap-2">
+                      <svg class="w-3.5 h-3.5 text-yellow-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                      </svg>
+                      <span>Name is read-only and cannot be edited. Contact Toprec via help and support to request name change.</span>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="absolute top-full left-4 border-4 border-transparent border-t-gray-900"></div>
+                  </div>
+                </div>
               </div>
             </div>
 
