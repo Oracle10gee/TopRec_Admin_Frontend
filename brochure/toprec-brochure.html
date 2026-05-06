@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOPREC Admin Portal - Product Brochure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* fonts loaded via link tags in head */
+
+  :root {
+    --green-900: #0d3520;
+    --green-800: #155229;
+    --green-700: #1a5632;
+    --green-600: #1e7a45;
+    --green-500: #22c55e;
+    --green-400: #4ade80;
+    --green-100: #dcfce7;
+    --green-50: #f0fdf4;
+    --gold: #d4a843;
+    --gold-light: #f0d78c;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+    --orange: #f97316;
+    --red: #ef4444;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--gray-800);
+    background: #fff;
+    line-height: 1.6;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  .page {
+    position: relative;
+    background: #fff;
+    page-break-after: always;
+  }
+
+  /* ─── COVER PAGE ─── */
+  .cover {
+    background: linear-gradient(135deg, var(--green-900) 0%, var(--green-700) 40%, var(--green-600) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 40px;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 1;
+  }
+
+  .cover-content { position: relative; z-index: 1; }
+
+  .cover-badge {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 40px;
+    border: 3px solid rgba(255,255,255,0.2);
+    overflow: hidden;
+  }
+
+  .cover-badge img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+  }
+
+  .cover-org {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 8px;
+  }
+
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+
+  .cover-subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 50px;
+    max-width: 420px;
+  }
+
+  .cover-divider {
+    width: 80px;
+    height: 3px;
+    background: var(--gold);
+    margin: 0 auto 50px;
+    border-radius: 2px;
+  }
+
+  .cover-tagline {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 10px;
+  }
+
+  .cover-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .cover-feat {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 20px 12px;
+    text-align: center;
+  }
+
+  .cover-feat-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 18px;
+  }
+
+  .cover-feat-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.3;
+  }
+
+  .cover-footer {
+    position: absolute;
+    bottom: 30px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    z-index: 1;
+  }
+
+  /* ─── COMMON PAGE STYLES ─── */
+  .page-inner {
+    padding: 35px 45px;
+    min-height: 297mm;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--green-100);
+  }
+
+  .page-header-logo {
+    height: 28px;
+    object-fit: contain;
+  }
+
+  .page-header-text {
+    font-size: 9px;
+    color: var(--gray-600);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .page-number {
+    position: absolute;
+    bottom: 25px;
+    right: 50px;
+    font-size: 10px;
+    color: var(--gray-300);
+    font-weight: 500;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--green-600);
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--green-900);
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .section-desc {
+    font-size: 12.5px;
+    color: var(--gray-600);
+    margin-bottom: 20px;
+    line-height: 1.55;
+    max-width: 480px;
+  }
+
+  /* ─── FEATURE CARDS ─── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .feature-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 18px;
+    transition: all 0.2s;
+    background: #fff;
+  }
+
+  .feature-card:hover {
+    border-color: var(--green-500);
+    box-shadow: 0 4px 20px rgba(34,197,94,0.08);
+  }
+
+  .fc-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .fc-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .fc-icon.green { background: var(--green-100); color: var(--green-700); }
+  .fc-icon.blue { background: #dbeafe; color: var(--blue); }
+  .fc-icon.purple { background: #ede9fe; color: var(--purple); }
+  .fc-icon.orange { background: #ffedd5; color: var(--orange); }
+  .fc-icon.red { background: #fee2e2; color: var(--red); }
+  .fc-icon.gold { background: #fef3c7; color: #b45309; }
+
+  .fc-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+
+  .fc-body {
+    font-size: 11.5px;
+    color: var(--gray-600);
+    line-height: 1.55;
+  }
+
+  .fc-body ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 6px;
+  }
+
+  .fc-body ul li {
+    position: relative;
+    padding-left: 16px;
+    margin-bottom: 3px;
+    font-size: 11px;
+    color: var(--gray-600);
+  }
+
+  .fc-body ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green-500);
+  }
+
+  /* ─── FULL-WIDTH FEATURE ─── */
+  .feature-full {
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+    background: #fff;
+  }
+
+  .feature-full .fc-header { margin-bottom: 12px; }
+
+  .ff-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .ff-col h4 {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── INTRO / OVERVIEW PAGE ─── */
+  .intro-hero {
+    background: linear-gradient(135deg, var(--green-50) 0%, #ecfdf5 100%);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 28px;
+    border: 1px solid var(--green-100);
+  }
+
+  .intro-hero p {
+    font-size: 14px;
+    color: var(--gray-700);
+    line-height: 1.7;
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    text-align: center;
+    padding: 14px 8px;
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+    background: #fff;
+  }
+
+  .stat-icon {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--green-700);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--gray-600);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── ROLE TABLE ─── */
+  .role-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-top: 10px;
+  }
+
+  .role-table th {
+    background: var(--green-700);
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .role-table th:first-child { border-radius: 8px 0 0 0; }
+  .role-table th:last-child { border-radius: 0 8px 0 0; }
+
+  .role-table td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-700);
+  }
+
+  .role-table tr:nth-child(even) td { background: var(--gray-50); }
+
+  .role-table .check { color: var(--green-600); font-weight: 700; font-size: 14px; }
+  .role-table .cross { color: var(--gray-300); font-size: 14px; }
+
+  /* ─── FLOW DIAGRAM ─── */
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 14px 0;
+  }
+
+  .flow-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+  }
+
+  .flow-step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--green-700);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 6px;
+  }
+
+  .flow-step-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gray-700);
+    line-height: 1.3;
+  }
+
+  .flow-step-desc {
+    font-size: 9px;
+    color: var(--gray-500);
+    margin-top: 2px;
+  }
+
+  .flow-arrow {
+    width: 30px;
+    flex-shrink: 0;
+    text-align: center;
+    color: var(--green-500);
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: -16px;
+  }
+
+  /* ─── HIGHLIGHT BOX ─── */
+  .highlight-box {
+    border-left: 4px solid var(--green-600);
+    background: var(--green-50);
+    padding: 16px 20px;
+    border-radius: 0 10px 10px 0;
+    margin: 16px 0;
+  }
+
+  .highlight-box h4 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green-800);
+    margin-bottom: 4px;
+  }
+
+  .highlight-box p {
+    font-size: 11px;
+    color: var(--gray-600);
+    line-height: 1.5;
+  }
+
+  /* ─── TECH STACK ─── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .tech-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .tech-card-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 2px;
+  }
+
+  .tech-card-ver {
+    font-size: 10px;
+    color: var(--green-600);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .tech-card-desc {
+    font-size: 10px;
+    color: var(--gray-500);
+    line-height: 1.4;
+  }
+
+  /* ─── BACK COVER ─── */
+  .back-cover {
+    background: linear-gradient(135deg, var(--green-900) 0%, var(--green-700) 50%, var(--green-600) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 60px;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  .back-cover::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .back-content { position: relative; z-index: 1; }
+
+  .back-logo { height: 60px; object-fit: contain; margin-bottom: 30px; filter: brightness(0) invert(1); }
+
+  .back-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .back-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    max-width: 380px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+
+  .back-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 400px;
+    margin: 0 auto 40px;
+    text-align: left;
+  }
+
+  .back-info-item label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold-light);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .back-info-item span {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .back-legal {
+    font-size: 9px;
+    color: rgba(255,255,255,0.35);
+    max-width: 420px;
+    line-height: 1.5;
+  }
+
+  /* ─── CERTIFICATE PREVIEW ─── */
+  .cert-preview {
+    border: 3px solid var(--green-600);
+    border-radius: 12px;
+    padding: 24px;
+    background: linear-gradient(to bottom right, #fefefe, #f7fdf9);
+    text-align: center;
+    margin: 14px 0;
+    position: relative;
+  }
+
+  .cert-preview::before {
+    content: 'SAMPLE';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 60px;
+    font-weight: 900;
+    color: rgba(26,86,50,0.06);
+    letter-spacing: 20px;
+    z-index: 0;
+  }
+
+  .cert-preview > * { position: relative; z-index: 1; }
+
+  .cert-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--green-800);
+    margin-bottom: 3px;
+  }
+
+  .cert-sub {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .cert-body {
+    font-size: 10px;
+    color: var(--gray-600);
+    line-height: 1.5;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  .cert-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green-700);
+    margin: 8px 0;
+  }
+
+  .cert-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  .cert-footer-item {
+    font-size: 9px;
+    color: var(--gray-500);
+  }
+
+  .cert-footer-item strong {
+    display: block;
+    font-size: 10px;
+    color: var(--gray-700);
+  }
+
+  .cert-qr {
+    width: 40px;
+    height: 40px;
+    background: var(--gray-200);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    color: var(--gray-500);
+  }
+
+  /* ─── NOTIFICATION LIST ─── */
+  .notif-list { margin-top: 8px; }
+
+  .notif-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .notif-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .notif-dot.on { background: var(--green-500); }
+  .notif-dot.off { background: var(--gray-300); }
+
+  .notif-text {
+    flex: 1;
+    font-size: 11px;
+    color: var(--gray-700);
+  }
+
+  .notif-text span {
+    display: block;
+    font-size: 9px;
+    color: var(--gray-500);
+    margin-top: 1px;
+  }
+
+  .notif-status {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .notif-status.on { background: var(--green-100); color: var(--green-700); }
+  .notif-status.off { background: var(--gray-100); color: var(--gray-600); }
+
+  /* ─── SECURITY FLOW ─── */
+  .sec-steps {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 12px;
+    margin: 12px 0;
+  }
+
+  .sec-step {
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .sec-step-num {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--green-600);
+    margin-bottom: 4px;
+  }
+
+  .sec-step-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 3px;
+  }
+
+  .sec-step-desc {
+    font-size: 9.5px;
+    color: var(--gray-500);
+    line-height: 1.4;
+  }
+
+  @media print {
+    body { background: white; }
+    .page { box-shadow: none; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 1 — COVER
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page cover" style="page-break-after:always;">
+  <div class="cover-content">
+    <div class="cover-badge">
+      <img src="../src/assets/toprec_badge.png" alt="TOPREC Badge">
+    </div>
+    <div class="cover-org">Town Planners Registration Council of Nigeria</div>
+    <div class="cover-title">TOPREC<br>Admin Portal</div>
+    <div class="cover-subtitle">
+      A comprehensive digital platform for professional license management, payments, and member administration.
+    </div>
+    <div class="cover-divider"></div>
+    <div class="cover-features">
+      <div class="cover-feat">
+        <div class="cover-feat-icon">&#x1F4DC;</div>
+        <div class="cover-feat-label">License<br>Management</div>
+      </div>
+      <div class="cover-feat">
+        <div class="cover-feat-icon">&#x1F4B3;</div>
+        <div class="cover-feat-label">Secure<br>Payments</div>
+      </div>
+      <div class="cover-feat">
+        <div class="cover-feat-icon">&#x1F465;</div>
+        <div class="cover-feat-label">Member<br>Directory</div>
+      </div>
+    </div>
+  </div>
+  <div class="cover-footer">
+    Established by Decree No. 3 of 1988 &nbsp;&bull;&nbsp; Product Brochure 2026
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 2 — OVERVIEW & INTRODUCTION
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page" style="page-break-after:always;">
+  <div class="page-inner">
+    <div class="page-header">
+      <img src="../src/assets/Toprec_Title_and_Logo.png" alt="TOPREC" class="page-header-logo">
+      <span class="page-header-text">Product Brochure</span>
+    </div>
+
+    <div class="section-label">Introduction</div>
+    <div class="section-title">Platform Overview</div>
+    <div class="section-desc">
+      Everything you need to manage professional town planning licenses in Nigeria &mdash; in one unified platform.
+    </div>
+
+    <div class="intro-hero">
+      <p>
+        The <strong>TOPREC Admin Portal</strong> is a purpose-built web application designed for the
+        <strong>Town Planners Registration Council of Nigeria</strong>. It provides registered town planners,
+        consulting firms, and practice firms with a secure, modern interface to manage their professional
+        licenses, process payments, maintain profiles, and stay compliant with regulatory requirements.
+      </p>
+      <br>
+      <p>
+        Administrators and super-administrators gain access to a comprehensive member directory, payment
+        configuration tools, and real-time oversight of the entire membership base. The platform replaces
+        manual, paper-based workflows with a streamlined digital experience &mdash; from initial registration
+        through annual license renewal.
+      </p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-icon">&#x1F512;</div>
+        <div class="stat-value">JWT</div>
+        <div class="stat-label">Secure Auth</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">&#x1F4B3;</div>
+        <div class="stat-value">Remita</div>
+        <div class="stat-label">Payment Gateway</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">&#x1F3DB;</div>
+        <div class="stat-value">4</div>
+        <div class="stat-label">User Roles</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">&#x1F4F1;</div>
+        <div class="stat-value">100%</div>
+        <div class="stat-label">Responsive</div>
+      </div>
+    </div>
+
+    <div class="section-label">User Roles</div>
+    <div class="section-title" style="font-size:22px; margin-bottom: 14px;">Role-Based Access Control</div>
+
+    <table class="role-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Member</th>
+          <th>Consulting Firm</th>
+          <th>Practice Firm</th>
+          <th>Superadmin</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Dashboard &amp; Home</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Profile Management</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>License &amp; Certificate</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Payments &amp; Renewals</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Security Settings</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Notification Preferences</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Members Directory</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Payment Configuration</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="page-number">02</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 3 — AUTHENTICATION & ONBOARDING
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page" style="page-break-after:always;">
+  <div class="page-inner">
+    <div class="page-header">
+      <img src="../src/assets/Toprec_Title_and_Logo.png" alt="TOPREC" class="page-header-logo">
+      <span class="page-header-text">Authentication &amp; Onboarding</span>
+    </div>
+
+    <div class="section-label">Module 01</div>
+    <div class="section-title">Authentication &amp; Security</div>
+    <div class="section-desc">
+      Enterprise-grade authentication with JWT tokens, OTP verification, and automatic session management to protect every account.
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon green">&#x1F511;</div>
+          <div class="fc-title">Secure Login</div>
+        </div>
+        <div class="fc-body">
+          Authenticate using your TOPREC registration number (e.g., RTP/1*** or PFN/5**) and password. Features include:
+          <ul>
+            <li>Password visibility toggle</li>
+            <li>Real-time field validation</li>
+            <li>Loading state with animated spinner</li>
+            <li>Auto-redirect to dashboard on success</li>
+            <li>Existing-user profile update modal</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon blue">&#x1F4DD;</div>
+          <div class="fc-title">Member Registration</div>
+        </div>
+        <div class="fc-body">
+          Full sign-up flow with role selection and comprehensive form collection:
+          <ul>
+            <li>Role: Member, Consulting Firm, or Practice Firm</li>
+            <li>Personal Info: name, email, phone, address, gender</li>
+            <li>Professional: registration number, state, date</li>
+            <li>Security: password with strength requirements</li>
+            <li>Conditional fields based on selected role</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon purple">&#x1F504;</div>
+          <div class="fc-title">Password Recovery</div>
+        </div>
+        <div class="fc-body">
+          Multi-step password recovery with OTP verification for identity assurance:
+          <ul>
+            <li>Enter email or registration number</li>
+            <li>Receive 6-digit OTP via email</li>
+            <li>Verify OTP with cooldown-based resend</li>
+            <li>Set new password (min. 6 characters)</li>
+            <li>Auto-redirect to login on success</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon gold">&#x1F6E1;</div>
+          <div class="fc-title">Session Management</div>
+        </div>
+        <div class="fc-body">
+          Robust token-based session handling to ensure secure, uninterrupted usage:
+          <ul>
+            <li>JWT access &amp; refresh token architecture</li>
+            <li>Automatic token refresh 5 min before expiry</li>
+            <li>Persistent login via localStorage</li>
+            <li>Route guards: AuthGuard &amp; NoAuthGuard</li>
+            <li>Global error interceptor for 401/403</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 22px;">
+      <h4>Password Recovery Flow</h4>
+      <p>The OTP-verified process ensures that only the account owner can reset their credentials, adding an essential layer of identity protection.</p>
+    </div>
+
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-step-num">1</div>
+        <div class="flow-step-label">Enter ID</div>
+        <div class="flow-step-desc">Email or Reg. No.</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-step-num">2</div>
+        <div class="flow-step-label">Receive OTP</div>
+        <div class="flow-step-desc">6-digit code via email</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-step-num">3</div>
+        <div class="flow-step-label">Verify OTP</div>
+        <div class="flow-step-desc">Enter &amp; validate code</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-step-num">4</div>
+        <div class="flow-step-label">New Password</div>
+        <div class="flow-step-desc">Set &amp; confirm</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-step-num">5</div>
+        <div class="flow-step-label">Login</div>
+        <div class="flow-step-desc">Auto-redirect</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-number">03</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 4 — DASHBOARD HOME
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page" style="page-break-after:always;">
+  <div class="page-inner">
+    <div class="page-header">
+      <img src="../src/assets/Toprec_Title_and_Logo.png" alt="TOPREC" class="page-header-logo">
+      <span class="page-header-text">Dashboard &amp; Home</span>
+    </div>
+
+    <div class="section-label">Module 02</div>
+    <div class="section-title">Dashboard Home</div>
+    <div class="section-desc">
+      A personalised command centre providing real-time visibility into license status, financial standing, and profile health at a glance.
+    </div>
+
+    <div class="feature-full">
+      <div class="fc-header">
+        <div class="fc-icon green">&#x1F4CA;</div>
+        <div class="fc-title">Key Metrics Dashboard</div>
+      </div>
+      <div class="ff-cols">
+        <div class="ff-col">
+          <h4>Statistics Cards</h4>
+          <div class="fc-body">
+            <ul>
+              <li><strong>License Status</strong> &mdash; Active, Expired, or Blocked badge with days-remaining countdown</li>
+              <li><strong>Levy Balance</strong> &mdash; Outstanding balance in Nigerian Naira (&#8358;) with Clear/Outstanding indicator</li>
+              <li><strong>Profile Completion</strong> &mdash; Percentage progress bar showing X/Y fields completed, clickable to navigate to profile</li>
+              <li><strong>Member Since</strong> &mdash; Registration date with role display</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ff-col">
+          <h4>Quick Actions</h4>
+          <div class="fc-body">
+            <ul>
+              <li><strong>Update Profile</strong> &mdash; One-click navigation to edit personal information</li>
+              <li><strong>Make Payment</strong> &mdash; Direct access to license renewal payment processing</li>
+              <li><strong>View License</strong> &mdash; Instant access to view and download your practice license</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon orange">&#x1F514;</div>
+          <div class="fc-title">Smart Alerts &amp; Banners</div>
+        </div>
+        <div class="fc-body">
+          Context-aware notification banners that appear automatically based on your account status:
+          <ul>
+            <li><strong>License Renewal Reminder</strong> &mdash; Appears when license expires within 60 days, with gradient green banner and &ldquo;Renew Now&rdquo; call-to-action</li>
+            <li><strong>Outstanding Levy Warning</strong> &mdash; Red gradient alert when financial obligations are pending, with &ldquo;Pay Now&rdquo; button</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon blue">&#x1F4C5;</div>
+          <div class="fc-title">License Validity Tracker</div>
+        </div>
+        <div class="fc-body">
+          Visual representation of your annual license period with real-time progress tracking:
+          <ul>
+            <li>Horizontal progress bar showing elapsed days in the calendar year</li>
+            <li>Issued date to expiry date range display (Jan 1 &ndash; Dec 31)</li>
+            <li>Colour-coded status: green (safe), orange (expiring soon), red (expired)</li>
+            <li>Personal information summary (membership number, role, email)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 20px;">
+      <h4>Personalised Welcome Experience</h4>
+      <p>
+        The dashboard greets each user by their first name alongside the current date. The license status badge
+        is prominently displayed in the header &mdash; providing instant clarity on whether the user's license is
+        Active, Expired, or Blocked, ensuring compliance awareness from the moment they log in.
+      </p>
+    </div>
+
+  </div>
+  <div class="page-number">04</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 5 — PROFILE MANAGEMENT
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page" style="page-break-after:always;">
+  <div class="page-inner">
+    <div class="page-header">
+      <img src="../src/assets/Toprec_Title_and_Logo.png" alt="TOPREC" class="page-header-logo">
+      <span class="page-header-text">Profile Management</span>
+    </div>
+
+    <div class="section-label">Module 03</div>
+    <div class="section-title">Profile Management</div>
+    <div class="section-desc">
+      Complete professional profile with photo management, editable fields, and read-only regulatory data &mdash; ensuring accuracy while giving users control over their contact details.
+    </div>
+
+    <div class="feature-full">
+      <div class="fc-header">
+        <div class="fc-icon purple">&#x1F464;</div>
+        <div class="fc-title">Profile Card &amp; Photo Management</div>
+      </div>
+      <div class="ff-cols">
+        <div class="ff-col">
+          <h4>Profile Header</h4>
+          <div class="fc-body">
+            <ul>
+              <li>Professional gradient header with avatar display</li>
+              <li>Profile photo upload (JPEG, PNG, WebP &mdash; max 5 MB)</li>
+              <li>Initials fallback when no photo is uploaded</li>
+              <li>Camera icon overlay for quick photo change</li>
+              <li>Upload &amp; remove photo actions with loading states</li>
+              <li>Membership ID and &ldquo;Active Member&rdquo; badges</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ff-col">
+          <h4>Edit &amp; View Modes</h4>
+          <div class="fc-body">
+            <ul>
+              <li>Toggle between view and edit modes</li>
+              <li>Visual distinction: disabled fields shown in grey</li>
+              <li>Cancel reverts all changes to original values</li>
+              <li>Save button disabled until form is valid</li>
+              <li>Success/error alerts with auto-dismiss (3 seconds)</li>
+              <li>Loading spinner during data fetch</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon green">&#x1F4CB;</div>
+          <div class="fc-title">Personal Information</div>
+        </div>
+        <div class="fc-body">
+          Core personal details with appropriate edit permissions:
+          <ul>
+            <li><strong>Full Name</strong> &mdash; Read-only; requires contacting TOPREC support to change</li>
+            <li><strong>Email Address</strong> &mdash; Editable with email format validation</li>
+            <li><strong>Phone Number</strong> &mdash; Editable with +234 Nigerian format</li>
+            <li><strong>Address</strong> &mdash; Editable, minimum 5 characters</li>
+            <li><strong>Gender</strong> &mdash; Editable dropdown (Members only): Male, Female, Other, Prefer not to say</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon blue">&#x1F3DB;</div>
+          <div class="fc-title">Professional Information</div>
+        </div>
+        <div class="fc-body">
+          Regulatory data managed by the council:
+          <ul>
+            <li><strong>Membership Number</strong> &mdash; Read-only; issued by TOPREC</li>
+            <li><strong>State of Practice</strong> &mdash; Editable dropdown populated from API with all Nigerian states</li>
+            <li><strong>Date of Registration</strong> &mdash; Read-only; set at account creation</li>
+            <li>Tooltips on read-only fields explain why they cannot be changed</li>
+            <li>Red asterisks mark all required fields</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 22px;">
+      <h4>Data Integrity Safeguards</h4>
+      <p>
+        Critical regulatory fields &mdash; Full Name, Membership Number, and Registration Date &mdash; are
+        locked to prevent unauthorised modifications. Users wishing to correct these fields are guided to
+        contact TOPREC help and support via informational tooltips, maintaining the integrity of the
+        professional registry.
+      </p>
+    </div>
+
+  </div>
+  <div class="page-number">05</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 6 — LICENSE MANAGEMENT
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page" style="page-break-after:always;">
+  <div class="page-inner">
+    <div class="page-header">
+      <img src="../src/assets/Toprec_Title_and_Logo.png" alt="TOPREC" class="page-header-logo">
+      <span class="page-header-text">License Management</span>
+    </div>
+
+    <div class="section-label">Module 04</div>
+    <div class="section-title">License &amp; Certificate</div>
+    <div class="section-desc">
+      Digital license certificates with QR code verification, PDF download, and real-time expiry tracking &mdash; bringing paperless efficiency to professional licensing.
+    </div>
+
+    <div class="feature-grid" style="margin-bottom: 16px;">
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon green">&#x1F4DC;</div>
+          <div class="fc-title">Digital Certificate</div>
+        </div>
+        <div class="fc-body">
+          A professionally designed, printable license certificate rendered directly in the browser:
+          <ul>
+            <li>Official TOPREC crest, council name, and establishment decree</li>
+            <li>Role-specific authorization text referencing the relevant Town Planners Act provisions</li>
+            <li>User's full legal name in decorative typography</li>
+            <li>Validity period (annual: Jan 1 &ndash; Dec 31)</li>
+            <li>Registrar's signature block</li>
+            <li>Green decorative border with concentric circle pattern</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon blue">&#x1F50D;</div>
+          <div class="fc-title">Verification &amp; Sharing</div>
+        </div>
+        <div class="fc-body">
+          Built-in verification ensures every certificate's authenticity:
+          <ul>
+            <li><strong>QR Code</strong> &mdash; Embedded on each certificate, linking to a unique verification URL</li>
+            <li><strong>Download as PDF</strong> &mdash; Print-optimised rendering via the browser print dialogue</li>
+            <li><strong>Print</strong> &mdash; Direct printing from the application</li>
+            <li>Certified Seal displayed for Consulting and Practice Firms</li>
+            <li>Certificate elements hidden on-screen are visible in print layout</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini certificate preview -->
+    <div class="cert-preview">
+      <div class="cert-sub">Town Planners Registration Council of Nigeria</div>
+      <div class="cert-title">Certificate of License to Practice</div>
+      <div class="cert-body" style="margin-bottom: 6px;">This certificate authenticates that</div>
+      <div class="cert-name">John Adeyemi Okonkwo</div>
+      <div class="cert-body">
+        Having complied with the provisions of Section (5)(1) Town Planners (Registration, etc.) Act,
+        CAP T7 LFN 2004, is hereby authorized to practice as a <strong>Registered Town Planner</strong>
+        within the Federal Republic of Nigeria.
+      </div>
+      <div class="cert-footer-row">
+        <div class="cert-footer-item">Valid Till<br><strong>Dec 31, 2026</strong></div>
+        <div class="cert-qr">QR</div>
+        <div class="cert-footer-item">Ag. Registrar<br><strong>Tpl. Uhiere Samuel</strong></div>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon orange">&#x23F3;</div>
+          <div class="fc-title">Expiry Tracking</div>
+        </div>
+        <div class="fc-body">
+          <ul>
+            <li>Status badges: <strong>Active</strong> (green), <strong>Expired</strong> (red), <strong>Pending</strong> (yellow), <strong>Suspended</strong> (grey)</li>
+            <li>Days-remaining countdown displayed prominently</li>
+            <li>Renewal reminder banner at &le; 60 days until expiry with direct &ldquo;Renew License Now&rdquo; action</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon red">&#x1F6AB;</div>
+          <div class="fc-title">Financial Compliance Gate</div>
+        </div>
+        <div class="fc-body">
+          <ul>
+            <li>Outstanding levy balances block access to the license page entirely</li>
+            <li>Clear messaging explains why access is restricted</li>
+            <li>Direct &ldquo;Settle License Fees&rdquo; button routes to the Payments module</li>
+            <li>License automatically becomes viewable once balance is cleared</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-number">06</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 7 — PAYMENTS & RENEWALS
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page" style="page-break-after:always;">
+  <div class="page-inner">
+    <div class="page-header">
+      <img src="../src/assets/Toprec_Title_and_Logo.png" alt="TOPREC" class="page-header-logo">
+      <span class="page-header-text">Payments &amp; Renewals</span>
+    </div>
+
+    <div class="section-label">Module 05</div>
+    <div class="section-title">Payments &amp; Renewals</div>
+    <div class="section-desc">
+      End-to-end payment processing powered by Remita &mdash; Nigeria's leading payment gateway &mdash; with automatic tax calculation, receipt generation, and comprehensive payment history.
+    </div>
+
+    <div class="feature-full">
+      <div class="fc-header">
+        <div class="fc-icon green">&#x1F4B0;</div>
+        <div class="fc-title">License Renewal Payment</div>
+      </div>
+      <div class="ff-cols">
+        <div class="ff-col">
+          <h4>Payment Configuration</h4>
+          <div class="fc-body">
+            <ul>
+              <li>Dynamic payment type selection from admin-configured options</li>
+              <li>Automatic subtotal, tax rate, and total calculation</li>
+              <li>Tax amount computed as a percentage of the base amount</li>
+              <li>Currency displayed in Nigerian Naira (&#8358;)</li>
+              <li>Phone number pre-filled from user profile</li>
+              <li>Outstanding balance detection with combined payment flow</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ff-col">
+          <h4>Remita Integration</h4>
+          <div class="fc-body">
+            <ul>
+              <li>Secure inline checkout via Remita SDK</li>
+              <li>Dynamic script loading with CDN fallback URLs</li>
+              <li>Unique reference generation (TOPREC-timestamp-random)</li>
+              <li>Remita Retrieval Reference (RRR) tracking</li>
+              <li>Real-time payment status callbacks</li>
+              <li>Automatic license renewal on successful payment</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <h4>Payment Processing Flow</h4>
+      <p>From type selection through Remita checkout to license renewal &mdash; the entire process is handled seamlessly within the application.</p>
+    </div>
+
+    <div class="flow-steps" style="margin-bottom: 22px;">
+      <div class="flow-step">
+        <div class="flow-step-num">1</div>
+        <div class="flow-step-label">Select Type</div>
+        <div class="flow-step-desc">Choose payment</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-step-num">2</div>
+        <div class="flow-step-label">Review</div>
+        <div class="flow-step-desc">Amount &amp; tax</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-step-num">3</div>
+        <div class="flow-step-label">Remita</div>
+        <div class="flow-step-desc">Secure checkout</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-step-num">4</div>
+        <div class="flow-step-label">Confirmation</div>
+        <div class="flow-step-desc">Status &amp; receipt</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-step-num">5</div>
+        <div class="flow-step-label">Renewed</div>
+        <div class="flow-step-desc">License updated</div>
+      </div>
+    </div>
+
+    <div class="feature-full">
+      <div class="fc-header">
+        <div class="fc-icon blue">&#x1F4C4;</div>
+        <div class="fc-title">Payment History &amp; Records</div>
+      </div>
+      <div class="ff-cols">
+        <div class="ff-col">
+          <h4>History Table</h4>
+          <div class="fc-body">
+            <ul>
+              <li>Chronological list of all past transactions</li>
+              <li>Columns: Date, Description, Reference, RRR, Amount (&#8358;), Status, Method</li>
+              <li>Colour-coded status: Successful (green), Pending (orange), Failed (red)</li>
+              <li>Pagination with configurable items per page</li>
+              <li>Payment count badge on the History tab</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ff-col">
+          <h4>Actions &amp; Filters</h4>
+          <div class="fc-body">
+            <ul>
+              <li>Filter by status: All, Successful, Pending, Failed</li>
+              <li>Refresh individual payment status in real time</li>
+              <li>Download payment receipt / confirmation</li>
+              <li>Planned export options: CSV, Excel, and PDF</li>
+              <li>Tab state persisted in localStorage across sessions</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-number">07</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 8 — MEMBER DIRECTORY (ADMIN)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page" style="page-break-after:always;">
+  <div class="page-inner">
+    <div class="page-header">
+      <img src="../src/assets/Toprec_Title_and_Logo.png" alt="TOPREC" class="page-header-logo">
+      <span class="page-header-text">Member Administration</span>
+    </div>
+
+    <div class="section-label">Module 06</div>
+    <div class="section-title">Members Directory</div>
+    <div class="section-desc">
+      A centralised administration hub exclusively for super-administrators &mdash; providing full visibility and management control over the entire TOPREC membership base.
+    </div>
+
+    <div class="feature-full">
+      <div class="fc-header">
+        <div class="fc-icon green">&#x1F465;</div>
+        <div class="fc-title">Three-Tab Directory View</div>
+      </div>
+      <div class="fc-body" style="margin-bottom: 14px;">
+        The directory is organized into three distinct categories, each with dedicated count badges, search, and filtering capabilities:
+      </div>
+      <div class="ff-cols">
+        <div class="ff-col">
+          <h4>Directory Categories</h4>
+          <div class="fc-body">
+            <ul>
+              <li><strong>Members</strong> &mdash; Individual registered town planners with personal details, registration numbers, and practice status</li>
+              <li><strong>Consulting Firms</strong> &mdash; Registered consulting organisations authorised for large-scale planning projects (master plans, EIS, campus plans, subdivisions &gt; 10 hectares)</li>
+              <li><strong>Practice Firms</strong> &mdash; Registered firms authorised for site analysis, smaller layouts (&lt; 10 hectares), development permits, and advisory services</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ff-col">
+          <h4>Management Features</h4>
+          <div class="fc-body">
+            <ul>
+              <li>Quick stats dashboard showing total and active member counts</li>
+              <li>Unified search across name, email, and registration number</li>
+              <li>Status filter dropdown (Active, Inactive, Pending, etc.)</li>
+              <li>Category-specific count badges on each tab</li>
+              <li>Tabular view with full contact information</li>
+              <li>View, edit, and manage individual member records</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon blue">&#x1F50E;</div>
+          <div class="fc-title">Search &amp; Filter</div>
+        </div>
+        <div class="fc-body">
+          Powerful tools to quickly locate specific members in large directories:
+          <ul>
+            <li>Full-text search across all member fields</li>
+            <li>Status-based filtering (Active, Inactive, Suspended, Pending)</li>
+            <li>Category-based filtering by role type</li>
+            <li>Real-time result updates as filters are applied</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-header">
+          <div class="fc-icon purple">&#x1F4CA;</div>
+          <div class="fc-title">Statistics Dashboard</div>
+        </div>
+        <div class="fc-body">
+          At-a-glance metrics for workforce oversight:
+          <ul>
+            <li><strong>Total Members</strong> &mdash; Blue badge showing aggregate count across all roles</li>
+            <li><strong>Active Members</strong> &mdash; Green badge showing currently active registrations</li>
+            <li>Per-tab count badges for Members, Consulting Firms, and Practice Firms</li>
+            <li>Real-time data refresh from the member API</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 20px;">
+      <h4>Superadmin Exclusive</h4>
+      <p>
+        The Members Directory is restricted to users with the Superadmin role. The sidebar navigation item
+        is dynamically hidden for all other roles through role-based menu filtering, and route guards
+        enforce access control at the application level.
+      </p>
+    </div>
+
+  </div>
+  <div class="page-number">08</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 9 — SETTINGS
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page" style="page-break-after:always;">
+  <div class="page-inner">
+    <div class="page-header">
+      <img src="../src/assets/Toprec_Title_and_Logo.png" alt="TOPREC" class="page-header-logo">
+      <span class="page-header-text">Settings &amp; Configuration</span>
+    </div>
+
+    <div class="section-label">Module 07</div>
+    <div class="section-title">Settings &amp; Preferences</div>
+    <div class="section-desc">
+      Security credentials, notification channels, and payment settings with role-based tab visibility.
+    </div>
+
+    <!-- Security Settings -->
+    <div class="feature-full" style="margin-bottom: 10px;">
+      <div class="fc-header">
+        <div class="fc-icon green">&#x1F510;</div>
+        <div class="fc-title">Security Settings</div>
+      </div>
+      <div class="fc-body" style="margin-bottom: 8px;">
+        OTP-verified password change ensures only the account holder can modify credentials, via three secure steps:
+      </div>
+      <div class="sec-steps">
+        <div class="sec-step">
+          <div class="sec-step-num">01</div>
+          <div class="sec-step-title">Request OTP</div>
+          <div class="sec-step-desc">System sends a one-time passcode to the registered email address for identity verification.</div>
+        </div>
+        <div class="sec-step">
+          <div class="sec-step-num">02</div>
+          <div class="sec-step-title">Verify OTP</div>
+          <div class="sec-step-desc">Enter the 6-digit code received. Includes cooldown-based resend functionality if the code expires.</div>
+        </div>
+        <div class="sec-step">
+          <div class="sec-step-num">03</div>
+          <div class="sec-step-title">Set New Password</div>
+          <div class="sec-step-desc">Enter and confirm a new password (min. 8 characters) with strength requirements enforced.</div>
+        </div>
+      </div>
+      <div class="ff-cols" style="margin-top: 10px;">
+        <div class="ff-col">
+          <div class="fc-body">
+            <ul>
+              <li>Security tip cards with best practice guidance</li>
+              <li>Password strength: uppercase, lowercase, numbers, special characters</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ff-col">
+          <div class="fc-body">
+            <ul>
+              <li>Modal-based step flow with progress indicators</li>
+              <li>Available to all authenticated users regardless of role</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Settings -->
+    <div class="feature-full" style="margin-bottom: 10px;">
+      <div class="fc-header">
+        <div class="fc-icon blue">&#x1F514;</div>
+        <div class="fc-title">Notification Preferences</div>
+      </div>
+      <div class="fc-body" style="margin-bottom: 6px;">
+        Six notification channels with toggle switches and quick &ldquo;Enable All&rdquo; / &ldquo;Disable All&rdquo; controls:
+      </div>
+
+      <div class="notif-list">
+        <div class="notif-item">
+          <div class="notif-dot on"></div>
+          <div class="notif-text"><strong>Email Notifications</strong> &mdash; Important updates and announcements via email<span>Sent to registered email address</span></div>
+          <div class="notif-status on">Default: On</div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot off"></div>
+          <div class="notif-text"><strong>SMS Notifications</strong> &mdash; Instant text message alerts for urgent matters<span>Standard messaging rates may apply</span></div>
+          <div class="notif-status off">Default: Off</div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot on"></div>
+          <div class="notif-text"><strong>Payment Reminders</strong> &mdash; Deadline and due date notifications<span>Sent 7 days before due date</span></div>
+          <div class="notif-status on">Default: On</div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot on"></div>
+          <div class="notif-text"><strong>License Renewal Reminders</strong> &mdash; Never miss your renewal deadline<span>Sent 30 days before expiry</span></div>
+          <div class="notif-status on">Default: On</div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot off"></div>
+          <div class="notif-text"><strong>TOPREC Newsletter</strong> &mdash; Monthly industry updates and news<span>Sent monthly on the 1st</span></div>
+          <div class="notif-status off">Default: Off</div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot on"></div>
+          <div class="notif-text"><strong>System Alerts</strong> &mdash; Critical system and security notifications<span>Important security updates</span></div>
+          <div class="notif-status on">Default: On</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <h4>Payment Settings (Superadmin Only)</h4>
+      <p>
+        Super-administrators have access to a dedicated Payment Settings tab for configuring payment types, base amounts,
+        tax rates, and Remita gateway parameters. This tab is completely hidden from all other user roles.
+      </p>
+    </div>
+
+  </div>
+  <div class="page-number">09</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 10 — TECHNICAL ARCHITECTURE & NAVIGATION
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page" style="page-break-after:always;">
+  <div class="page-inner">
+    <div class="page-header">
+      <img src="../src/assets/Toprec_Title_and_Logo.png" alt="TOPREC" class="page-header-logo">
+      <span class="page-header-text">Architecture &amp; Technology</span>
+    </div>
+
+    <div class="section-label">Technical Foundation</div>
+    <div class="section-title">Architecture &amp; Tech Stack</div>
+    <div class="section-desc">
+      Built on modern, enterprise-grade technologies &mdash; ensuring performance, security, and maintainability.
+    </div>
+
+    <div class="tech-grid" style="margin-bottom: 22px;">
+      <div class="tech-card">
+        <div class="stat-icon">&#x1F3D7;</div>
+        <div class="tech-card-name">Angular</div>
+        <div class="tech-card-ver">v17.3 &bull; Standalone APIs</div>
+        <div class="tech-card-desc">Modern component architecture with lazy-loaded feature modules and reactive forms.</div>
+      </div>
+      <div class="tech-card">
+        <div class="stat-icon">&#x1F4DD;</div>
+        <div class="tech-card-name">TypeScript</div>
+        <div class="tech-card-ver">v5.4 &bull; Strict Mode</div>
+        <div class="tech-card-desc">Full type safety with strict compilation, interfaces, and generics for API contracts.</div>
+      </div>
+      <div class="tech-card">
+        <div class="stat-icon">&#x1F3A8;</div>
+        <div class="tech-card-name">Tailwind CSS</div>
+        <div class="tech-card-ver">v3.4 &bull; Utility-First</div>
+        <div class="tech-card-desc">Responsive, mobile-first styling with SCSS integration and custom configuration.</div>
+      </div>
+      <div class="tech-card">
+        <div class="stat-icon">&#x1F504;</div>
+        <div class="tech-card-name">RxJS</div>
+        <div class="tech-card-ver">v7.8 &bull; Reactive Streams</div>
+        <div class="tech-card-desc">BehaviorSubjects for state management, observable-based HTTP, and event handling.</div>
+      </div>
+      <div class="tech-card">
+        <div class="stat-icon">&#x1F512;</div>
+        <div class="tech-card-name">JWT Auth</div>
+        <div class="tech-card-ver">Access &amp; Refresh Tokens</div>
+        <div class="tech-card-desc">Dual-token security with automatic refresh, guards, and HTTP interceptors.</div>
+      </div>
+      <div class="tech-card">
+        <div class="stat-icon">&#x1F4B3;</div>
+        <div class="tech-card-name">Remita SDK</div>
+        <div class="tech-card-ver">Inline Checkout</div>
+        <div class="tech-card-desc">Dynamically loaded payment gateway with CDN fallbacks and RRR tracking.</div>
+      </div>
+    </div>
+
+    <!-- Navigation & UX -->
+    <div class="feature-full" style="margin-bottom: 14px;">
+      <div class="fc-header">
+        <div class="fc-icon green">&#x1F9ED;</div>
+        <div class="fc-title">Navigation &amp; User Experience</div>
+      </div>
+      <div class="ff-cols">
+        <div class="ff-col">
+          <h4>Sidebar Navigation</h4>
+          <div class="fc-body">
+            <ul>
+              <li>Fixed sidebar on desktop, collapsible on mobile</li>
+              <li>Dark green gradient with TOPREC branding</li>
+              <li>Active route indicator with white highlight</li>
+              <li>Role-based menu item filtering</li>
+              <li>User profile section with avatar, name, and role</li>
+              <li>Logout button with session cleanup</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ff-col">
+          <h4>Application-Wide Features</h4>
+          <div class="fc-body">
+            <ul>
+              <li>Toast notifications (success, error, warning, info) with auto-dismiss</li>
+              <li>Loading states with spinners on all async operations</li>
+              <li>Responsive design for desktop, tablet, and mobile</li>
+              <li>Form validations with inline error messages</li>
+              <li>Lazy-loaded modules for optimised performance</li>
+              <li>XSRF protection on all HTTP requests</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-full">
+      <div class="fc-header">
+        <div class="fc-icon purple">&#x1F6E1;</div>
+        <div class="fc-title">Security Architecture</div>
+      </div>
+      <div class="ff-cols">
+        <div class="ff-col">
+          <h4>Authentication Layer</h4>
+          <div class="fc-body">
+            <ul>
+              <li><strong>AuthGuard</strong> &mdash; Protects all dashboard routes; redirects unauthenticated users to login</li>
+              <li><strong>NoAuthGuard</strong> &mdash; Prevents authenticated users from accessing login/signup pages</li>
+              <li><strong>Auth Interceptor</strong> &mdash; Injects Bearer token into every outbound HTTP request</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ff-col">
+          <h4>Error Handling</h4>
+          <div class="fc-body">
+            <ul>
+              <li><strong>Error Interceptor</strong> &mdash; Catches all HTTP errors globally (401, 403, 500, etc.)</li>
+              <li>Automatic session invalidation on authentication failures</li>
+              <li>User-friendly error messages via the notification service</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-number">10</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 11 — BACK COVER
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page back-cover" style="page-break-after:auto;">
+  <div class="back-content">
+    <img src="../src/assets/Toprec_Title_and_Logo.png" alt="TOPREC" class="back-logo">
+    <div class="back-title">Ready to Get Started?</div>
+    <div class="back-sub">
+      The TOPREC Admin Portal brings professional licensing into the digital age.
+      Secure, efficient, and built for the future of town planning regulation in Nigeria.
+    </div>
+
+    <div class="back-info-grid">
+      <div class="back-info-item">
+        <label>Organisation</label>
+        <span>Town Planners Registration<br>Council of Nigeria</span>
+      </div>
+      <div class="back-info-item">
+        <label>Established</label>
+        <span>Decree No. 3 of 1988<br>CAP T7 LFN 2004</span>
+      </div>
+      <div class="back-info-item">
+        <label>Platform</label>
+        <span>Web Application<br>Angular 17 &bull; TypeScript</span>
+      </div>
+      <div class="back-info-item">
+        <label>Security</label>
+        <span>JWT Authentication<br>OTP Verification</span>
+      </div>
+    </div>
+
+    <div style="width: 80px; height: 2px; background: var(--gold); margin: 0 auto 30px; border-radius: 1px;"></div>
+
+    <div class="back-legal">
+      &copy; 2026 Town Planners Registration Council of Nigeria. All rights reserved.
+      This document is for informational purposes only. Features and specifications are
+      subject to change. TOPREC is a registered entity of the Federal Republic of Nigeria.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
